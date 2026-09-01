@@ -1,118 +1,109 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد البطاقات التعليمية الذكي</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .perspective { perspective: 1000px; }
-        .transform-style-3d { transform-style: preserve-3d; }
-        .backface-hidden { backface-visibility: hidden; }
-        .rotate-y-180 { transform: rotateY(180deg); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مولد البطاقات التعليمية الذكي</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-8 font-sans">
-    <div class="max-w-3xl mx-auto space-y-8">
-        
-        <!-- Header -->
-        <header class="text-center space-y-2">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-400">مولد البطاقات التعليمية الذكي</h1>
-            <p class="text-slate-400">صمم بطاقات استذكار تفاعلية واختبر معلوماتك بسهولة</p>
-        </header>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 flex flex-col items-center font-sans">
+  <div class="max-w-md w-full space-y-6">
+    
+    <header class="text-center py-4">
+      <h1 class="text-2xl font-bold text-indigo-400">مولد البطاقات التعليمية الذكي</h1>
+      <p class="text-xs text-slate-400 mt-1">اضغط على الكارت لكشف الإجابة واختبار حفظك</p>
+    </header>
 
-        <!-- Input Form -->
-        <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 space-y-4">
-            <h2 class="text-xl font-bold text-slate-200 mb-2">إضافة بطاقة جديدة</h2>
-            <div>
-                <label class="block mb-1 text-sm font-medium text-slate-300">السؤال / المصطلح:</label>
-                <input type="text" id="question" class="w-full p-3 rounded-xl bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-500 text-white" placeholder="مثال: ما هي عملية البناء الضوئي؟">
-            </div>
-            <div>
-                <label class="block mb-1 text-sm font-medium text-slate-300">الإجابة / الشرح:</label>
-                <textarea id="answer" rows="3" class="w-full p-3 rounded-xl bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-500 text-white" placeholder="مثال: عملية تصنع بها النباتات غذاءها باستخدام الضوء والماء."></textarea>
-            </div>
-            <button onclick="addCard()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl transition-all duration-200 shadow-lg shadow-indigo-600/30">
-                + إضافة البطاقة
-            </button>
-        </div>
-
-        <!-- Cards Container -->
-        <div>
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-slate-200">البطاقات (<span id="cardCount">0</span>)</h2>
-                <button onclick="clearCards()" class="text-sm text-red-400 hover:text-red-300">مسح الكل</button>
-            </div>
-            <div id="cardsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </div>
-
+    <!-- Form -->
+    <div class="bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700 space-y-3">
+      <h2 class="text-sm font-semibold text-slate-200">إضافة بطاقة جديدة</h2>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">السؤال / المصطلح:</label>
+        <input id="qInput" type="text" placeholder="مثال: ما هي عملية البناء الضوئي؟" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">الإجابة / الشرح:</label>
+        <textarea id="aInput" rows="2" placeholder="مثال: عملية تصنع بها النباتات غذاءها..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+      </div>
+      <button onclick="addCard()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-lg transition text-sm">+ إضافة البطاقة</button>
     </div>
 
-    <script>
-        let cards = JSON.parse(localStorage.getItem('flashcards') || '[]');
+    <!-- Cards Container -->
+    <div class="space-y-3">
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-semibold text-slate-300">بطاقات المراجعة (<span id="count">0</span>)</h2>
+        <button onclick="clearCards()" class="text-xs text-red-400 hover:underline">مسح الكل</button>
+      </div>
+      <div id="cardsList" class="space-y-3"></div>
+    </div>
 
-        function renderCards() {
-            const container = document.getElementById('cardsList');
-            const count = document.getElementById('cardCount');
-            container.innerHTML = '';
-            count.innerText = cards.length;
+  </div>
 
-            if (cards.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 text-center col-span-2 py-8">لا توجد بطاقات بعد. أضف أول بطاقة فوق!</p>';
-                return;
-            }
+  <script>
+    let cards = JSON.parse(localStorage.getItem('cards') || '[]');
 
-            cards.forEach((card, index) => {
-                const cardEl = document.createElement('div');
-                cardEl.className = "bg-slate-800 border border-slate-700 hover:border-indigo-500/50 p-5 rounded-2xl shadow-md space-y-3 relative";
-                cardEl.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-950 text-indigo-300 rounded-full border border-indigo-800/50">بطاقة #${index + 1}</span>
-                        <button onclick="deleteCard(${index})" class="text-slate-500 hover:text-red-400 text-sm">✕</button>
-                    </div>
-                    <div class="space-y-2">
-                        <p class="font-bold text-lg text-indigo-300">س: ${card.q}</p>
-                        <p class="text-slate-300 text-sm border-t border-slate-700/60 pt-2">ج: ${card.a}</p>
-                    </div>
-                `;
-                container.appendChild(cardEl);
-            });
-        }
+    function saveAndRender() {
+      localStorage.setItem('cards', JSON.stringify(cards));
+      const list = document.getElementById('cardsList');
+      document.getElementById('count').innerText = cards.length;
+      list.innerHTML = '';
 
-        function addCard() {
-            const q = document.getElementById('question').value.trim();
-            const a = document.getElementById('answer').value.trim();
+      if(cards.length === 0) {
+        list.innerHTML = '<p class="text-center text-xs text-slate-500 py-6">لا توجد بطاقات بعد. أضف أول بطاقة فوق!</p>';
+        return;
+      }
 
-            if (!q || !a) {
-                alert('برجاء كتابة السؤال والإجابة كلاهما.');
-                return;
-            }
+      cards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 cursor-pointer select-none transition hover:border-indigo-500 relative shadow';
+        cardEl.onclick = () => toggleAnswer(index);
 
-            cards.push({ q, a });
-            localStorage.setItem('flashcards', JSON.stringify(cards));
-            
-            document.getElementById('question').value = '';
-            document.getElementById('answer').value = '';
-            
-            renderCards();
-        }
+        cardEl.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs text-indigo-400 font-semibold">بطاقة #${index + 1} 🔍 (اضغط للاختبار)</span>
+            <button onclick="event.stopPropagation(); deleteCard(${index})" class="text-slate-500 hover:text-red-400 text-xs px-1">✕</button>
+          </div>
+          <div class="text-sm font-medium text-slate-100 mb-2">${escapeHtml(card.q)}</div>
+          <div id="ans-${index}" class="hidden pt-3 border-t border-slate-700 text-xs text-emerald-400 bg-slate-900/50 p-2.5 rounded-lg mt-2">
+            <span class="font-bold block mb-1 text-emerald-500">الإجابة الصحيحة:</span> ${escapeHtml(card.a)}
+          </div>
+        `;
+        list.appendChild(cardEl);
+      });
+    }
 
-        function deleteCard(index) {
-            cards.splice(index, 1);
-            localStorage.setItem('flashcards', JSON.stringify(cards));
-            renderCards();
-        }
+    function toggleAnswer(index) {
+      const ansEl = document.getElementById(`ans-${index}`);
+      if(ansEl) ansEl.classList.toggle('hidden');
+    }
 
-        function clearCards() {
-            if (confirm('هل أنت تأكد من مسح جميع البطاقات؟')) {
-                cards = [];
-                localStorage.removeItem('flashcards');
-                renderCards();
-            }
-        }
+    function addCard() {
+      const q = document.getElementById('qInput').value.trim();
+      const a = document.getElementById('aInput').value.trim();
+      if(!q || !a) return alert('برجاء كتابة السؤال والإجابة');
+      cards.push({q, a});
+      document.getElementById('qInput').value = '';
+      document.getElementById('aInput').value = '';
+      saveAndRender();
+    }
 
-        // Initial Load
-        renderCards();
-    </script>
+    function deleteCard(index) {
+      cards.splice(index, 1);
+      saveAndRender();
+    }
+
+    function clearCards() {
+      if(confirm('هل أنت تأكد من مسح جميع البطاقات؟')) {
+        cards = [];
+        saveAndRender();
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    saveAndRender();
+  </script>
 </body>
 </html>
