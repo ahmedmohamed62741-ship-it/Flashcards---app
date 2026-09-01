@@ -3,94 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة بطاقات المذاكرة الذكية</title>
+  <title>تطبيق اختبارات الاختيار من متعدد</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .perspective { perspective: 1000px; }
-    .transform-style-3d { transform-style: preserve-3d; }
-    .backface-hidden { backface-visibility: hidden; }
-    .rotate-y-180 { transform: rotateY(180deg); }
-  </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 flex flex-col items-center font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-3 flex flex-col items-center font-sans">
 
-  <div class="max-w-md w-full space-y-5">
+  <div class="max-w-md w-full space-y-4">
     
     <header class="text-center py-2">
-      <h1 class="text-2xl font-extrabold text-indigo-400">🧠 بطاقات المذاكرة الذكية</h1>
-      <p class="text-xs text-slate-400 mt-1">اختبر حفظك وفهمك بطريقة تفاعلية</p>
+      <h1 class="text-xl font-extrabold text-indigo-400">📝 اختبارك الشخصي</h1>
+      <p class="text-xs text-slate-400 mt-1">أنشئ أسئلتك واختبر نفسك الآن</p>
     </header>
 
-    <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
-      <button id="tabManage" onclick="switchTab('manage')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition">➕ إضافة وإدارة</button>
-      <button id="tabQuiz" onclick="switchTab('quiz')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition">🚀 ابدأ المراجعة</button>
+    <!-- Tabs -->
+    <div class="flex bg-slate-900 p-1 rounded-full border border-slate-700">
+      <button id="tabManage" onclick="switchTab('manage')" class="flex-1 py-2 text-xs font-bold rounded-full bg-indigo-600 text-white transition">➕ إنشاء الأسئلة</button>
+      <button id="tabQuiz" onclick="switchTab('quiz')" class="flex-1 py-2 text-xs font-bold rounded-full text-slate-400 hover:text-white transition">🚀 ابدأ الاختبار</button>
     </div>
 
+    <!-- VIEW 1: MANAGE CARDS (MCQ Style) -->
     <div id="viewManage" class="space-y-4">
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3 shadow-lg">
-        <h2 class="text-xs font-bold text-slate-300">إضافة كارت جديد</h2>
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3 shadow-lg">
+        <h2 class="text-xs font-bold text-slate-300">إضافة سؤال اختبار جديد</h2>
         <div>
           <label class="block text-xs text-slate-400 mb-1">السؤال / المصطلح:</label>
-          <input id="qInput" type="text" placeholder="مثال: Capital of France?" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+          <input id="qInput" type="text" placeholder="مثال: ما عاصمة مصر؟" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
         </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">الإجابة الصحيحة:</label>
-          <textarea id="aInput" rows="2" placeholder="مثال: Paris" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+        <div class="grid grid-cols-1 gap-2">
+          <div>
+            <label class="block text-xs text-emerald-400 mb-1 font-bold">الإجابة الصحيحة ✅:</label>
+            <input id="aInput" type="text" placeholder="مثال: القاهرة" class="w-full bg-slate-950 border-2 border-emerald-700 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none">
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs text-rose-400 mb-1">الإجابات الخاطئة ❌ (3 خيارات):</label>
+            <input id="iInput1" type="text" placeholder="مثال: الرياض" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100">
+            <input id="iInput2" type="text" placeholder="مثال: دبي" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100">
+            <input id="iInput3" type="text" placeholder="مثال: الدوحة" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100">
+          </div>
         </div>
-        <button onclick="addCard()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-lg transition text-xs shadow-md">+ حفظ الكارت</button>
+        <button onclick="addCard()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition text-xs">+ حفظ سؤال الاختبار</button>
       </div>
 
       <div class="space-y-2">
         <div class="flex justify-between items-center px-1">
-          <span class="text-xs text-slate-400">قائمة الكروت (<span id="cardCount">0</span>)</span>
+          <span class="text-xs text-slate-400">الأسئلة المحفوظة (<span id="cardCount">0</span>)</span>
           <button onclick="clearCards()" class="text-xs text-red-400 hover:underline">مسح الكل</button>
         </div>
         <div id="manageCardsList" class="space-y-2"></div>
       </div>
     </div>
 
+    <!-- VIEW 2: QUIZ MODE (MCQ Style) -->
     <div id="viewQuiz" class="hidden space-y-4">
       
       <div id="quizContainer" class="space-y-4">
         <div class="flex justify-between items-center text-xs text-slate-400 px-1">
-          <span id="quizProgress">الكارت 1 من 1</span>
-          <span id="quizScore" class="text-emerald-400 font-bold">🎯 الإجابات الصحيحة: 0</span>
+          <span id="quizProgress">السؤال 1 من 1</span>
+          <span id="quizScore" class="text-emerald-400 font-bold">🎯 النتيجة: 0</span>
         </div>
 
-        <div class="perspective w-full h-64 cursor-pointer" onclick="flipCard()">
-          <div id="flashcard" class="w-full h-full relative transform-style-3d transition-transform duration-500 shadow-xl rounded-2xl">
-            
-            <div class="absolute w-full h-full bg-gradient-to-br from-slate-800 to-slate-850 border-2 border-indigo-500/40 rounded-2xl p-6 flex flex-col justify-between items-center text-center backface-hidden shadow-2xl">
-              <div class="w-full flex justify-between items-center text-xs text-indigo-400">
-                <span>❓ السؤال</span>
-                <button onclick="event.stopPropagation(); speakText(document.getElementById('quizQ').innerText)" class="p-1 hover:text-white">🔊 نطق</button>
-              </div>
-              <p id="quizQ" class="text-lg font-bold text-slate-100 my-auto">جاري التحميل...</p>
-              <span class="text-xs text-slate-500 bg-slate-900/60 px-3 py-1 rounded-full">👆 اضغط على الكارت لكشف الإجابة</span>
-            </div>
-
-            <div class="absolute w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-2xl p-6 flex flex-col justify-between items-center text-center backface-hidden rotate-y-180 shadow-2xl">
-              <div class="w-full flex justify-between items-center text-xs text-emerald-400">
-                <span>💡 الإجابة الصحيحة</span>
-                <button onclick="event.stopPropagation(); speakText(document.getElementById('quizA').innerText)" class="p-1 hover:text-white">🔊 نطق</button>
-              </div>
-              <p id="quizA" class="text-base font-semibold text-emerald-300 my-auto">...</p>
-              <span class="text-xs text-slate-500">تقييم حفظك لـ هذا الكارت 👇</span>
-            </div>
-
-          </div>
+        <!-- Question Display -->
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-5 shadow-2xl space-y-3">
+          <span class="text-xs text-indigo-400 font-bold">❓ السؤال الحالي:</span>
+          <p id="quizQ" class="text-base font-bold text-slate-100 py-1">...</p>
         </div>
 
-        <div id="quizActions" class="grid grid-cols-2 gap-3 pt-2">
-          <button onclick="answerQuiz(false)" class="bg-rose-900/40 hover:bg-rose-800/60 border border-rose-700/50 text-rose-300 font-bold py-3 rounded-xl text-xs transition">❌ نسيتها / محتاجة مراجعة</button>
-          <button onclick="answerQuiz(true)" class="bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 font-bold py-3 rounded-xl text-xs transition">✅ عرفتها بسهولة</button>
+        <!-- Options Display (MCQ) -->
+        <div id="quizOptionsList" class="grid grid-cols-1 gap-2.5">
+          <!-- Options dynamically inserted here -->
         </div>
+
+        <!-- Status Message & Next Button -->
+        <div id="quizStatus" class="hidden text-center p-3 rounded-lg border text-sm font-bold"></div>
+        <button id="nextBtn" onclick="nextQuizCard()" class="hidden w-full bg-indigo-600 text-white font-bold py-3 rounded-xl text-xs transition">السؤال التالي ➡️</button>
       </div>
 
-      <div id="quizEmpty" class="hidden bg-slate-800 p-8 rounded-2xl border border-slate-700 text-center space-y-3">
-        <p class="text-2xl">🎉</p>
-        <p class="text-sm font-bold text-slate-200" id="quizDoneTitle">أضف كروت أولاً لبدء المراجعة!</p>
-        <button onclick="switchTab('manage')" class="bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-lg shadow">إضافة كروت جديدة</button>
+      <div id="quizEmpty" class="hidden bg-slate-900 p-8 rounded-2xl border border-slate-700 text-center space-y-3">
+        <p class="text-3xl">🎉</p>
+        <p class="text-xs font-bold text-slate-200" id="quizDoneTitle">أضف أسئلة أولاً لبدء الاختبار!</p>
+        <button onclick="switchTab('manage')" class="bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow">إنشاء أول سؤال</button>
       </div>
 
     </div>
@@ -98,10 +89,11 @@
   </div>
 
   <script>
-    let cards = JSON.parse(localStorage.getItem('cards') || '[]');
+    // Data Structure: { q, a (correct), incorrects ([i1, i2, i3]) }
+    let cards = JSON.parse(localStorage.getItem('cards_mcq') || '[]');
     let currentQuizIndex = 0;
     let score = 0;
-    let isFlipped = false;
+    let quizState = 'pending'; // 'pending', 'answered'
 
     function switchTab(tab) {
       document.getElementById('viewManage').classList.toggle('hidden', tab !== 'manage');
@@ -111,12 +103,12 @@
       const tabQ = document.getElementById('tabQuiz');
 
       if(tab === 'manage') {
-        tabM.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition";
-        tabQ.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
+        tabM.className = "flex-1 py-2 text-xs font-bold rounded-full bg-indigo-600 text-white transition";
+        tabQ.className = "flex-1 py-2 text-xs font-bold rounded-full text-slate-400 hover:text-white transition";
         renderManageList();
       } else {
-        tabQ.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition";
-        tabM.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
+        tabQ.className = "flex-1 py-2 text-xs font-bold rounded-full bg-indigo-600 text-white transition";
+        tabM.className = "flex-1 py-2 text-xs font-bold rounded-full text-slate-400 hover:text-white transition";
         startQuiz();
       }
     }
@@ -124,25 +116,36 @@
     function addCard() {
       const q = document.getElementById('qInput').value.trim();
       const a = document.getElementById('aInput').value.trim();
-      if(!q || !a) return alert('يرجى كتابة السؤال والإجابة!');
+      const i1 = document.getElementById('iInput1').value.trim();
+      const i2 = document.getElementById('iInput2').value.trim();
+      const i3 = document.getElementById('iInput3').value.trim();
+
+      if(!q || !a || !i1 || !i2 || !i3) return alert('يرجى ملء السؤال والإجابة الصحيحة وجميع الإجابات الخاطئة الثلاث!');
       
-      cards.push({q, a});
-      localStorage.setItem('cards', JSON.stringify(cards));
+      cards.push({q, a, incorrects: [i1, i2, i3]});
+      localStorage.setItem('cards_mcq', JSON.stringify(cards));
+      
+      // Clear inputs
       document.getElementById('qInput').value = '';
       document.getElementById('aInput').value = '';
+      document.getElementById('iInput1').value = '';
+      document.getElementById('iInput2').value = '';
+      document.getElementById('iInput3').value = '';
+
       renderManageList();
+      alert('تم حفظ سؤال الاختبار! اضغط على "ابدأ الاختبار" للتجربة.');
     }
 
     function deleteCard(idx) {
       cards.splice(idx, 1);
-      localStorage.setItem('cards', JSON.stringify(cards));
+      localStorage.setItem('cards_mcq', JSON.stringify(cards));
       renderManageList();
     }
 
     function clearCards() {
-      if(confirm('تأكيد مسح كافة البطاقات؟')) {
+      if(confirm('تأكيد مسح كافة الأسئلة المحفوظة؟')) {
         cards = [];
-        localStorage.removeItem('cards');
+        localStorage.removeItem('cards_mcq');
         renderManageList();
       }
     }
@@ -153,17 +156,14 @@
       list.innerHTML = '';
 
       if(cards.length === 0) {
-        list.innerHTML = `<p class="text-center text-xs text-slate-500 py-6">لا توجد بطاقات محفوظة حالياً.</p>`;
+        list.innerHTML = `<p class="text-center text-xs text-slate-500 py-3">لا توجد أسئلة اختبار محفوظة.</p>`;
         return;
       }
 
       cards.forEach((c, i) => {
         list.innerHTML += `
-          <div class="bg-slate-800 border border-slate-700/80 rounded-lg p-3 flex justify-between items-center text-xs">
-            <div class="truncate pl-2">
-              <span class="font-bold text-indigo-400 block truncate">${escapeHtml(c.q)}</span>
-              <span class="text-slate-400 truncate block text-[11px]">${escapeHtml(c.a)}</span>
-            </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 flex justify-between items-center text-xs">
+            <span class="font-bold text-indigo-300 truncate pl-2">❓ ${escapeHtml(c.q)}</span>
             <button onclick="deleteCard(${i})" class="text-slate-500 hover:text-rose-400 p-1">✕</button>
           </div>
         `;
@@ -174,7 +174,7 @@
       if(cards.length === 0) {
         document.getElementById('quizContainer').classList.add('hidden');
         document.getElementById('quizEmpty').classList.remove('hidden');
-        document.getElementById('quizDoneTitle').innerText = "لا توجد بطاقات لمراجعتها!";
+        document.getElementById('quizDoneTitle').innerText = "لا توجد أسئلة لمراجعتها! أنشئ أسئلة أولاً.";
         return;
       }
 
@@ -186,23 +186,72 @@
     }
 
     function showQuizCard() {
-      isFlipped = false;
-      document.getElementById('flashcard').classList.remove('rotate-y-180');
-      
+      const quizStatus = document.getElementById('quizStatus');
+      const nextBtn = document.getElementById('nextBtn');
+      quizStatus.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      quizState = 'pending';
+
       const card = cards[currentQuizIndex];
       document.getElementById('quizQ').innerText = card.q;
-      document.getElementById('quizA').innerText = card.a;
-      document.getElementById('quizProgress').innerText = `الكارت ${currentQuizIndex + 1} من ${cards.length}`;
-      document.getElementById('quizScore').innerText = `🎯 إجاباتك الصحيحة: ${score}`;
+      document.getElementById('quizProgress').innerText = `السؤال ${currentQuizIndex + 1} من ${cards.length}`;
+      document.getElementById('quizScore').innerText = `🎯 النتيجة: ${score}`;
+
+      // Shuffle options: 1 Correct + 3 Incorrects
+      let options = [card.a, ...card.incorrects];
+      shuffleArray(options);
+
+      const optionsList = document.getElementById('quizOptionsList');
+      optionsList.innerHTML = '';
+
+      options.forEach((opt, idx) => {
+        optionsList.innerHTML += `
+          <button onclick="answerQuizMcq(${escapeJsString(opt)}, this)" class="option-btn text-right bg-slate-900 border border-slate-700 hover:border-indigo-600 rounded-xl p-4 text-xs text-slate-200 transition">
+            <span class="font-bold text-slate-500 ml-1.5">${String.fromCharCode(65 + idx)})</span> ${escapeHtml(opt)}
+          </button>
+        `;
+      });
     }
 
-    function flipCard() {
-      isFlipped = !isFlipped;
-      document.getElementById('flashcard').classList.toggle('rotate-y-180', isFlipped);
+    function answerQuizMcq(selectedAnswer, selectedBtn) {
+      if(quizState === 'answered') return; // Prevent multiple clicks
+      quizState = 'answered';
+
+      const card = cards[currentQuizIndex];
+      const quizStatus = document.getElementById('quiz Status');
+      const nextBtn = document.getElementById('nextBtn');
+      const optionBtns = document.getElementsByClassName('option-btn');
+
+      // Feedback for all buttons
+      for (let btn of optionBtns) {
+        btn.onclick = null; // Disable all option clicks
+        btn.classList.add('border-slate-800'); // De-emphasize border
+        btn.classList.remove('hover:border-indigo-600');
+        
+        const btnText = btn.innerText.substring(btn.innerText.indexOf(')') + 2); // Get the option text, bypassing the 'A) ' part.
+        
+        if (btnText === card.a) {
+          btn.classList.add('bg-emerald-950/70', 'border-emerald-600', 'text-emerald-300'); // Highlight correct answer
+        }
+      }
+
+      if (selectedAnswer === card.a) {
+        score++;
+        quizStatus.innerText = "✅ إجابة صحيحة، أحسنت!";
+        quizStatus.classList.add('bg-emerald-950/70', 'border-emerald-600', 'text-emerald-300');
+        quizStatus.classList.remove('hidden', 'bg-rose-950/70', 'border-rose-600', 'text-rose-300');
+      } else {
+        selectedBtn.classList.add('bg-rose-950/70', 'border-rose-600', 'text-rose-300'); // Highlight chosen incorrect answer
+        quizStatus.innerText = "❌ إجابة خاطئة! الإجابة الصحيحة هي: " + card.a;
+        quizStatus.classList.add('bg-rose-950/70', 'border-rose-600', 'text-rose-300');
+        quizStatus.classList.remove('hidden', 'bg-emerald-950/70', 'border-emerald-600', 'text-emerald-300');
+      }
+
+      document.getElementById('quizScore').innerText = `🎯 النتيجة: ${score}`;
+      nextBtn.classList.remove('hidden');
     }
 
-    function answerQuiz(isCorrect) {
-      if(isCorrect) score++;
+    function nextQuizCard() {
       currentQuizIndex++;
 
       if(currentQuizIndex < cards.length) {
@@ -210,16 +259,14 @@
       } else {
         document.getElementById('quizContainer').classList.add('hidden');
         document.getElementById('quizEmpty').classList.remove('hidden');
-        document.getElementById('quizDoneTitle').innerText = `انتهت المراجعة! نتيجتك: ${score} من ${cards.length}`;
+        document.getElementById('quizDoneTitle').innerText = `انتهى الاختبار! نتيجة حفظك: ${score} من ${cards.length}`;
       }
     }
 
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'ar-SA';
-        window.speechSynthesis.speak(utterance);
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
       }
     }
 
@@ -227,7 +274,11 @@
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    function escapeJsString(str) {
+      return "'" + str.replace(/'/g, "\\'") + "'";
+    }
+
     renderManageList();
   </script>
 </body>
-  </html>
+</html>
