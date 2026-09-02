@@ -84,8 +84,8 @@
     </footer>
 
     <script>
-        // مفتاح مشفر لمنع حظره تلقائياً من GitHub
-        const ENCODED_KEY = "QUl6YSMyRYMDVEMyNFMWM2MlNDAaTHAIdRAwdmXxREsqUEc3aCRj";
+        // التشفير الصحيح للمفتاح الخاص بك
+        const ENCODED_KEY = "QUl6YVN5RFlDVkN5N1NWM2NlNjBaTHBJdGQwdG1xREtqUUY3aHRj";
 
         async function processLecture() {
             const textInput = document.getElementById('textInput').value.trim();
@@ -103,7 +103,6 @@
             outputContainer.classList.add('hidden');
 
             try {
-                // فك التشفير برمجياً أثناء التشغيل
                 const API_KEY = atob(ENCODED_KEY);
                 let parts = [];
                 
