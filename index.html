@@ -1,376 +1,209 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مساعد الطالب الذكي 🧠⚡</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PDF.js Read Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ملخص المحاضرات الذكي 🎓</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF.js لقراءة ملفات الـ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-3 flex flex-col items-center font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-8">
 
-  <div class="max-w-md w-full space-y-4">
-    
     <!-- Header -->
-    <header class="text-center py-2 space-y-1">
-      <div class="inline-block bg-indigo-900/50 text-indigo-400 text-[10px] font-bold px-3 py-1 rounded-full border border-indigo-700/50">⚡ أدوات المحاضرات المستقلة</div>
-      <h1 class="text-2xl font-extrabold text-amber-400">🎓 مساعد الطالب الذكي</h1>
-      <p class="text-xs text-slate-400">ارفع المحاضرة واختر الأداة المطلوبة بضغطة زر</p>
+    <header class="max-w-4xl mx-auto w-full text-center my-6">
+        <div class="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 px-4 py-2 rounded-full mb-4">
+            <i class="fa-solid fa-wand-magic-sparkles text-blue-400"></i>
+            <span class="text-xs md:text-sm text-blue-300 font-semibold">مساعد الطلاب الذكي</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
+            تلخيص المحاضرات بضغطة زرار 📚
+        </h1>
+        <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+            ارفع ملف الـ PDF أو انسخ نص المحاضرة، واحصل على ملخص شامل وأهم الأسئلة المتوقعة في ثوانٍ.
+        </p>
     </header>
 
-    <!-- API Key Input -->
-    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
-      <label class="block text-[11px] text-amber-400 font-bold">🔑 مفتاح Gemini API المجاني:</label>
-      <input id="apiKeyInput" type="password" placeholder="أدخل مفتاح الـ API الخاص بك..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500">
-      <p class="text-[10px] text-slate-500">احصل عليه مجاناً فوراً من <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 underline">Google AI Studio</a></p>
-    </div>
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto w-full space-y-6">
 
-    <!-- Input Section -->
-    <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-xl">
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-1">📂 1️⃣ اختر ملف المحاضرة (PDF):</label>
-        <input type="file" id="pdfFileInput" accept="application/pdf" class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
-      </div>
+        <!-- Input Section -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
+            
+            <!-- File Upload -->
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">
+                    <i class="fa-solid fa-file-pdf text-red-400 ml-1"></i> ارفع ملف المحاضرة (PDF):
+                </label>
+                <input type="file" id="pdfInput" accept=".pdf" class="block w-full text-sm text-slate-400
+                    file:ml-4 file:py-2.5 file:px-5
+                    file:rounded-xl file:border-0
+                    file:text-sm file:font-bold
+                    file:bg-blue-600 file:text-white
+                    hover:file:bg-blue-500
+                    cursor-pointer bg-slate-950 rounded-xl border border-slate-800 p-2">
+            </div>
 
-      <div class="text-center text-xs text-slate-500 font-bold">أو</div>
+            <div class="flex items-center my-2 text-slate-600">
+                <div class="flex-1 border-t border-slate-800"></div>
+                <span class="px-3 text-xs text-slate-500">أو</span>
+                <div class="flex-1 border-t border-slate-800"></div>
+            </div>
 
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-1">📝 2️⃣ انسخ نص المحاضرة مباشرة:</label>
-        <textarea id="lectureText" rows="3" placeholder="انسخ نص المحاضرة هنا..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
-      </div>
+            <!-- Text Input -->
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">
+                    <i class="fa-solid fa-align-right text-blue-400 ml-1"></i> انسخ نص المحاضرة هنا:
+                </label>
+                <textarea id="textInput" rows="6" placeholder="اطبع أو انسخ محتوى المحاضرة هنا..." 
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500 transition resize-y"></textarea>
+            </div>
 
-      <!-- Action Buttons (Independent Features) -->
-      <div class="space-y-2 pt-1">
-        <span class="block text-[11px] text-slate-400 font-bold text-center">👇 اختر الخدمة المطلوبة:</span>
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="processRequest('summary')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-md flex flex-col items-center justify-center gap-1">
-            <span>📝</span>
-            <span>تلخيص</span>
-          </button>
-
-          <button onclick="processRequest('cards')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-md flex flex-col items-center justify-center gap-1">
-            <span>🃏</span>
-            <span>بطاقات</span>
-          </button>
-
-          <button onclick="processRequest('quiz')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-md flex flex-col items-center justify-center gap-1">
-            <span>🎮</span>
-            <span>أسئلة MCQ</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Loader -->
-    <div id="loader" class="hidden text-center py-6 space-y-2">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-amber-500 border-t-transparent"></div>
-      <p id="loaderText" class="text-xs text-amber-400 font-bold">جاري معالجة الطلب بالذكاء الاصطناعي...</p>
-    </div>
-
-    <!-- DISPLAY RESULTS CONTAINER -->
-    <div id="resultContainer" class="hidden space-y-4">
-      
-      <!-- RESULT 1: SUMMARY -->
-      <div id="viewSummary" class="hidden bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-xl">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h2 class="text-xs font-bold text-amber-400">📝 ملخص المحاضرة:</h2>
-          <button onclick="copySummary()" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-1 rounded hover:bg-slate-700">📋 نسخ الملخص</button>
-        </div>
-        <ul id="summaryList" class="space-y-2 text-xs text-slate-200 leading-relaxed"></ul>
-      </div>
-
-      <!-- RESULT 2: FLASHCARDS -->
-      <div id="viewCards" class="hidden space-y-3">
-        <h2 class="text-xs font-bold text-sky-400 px-1">🃏 بطاقات المراجعة السريعة:</h2>
-        <div id="flashcardBox" onclick="flipCard()" class="bg-slate-900 border border-sky-700/60 rounded-2xl p-6 text-center shadow-xl cursor-pointer min-h-[140px] flex flex-col justify-center items-center transition transform active:scale-95">
-          <span id="cardBadge" class="text-[10px] bg-sky-950 text-sky-400 px-2.5 py-0.5 rounded-full mb-2 font-bold">السؤال ❓</span>
-          <p id="cardText" class="text-xs font-bold text-slate-100">اضغط للكشف عن الإجابة</p>
-        </div>
-        <div class="flex justify-between items-center text-xs px-1">
-          <button onclick="prevCard()" class="text-slate-400 hover:text-white font-bold">⬅️ السابق</button>
-          <span id="cardProgress" class="text-sky-400 font-bold text-[11px]">1 / 5</span>
-          <button onclick="nextCard()" class="text-slate-400 hover:text-white font-bold">التالي ➡️</button>
-        </div>
-      </div>
-
-      <!-- RESULT 3: MCQ QUIZ -->
-      <div id="viewQuiz" class="hidden space-y-3">
-        <div id="quizGameBox" class="space-y-3">
-          <div class="flex justify-between items-center text-xs text-slate-400 px-1">
-            <span id="quizProgress" class="font-bold text-emerald-400">سؤال 1</span>
-            <span id="quizScore" class="text-emerald-400 font-bold">🎯 النقاط: 0</span>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2">
-            <p id="quizQuestion" class="text-xs font-bold text-slate-100 leading-relaxed"></p>
-          </div>
-
-          <div id="quizOptions" class="grid grid-cols-1 gap-2"></div>
-          
-          <div id="quizFeedback" class="hidden text-center p-2.5 rounded-xl border text-xs font-bold shadow-lg"></div>
-          <button id="nextQuizBtn" onclick="nextQuestion()" class="hidden w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-2.5 rounded-xl text-xs transition shadow-lg">السؤال التالي ➡️</button>
+            <!-- Action Button -->
+            <button id="summarizeBtn" onclick="processLecture()" 
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
+                <i class="fa-solid fa-bolt"></i>
+                <span>تلخيص المحاضرة الآن</span>
+            </button>
         </div>
 
-        <!-- Quiz Final Score Result -->
-        <div id="quizFinal" class="hidden bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center space-y-4 shadow-2xl">
-          <div class="text-4xl animate-bounce">🏆</div>
-          <h2 class="text-sm font-bold text-emerald-400">انتهى الاختبار!</h2>
-          <p id="quizFinalText" class="text-xs text-slate-300"></p>
-          
-          <a id="shareWaBtn" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg">
-            تحدَّ أصحابك في الدفعة على الواتساب 🚀
-          </a>
+        <!-- Loading Spinner -->
+        <div id="loading" class="hidden text-center py-8 space-y-3">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="text-slate-400 text-sm font-semibold animate-pulse">جاري قراءة المحاضرة وتلخيصها بواسطة الذكاء الاصطناعي...</p>
         </div>
-      </div>
 
-    </div>
+        <!-- Output Result -->
+        <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> ملخص المحاضرة
+                </h3>
+                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-copy"></i> نسخ الملخص
+                </button>
+            </div>
+            <div id="outputContent" class="text-slate-300 text-sm md:text-base leading-relaxed whitespace-pre-line"></div>
+        </div>
 
-  </div>
+    </main>
 
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    <!-- Footer -->
+    <footer class="text-center text-slate-600 text-xs my-6">
+        تم التطوير لخدمة الطلاب 🚀
+    </footer>
 
-    let currentText = "";
-    let cardsData = [];
-    let currentCardIndex = 0;
-    let isCardFlipped = false;
+    <!-- Logic Script -->
+    <script>
+        // ==========================================
+        // 🔑 حط مفتاح الـ API بتاعك هنا مرة واحدة فقط
+        // ==========================================
+        const API_KEY = "AQ.Ab8RN6J-1JKMrZUnfu0K-UCPqJQuFk8zKvGinPEMIyfC_alkvg "; 
 
-    let quizData = [];
-    let currentQuizIndex = 0;
-    let score = 0;
-    let quizState = 'pending';
+        // إعداد مكتبة PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    async function extractPdfText(file) {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let text = "";
-      for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        text += content.items.map(item => item.str).join(" ") + "\n";
-      }
-      return text;
-    }
+        async function processLecture() {
+            const textInput = document.getElementById('textInput').value.trim();
+            const pdfInput = document.getElementById('pdfInput').files[0];
+            const loading = document.getElementById('loading');
+            const outputContainer = document.getElementById('outputContainer');
+            const outputContent = document.getElementById('outputContent');
 
-    async function getLectureText() {
-      let text = document.getElementById('lectureText').value.trim();
-      const pdfFile = document.getElementById('pdfFileInput').files[0];
+            let contentToSummarize = textInput;
 
-      if (!text && pdfFile) {
-        text = await extractPdfText(pdfFile);
-      }
-      return text;
-    }
+            // التحقق من إدخال بيانات
+            if (!contentToSummarize && !pdfInput) {
+                alert("من فضلك ارفع ملف PDF أو اكتب نص المحاضرة أولاً!");
+                return;
+            }
 
-    async function processRequest(type) {
-      const apiKey = document.getElementById('apiKeyInput').value.trim();
-      if (!apiKey) return alert("يرجى إدخال مفتاح Gemini API أولاً!");
+            // إظهار تحذير لو المفتاح لسة ما اتحطش في الكود
+            if (API_KEY === "ضع_مفتاح_API_الخاص_بك_هنا" || !API_KEY) {
+                alert("عفواً! صاحب الموقع لم يقم بإضافة مفتاح التشغيل بعد.");
+                return;
+            }
 
-      document.getElementById('loaderText').innerText = type === 'summary' ? "جاري صياغة الملخص..." : type === 'cards' ? "جاري إنشاء كروت المراجعة..." : "جاري استخراج أسئلة الاختبار...";
-      document.getElementById('loader').classList.remove('hidden');
-      document.getElementById('resultContainer').classList.add('hidden');
-      
-      hideAllViews();
+            loading.classList.remove('hidden');
+            outputContainer.classList.add('hidden');
 
-      currentText = await getLectureText();
-      if (!currentText) {
-        document.getElementById('loader').classList.add('hidden');
-        return alert("يرجى إرفاق ملف PDF أو كتابة نص المحاضرة أولاً!");
-      }
+            try {
+                // لو فيه ملف PDF مرفوع، استخرج النص منه
+                if (pdfInput) {
+                    contentToSummarize = await extractTextFromPDF(pdfInput);
+                }
 
-      let prompt = "";
-      if (type === 'summary') {
-        prompt = `قم بتلخيص المحاضرة التالية في نقاط واضحة ومبسطة باللغة العربية. أعد الإجابة في صيغة JSON تحتوي على مصفوفة نصوص فقط بالشكل التالي:
-["نقطة 1", "نقطة 2", "نقطة 3"]
+                if (!contentToSummarize.trim()) {
+                    throw new Error("لم نتمكن من استخراج أي نص من الملف.");
+                }
 
-المحاضرة:
-${currentText.substring(0, 7000)}`;
-      } else if (type === 'cards') {
-        prompt = `استخرج أهم 5 مفاهيم من المحاضرة في شكل بطاقات سؤال وإجابة قصيرة باللغة العربية. أعد الإجابة في صيغة JSON بالشكل التالي فقط:
-[{"q": "السؤال", "a": "الإجابة القصيرة"}]
+                // إرسال النص لـ Gemini API
+                const summary = await callGeminiAPI(contentToSummarize);
+                
+                outputContent.innerText = summary;
+                outputContainer.classList.remove('hidden');
 
-المحاضرة:
-${currentText.substring(0, 7000)}`;
-      } else if (type === 'quiz') {
-        prompt = `استخرج 5 أسئلة اختيار من متعدد (MCQ) من المحاضرة باللغة العربية. أعد الإجابة في صيغة JSON بالشكل التالي فقط:
-[{"q": "السؤال", "options": ["خيار 1", "خيار 2", "خيار 3", "خيار 4"], "correct": 0}]
-
-المحاضرة:
-${currentText.substring(0, 7000)}`;
-      }
-
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
-        });
-
-        const data = await response.json();
-        document.getElementById('loader').classList.add('hidden');
-
-        let rawText = data.candidates[0].content.parts[0].text.trim();
-        rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(rawText);
-
-        document.getElementById('resultContainer').classList.remove('hidden');
-
-        if (type === 'summary') {
-          renderSummary(parsed);
-        } else if (type === 'cards') {
-          cardsData = parsed;
-          currentCardIndex = 0;
-          renderCard();
-          document.getElementById('viewCards').classList.remove('hidden');
-        } else if (type === 'quiz') {
-          quizData = parsed;
-          startQuiz();
-          document.getElementById('viewQuiz').classList.remove('hidden');
+            } catch (error) {
+                alert("حدث خطأ أثناء التلخيص: " + error.message);
+            } finally {
+                loading.classList.add('hidden');
+            }
         }
 
-      } catch (err) {
-        document.getElementById('loader').classList.add('hidden');
-        alert("حدث خطأ أثناء معالجة المحاضرة. تأكد من صحة المفتاح ونص المحاضرة.");
-      }
-    }
+        // دالة استخراج النص من PDF
+        async function extractTextFromPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let fullText = "";
 
-    function hideAllViews() {
-      document.getElementById('viewSummary').classList.add('hidden');
-      document.getElementById('viewCards').classList.add('hidden');
-      document.getElementById('viewQuiz').classList.add('hidden');
-    }
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(" ");
+                fullText += pageText + "\n";
+            }
+            return fullText;
+        }
 
-    /* SUMMARY HANDLERS */
-    function renderSummary(list) {
-      const summaryList = document.getElementById('summaryList');
-      summaryList.innerHTML = '';
-      list.forEach(item => {
-        summaryList.innerHTML += `<li class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">🔹 ${escapeHtml(item)}</li>`;
-      });
-      document.getElementById('viewSummary').classList.remove('hidden');
-    }
+        // دالة الاتصال بـ Gemini API
+        async function callGeminiAPI(text) {
+            const prompt = `أنت مساعد أكاديمي خبير. قم بتلخيص المحاضرة التالية للطلاب بأسلوب منظم وواضح باللغة العربية:
+            1. النقاط الرئيسية والمفاهيم الأساسية.
+            2. الشرح المبسط لكل نقطة.
+            3. أهم الأسئلة المتوقعة في الامتحانات على هذه المحاضرة.
+            
+            المحاضرة:
+            ${text}`;
 
-    function copySummary() {
-      const items = Array.from(document.querySelectorAll('#summaryList li')).map(li => li.innerText).join('\n');
-      navigator.clipboard.writeText(items);
-      alert('تم نسخ الملخص بنجاح!');
-    }
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
 
-    /* FLASHCARD HANDLERS */
-    function renderCard() {
-      const card = cardsData[currentCardIndex];
-      isCardFlipped = false;
-      document.getElementById('cardBadge').innerText = "السؤال ❓ (اضغط للكشف)";
-      document.getElementById('cardBadge').className = "text-[10px] bg-sky-950 text-sky-400 px-2.5 py-0.5 rounded-full mb-2 font-bold";
-      document.getElementById('cardText').innerText = card.q;
-      document.getElementById('cardProgress').innerText = `${currentCardIndex + 1} / ${cardsData.length}`;
-    }
+            const data = await response.json();
+            if (data.error) {
+                throw new Error(data.error.message);
+            }
 
-    function flipCard() {
-      const card = cardsData[currentCardIndex];
-      isCardFlipped = !isCardFlipped;
-      if (isCardFlipped) {
-        document.getElementById('cardBadge').innerText = "الإجابة الصحيحة ✅";
-        document.getElementById('cardBadge').className = "text-[10px] bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded-full mb-2 font-bold";
-        document.getElementById('cardText').innerText = card.a;
-      } else {
-        renderCard();
-      }
-    }
+            return data.candidates[0].content.parts[0].text;
+        }
 
-    function nextCard() {
-      if (currentCardIndex < cardsData.length - 1) {
-        currentCardIndex++;
-        renderCard();
-      }
-    }
-
-    function prevCard() {
-      if (currentCardIndex > 0) {
-        currentCardIndex--;
-        renderCard();
-      }
-    }
-
-    /* QUIZ HANDLERS */
-    function startQuiz() {
-      currentQuizIndex = 0;
-      score = 0;
-      document.getElementById('quizGameBox').classList.remove('hidden');
-      document.getElementById('quizFinal').classList.add('hidden');
-      showQuizQuestion();
-    }
-
-    function showQuizQuestion() {
-      quizState = 'pending';
-      document.getElementById('quizFeedback').classList.add('hidden');
-      document.getElementById('nextQuizBtn').classList.add('hidden');
-
-      const qData = quizData[currentQuizIndex];
-      document.getElementById('quizQuestion').innerText = qData.q;
-      document.getElementById('quizProgress').innerText = `سؤال ${currentQuizIndex + 1} من ${quizData.length}`;
-      document.getElementById('quizScore').innerText = `🎯 النقاط: ${score}`;
-
-      const optionsBox = document.getElementById('quizOptions');
-      optionsBox.innerHTML = '';
-
-      qData.options.forEach((opt, idx) => {
-        optionsBox.innerHTML += `
-          <button onclick="answerQuestion(${idx}, this)" class="opt-btn text-right bg-slate-950 border border-slate-800 hover:border-emerald-500 rounded-xl p-3 text-xs text-slate-200 font-medium transition">
-            <span class="font-bold text-emerald-400 ml-1.5">${String.fromCharCode(65 + idx)})</span> ${escapeHtml(opt)}
-          </button>
-        `;
-      });
-    }
-
-    function answerQuestion(selectedIdx, btn) {
-      if (quizState === 'answered') return;
-      quizState = 'answered';
-
-      const qData = quizData[currentQuizIndex];
-      const feedback = document.getElementById('quizFeedback');
-      const nextBtn = document.getElementById('nextQuizBtn');
-
-      if (selectedIdx === qData.correct) {
-        score++;
-        btn.classList.add('bg-emerald-950', 'border-emerald-500', 'text-emerald-300');
-        feedback.innerText = "🎉 إجابة صحيحة!";
-        feedback.className = "text-center p-2.5 rounded-xl border text-xs font-bold shadow-lg bg-emerald-950 border-emerald-500 text-emerald-300";
-        if (typeof confetti === 'function') confetti({ particleCount: 40, spread: 50 });
-      } else {
-        btn.classList.add('bg-rose-950', 'border-rose-500', 'text-rose-300');
-        feedback.innerText = "❌ إجابة خاطئة! الصحيحة: " + qData.options[qData.correct];
-        feedback.className = "text-center p-2.5 rounded-xl border text-xs font-bold shadow-lg bg-rose-950 border-rose-500 text-rose-300";
-      }
-
-      document.getElementById('quizScore').innerText = `🎯 النقاط: ${score}`;
-      feedback.classList.remove('hidden');
-      nextBtn.classList.remove('hidden');
-    }
-
-    function nextQuestion() {
-      currentQuizIndex++;
-      if (currentQuizIndex < quizData.length) {
-        showQuizQuestion();
-      } else {
-        document.getElementById('quizGameBox').classList.add('hidden');
-        document.getElementById('quizFinal').classList.remove('hidden');
-        document.getElementById('quizFinalText').innerText = `حصلت على (${score} من ${quizData.length}) في اختبر المحاضرة!`;
-
-        const shareText = `📚 أنا اختبرت نفسي في المحاضرة وجبت (${score}/${quizData.length})! 🔥 حوّل محاضرتك لاختبار وتحدى زمايلك من هنا: ${window.location.href}`;
-        document.getElementById('shareWaBtn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-      }
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-  </script>
+        // دالة نسخ الملخص
+        function copyResult() {
+            const text = document.getElementById('outputContent').innerText;
+            navigator.clipboard.writeText(text);
+            alert("تم نسخ الملخص بنجاح!");
+        }
+    </script>
 </body>
-</html>
+  </html>
