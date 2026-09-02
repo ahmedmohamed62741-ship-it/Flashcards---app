@@ -6,9 +6,7 @@
     <title>ملخص المحاضرات الأكاديمي الشامل 🎓</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة استخراج وقراءة الـ PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- مكتبة تنسيق النصوص والعناوين -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
@@ -105,7 +103,7 @@
 
         <div id="loading" class="hidden text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري تحليل صفحات المحاضرة بالكامل...</p>
+            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري تحويل السلايدز وتحليلها بصرياً...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
@@ -150,36 +148,33 @@
                 const API_KEY = atob(ENCODED_KEY);
                 let parts = [];
                 
-                // برومبت ذكي يطالب بتلخيص أكاديمي عميق ومفصل لجميع النقاط
-                const systemPrompt = `You are a top-tier professor and academic tutor.
-Your goal is to provide a VERY THOROUGH, DEEP, AND COMPREHENSIVE academic summary of this lecture. 
+                const systemPrompt = `You are an elite professor and academic summary expert. 
+Analyze the provided lecture pages (text or slide images) deeply and comprehensively.
+Produce an EXHAUSTIVE, DETAILED academic summary that covers EVERY topic, definition, formula, drug name, mechanism, diagram concept, and clinical note so students can pass their exams with top marks.
 
-CRITICAL INSTRUCTIONS:
-1. DO NOT give high-level superficial summaries. Include ALL core academic principles, drug names, clinical manifestations, mechanisms, definitions, and diagnostic criteria.
-2. Structure the content logically using headers and bullet points.
-3. LANGUAGE RULE:
-   - If the lecture is in English, respond ENTIRELY IN ENGLISH.
-   - If the lecture is in Arabic, respond ENTIRELY IN ARABIC.
+STRICT RULES:
+1. NEVER complain about missing text or output boilerplate responses if images/pages are provided. Read the text directly from the slide images!
+2. Write the summary in the primary language of the lecture (Arabic if Arabic, English if English).
+3. Organize with clear headers, bullet points, and bold key terms.
 
-REQUIRED OUTPUT STRUCTURE:
-## 📌 1. Main Objectives & Core Overview
-* Key concepts and scope...
+REQUIRED SECTIONS:
+## 📌 1. Comprehensive Overview & Main Concepts
+* Key scope and core principles...
 
-## 🔬 2. Deep Dive Breakdown & Mechanisms (Detailed)
-* Thorough explanation of each topic covered...
-* Mention specific terms, mechanisms, and pathways...
+## 🔬 2. Deep Academic Breakdown & Detailed Mechanics
+* Detailed explanation covering all slides thoroughly...
 
-## 💊 3. Clinical Applications, Diagnosis & Treatments (if applicable)
-* Treatments, antidotes, diagnostics, or practical application...
+## 💊 3. Key Formulas, Treatments, or Clinical Applications (If applicable)
+* Practical applications, treatments, or specific details...
 
-## 🎯 4. Expected High-Yield Exam Questions
-* Key questions and answers derived from the content...`;
+## 🎯 4. Essential High-Yield Exam Questions & Answers
+* Exam-style questions and answers derived from the material...`;
 
                 parts.push({ text: systemPrompt });
 
                 if (uploadedFile) {
                     if (uploadedFile.type === 'application/pdf' || uploadedFile.name.endsWith('.pdf')) {
-                        loadingText.innerText = "جاري مسح صفحات الـ PDF واستخراج النص...";
+                        loadingText.innerText = "جاري قراءة محتوى صفحات الـ PDF...";
                         const arrayBuffer = await uploadedFile.arrayBuffer();
                         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                         
@@ -191,20 +186,20 @@ REQUIRED OUTPUT STRUCTURE:
                             extractedText += `\n--- Page ${i} ---\n` + pageText;
                         }
 
+                        // حساب متوسط الحروف في الصفحة لمعرفة هل الملف نصي حقيقي أم سلايدز/صور
                         const cleanText = extractedText.replace(/--- Page \d+ ---/g, '').trim();
+                        const avgCharsPerPage = cleanText.length / pdf.numPages;
 
-                        // إذا كان المستند يحتوي على نص قابل للقراءة
-                        if (cleanText.length > 200) {
+                        // لو الصفحة فيها أقل من 150 حرف في المتوسط، ده أكيد سلايدز أو ملف مصور!
+                        if (avgCharsPerPage > 150 && cleanText.length > 1000) {
                             parts.push({ text: "Full Lecture Content:\n" + extractedText });
                         } else {
-                            // إذا كان المستند عبارة عن صور/سلايدز مصورة، تحويل كل صفحة لصورة عالية الدقة تلقائياً
-                            loadingText.innerText = `الملف يحتوي على سلايدز مصورة (${pdf.numPages} صفحة)، جاري معالجتها بصرياً...`;
+                            loadingText.innerText = `الملف عبارة عن سلايدز/صور (${pdf.numPages} صفحة)، جاري تحويلها لصور عالية الدقة وقراءتها بصرياً...`;
                             const imageParts = await renderPdfPagesToImages(pdf);
                             parts = parts.concat(imageParts);
                         }
 
                     } else {
-                        // صورة منفردة
                         loadingText.innerText = "جاري قراءة الصورة...";
                         const base64Data = await fileToBase64(uploadedFile);
                         parts.push({
@@ -242,14 +237,13 @@ REQUIRED OUTPUT STRUCTURE:
             }
         }
 
-        // تحويل صفحات الـ PDF إلى صور خفيفة وواضحة ليقرأها الذكاء الاصطناعي بصرياً
         async function renderPdfPagesToImages(pdf) {
             let imageParts = [];
-            const totalPages = Math.min(pdf.numPages, 35); // معالجة حتى 35 صفحة
+            const totalPages = Math.min(pdf.numPages, 40);
 
             for (let i = 1; i <= totalPages; i++) {
                 const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 1.2 });
+                const viewport = page.getViewport({ scale: 1.5 });
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
@@ -257,8 +251,7 @@ REQUIRED OUTPUT STRUCTURE:
 
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
                 
-                // تحويل لـ JPEG مضغوط بجودة ممتازة وقليلة الحجم
-                const base64Image = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+                const base64Image = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
                 imageParts.push({
                     inlineData: {
                         mimeType: 'image/jpeg',
@@ -285,4 +278,4 @@ REQUIRED OUTPUT STRUCTURE:
         }
     </script>
 </body>
-</html>
+    </html>
