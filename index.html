@@ -3,39 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ملخص المحاضرات الذكي 🎓</title>
+    <title>ملخص المحاضرات الأكاديمي الشامل 🎓</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة استخراج النصوص من الـ PDF -->
+    <!-- مكتبة استخراج وقراءة الـ PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- مكتبة تحويل Markdown إلى HTML لتنسيق العناوين والنقاط -->
+    <!-- مكتبة تنسيق النصوص والعناوين -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
         body { font-family: 'Cairo', sans-serif; }
         
-        /* تنسيقات العناوين والنصوص داخل الملخص */
         #outputContent h2 { 
-            font-size: 1.25rem; 
+            font-size: 1.3rem; 
             font-weight: 800; 
             color: #38bdf8; 
             border-right: 4px solid #0284c7; 
             padding-right: 0.75rem; 
-            margin-top: 1.5rem; 
-            margin-bottom: 0.75rem; 
+            margin-top: 1.75rem; 
+            margin-bottom: 1rem; 
         }
         #outputContent h3 { 
-            font-size: 1.1rem; 
+            font-size: 1.15rem; 
             font-weight: 700; 
             color: #34d399; 
-            margin-top: 1rem; 
+            margin-top: 1.25rem; 
             margin-bottom: 0.5rem; 
         }
         #outputContent ul { 
             list-style-type: disc; 
             padding-right: 1.5rem; 
             margin-bottom: 1rem; 
-            space-y: 0.5rem;
         }
         #outputContent ol { 
             list-style-type: decimal; 
@@ -43,11 +41,11 @@
             margin-bottom: 1rem; 
         }
         #outputContent li { 
-            margin-bottom: 0.4rem; 
-            line-height: 1.7;
+            margin-bottom: 0.5rem; 
+            line-height: 1.8;
         }
         #outputContent p { 
-            margin-bottom: 0.75rem; 
+            margin-bottom: 0.85rem; 
             line-height: 1.8;
         }
         #outputContent strong { 
@@ -60,14 +58,14 @@
 
     <header class="max-w-4xl mx-auto w-full text-center my-6">
         <div class="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 px-4 py-2 rounded-full mb-4">
-            <i class="fa-solid fa-wand-magic-sparkles text-blue-400"></i>
-            <span class="text-xs md:text-sm text-blue-300 font-semibold">مساعد الطلاب الذكي (PDF، صور، نصوص)</span>
+            <i class="fa-solid fa-graduation-cap text-blue-400"></i>
+            <span class="text-xs md:text-sm text-blue-300 font-semibold">المساعد الأكاديمي الشامل للمحاضرات</span>
         </div>
         <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
             تلخيص المحاضرات والملفات بضغطة زرار 📚
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            ارفع ملف PDF، أو صورة للمحاضرة (JPG/PNG)، أو انسخ النص، وسيتم التلخيص تلقائياً بنفس لغة المحتوى.
+            تحليل دقيق وكامل للسلايدز والملفات المكتوبة أو المصورة دون إغفال التفاصيل الهامة.
         </p>
     </header>
 
@@ -76,7 +74,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
             <div>
                 <label class="block text-sm font-bold text-slate-300 mb-2">
-                    <i class="fa-solid fa-file-image text-emerald-400 ml-1"></i> ارفع ملف المحاضرة (PDF أو صورة):
+                    <i class="fa-solid fa-file-pdf text-emerald-400 ml-1"></i> ارفع ملف المحاضرة (PDF أو صورة):
                 </label>
                 <input type="file" id="fileInput" accept=".pdf, image/png, image/jpeg, image/jpg, image/webp" class="block w-full text-sm text-slate-400
                     file:ml-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0
@@ -101,19 +99,19 @@
             <button id="summarizeBtn" onclick="processLecture()" 
                 class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
                 <i class="fa-solid fa-bolt"></i>
-                <span>تلخيص المحاضرة الآن</span>
+                <span>بدء التلخيص الشامل والعميق</span>
             </button>
         </div>
 
         <div id="loading" class="hidden text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري معالجة المحتوى واستخراج الملخص...</p>
+            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري تحليل صفحات المحاضرة بالكامل...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> ملخص المحاضرة المنظم
+                    <i class="fa-solid fa-circle-check"></i> التلخيص الأكاديمي الشامل
                 </h3>
                 <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-copy"></i> نسخ الملخص
@@ -152,48 +150,62 @@
                 const API_KEY = atob(ENCODED_KEY);
                 let parts = [];
                 
-                // برومبت صارم لإجبار الموديل على إخراج عناوين ونقاط عريضة فقط
-                const systemPrompt = `You are an expert academic tutor.
-Your task is to summarize the provided lecture material into a clean, well-structured, and highly organized academic summary.
+                // برومبت ذكي يطالب بتلخيص أكاديمي عميق ومفصل لجميع النقاط
+                const systemPrompt = `You are a top-tier professor and academic tutor.
+Your goal is to provide a VERY THOROUGH, DEEP, AND COMPREHENSIVE academic summary of this lecture. 
 
-STRICT FORMATTING RULES:
-1. Use "##" for main Section Headers with appropriate emojis.
-2. Use bullet points (*) for all detailed explanations.
-3. Use bold text (**word**) for key scientific terms and important concepts.
-4. Do NOT output unreadable characters, encoding garbage, or raw LaTeX formulas unless standard text.
-5. LANGUAGE RULE:
-   - If the material is in English, respond ENTIRELY IN ENGLISH.
-   - If the material is in Arabic, respond ENTIRELY IN ARABIC.
+CRITICAL INSTRUCTIONS:
+1. DO NOT give high-level superficial summaries. Include ALL core academic principles, drug names, clinical manifestations, mechanisms, definitions, and diagnostic criteria.
+2. Structure the content logically using headers and bullet points.
+3. LANGUAGE RULE:
+   - If the lecture is in English, respond ENTIRELY IN ENGLISH.
+   - If the lecture is in Arabic, respond ENTIRELY IN ARABIC.
 
 REQUIRED OUTPUT STRUCTURE:
-## 📌 المفاهيم والأفكار الرئيسية (Key Concepts)
-* Clear bullet points...
+## 📌 1. Main Objectives & Core Overview
+* Key concepts and scope...
 
-## 💡 الشرح التبسيطي والتفاصيل (Detailed Explanation)
-* Bullet points highlighting core mechanics/principles...
+## 🔬 2. Deep Dive Breakdown & Mechanisms (Detailed)
+* Thorough explanation of each topic covered...
+* Mention specific terms, mechanisms, and pathways...
 
-## 🎯 أهم الأسئلة المتوقعة (Expected Exam Questions)
-* Q1 & A...
-* Q2 & A...`;
+## 💊 3. Clinical Applications, Diagnosis & Treatments (if applicable)
+* Treatments, antidotes, diagnostics, or practical application...
+
+## 🎯 4. Expected High-Yield Exam Questions
+* Key questions and answers derived from the content...`;
 
                 parts.push({ text: systemPrompt });
 
                 if (uploadedFile) {
                     if (uploadedFile.type === 'application/pdf' || uploadedFile.name.endsWith('.pdf')) {
-                        loadingText.innerText = "جاري قراءة ملف الـ PDF وتجهيز النصوص...";
-                        const pdfText = await extractTextFromPDF(uploadedFile);
+                        loadingText.innerText = "جاري مسح صفحات الـ PDF واستخراج النص...";
+                        const arrayBuffer = await uploadedFile.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                         
-                        if (pdfText.trim().length > 0) {
-                            parts.push({ text: "Lecture Content:\n" + pdfText });
-                        } else {
-                            loadingText.innerText = "الملف يحتوي على صور، جاري التجهيز للمعالجة...";
-                            const base64Data = await fileToBase64(uploadedFile);
-                            parts.push({
-                                inlineData: { mimeType: 'application/pdf', data: base64Data }
-                            });
+                        let extractedText = "";
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join(" ");
+                            extractedText += `\n--- Page ${i} ---\n` + pageText;
                         }
+
+                        const cleanText = extractedText.replace(/--- Page \d+ ---/g, '').trim();
+
+                        // إذا كان المستند يحتوي على نص قابل للقراءة
+                        if (cleanText.length > 200) {
+                            parts.push({ text: "Full Lecture Content:\n" + extractedText });
+                        } else {
+                            // إذا كان المستند عبارة عن صور/سلايدز مصورة، تحويل كل صفحة لصورة عالية الدقة تلقائياً
+                            loadingText.innerText = `الملف يحتوي على سلايدز مصورة (${pdf.numPages} صفحة)، جاري معالجتها بصرياً...`;
+                            const imageParts = await renderPdfPagesToImages(pdf);
+                            parts = parts.concat(imageParts);
+                        }
+
                     } else {
-                        loadingText.innerText = "جاري تحضير الصورة...";
+                        // صورة منفردة
+                        loadingText.innerText = "جاري قراءة الصورة...";
                         const base64Data = await fileToBase64(uploadedFile);
                         parts.push({
                             inlineData: { mimeType: uploadedFile.type || 'image/jpeg', data: base64Data }
@@ -205,7 +217,7 @@ REQUIRED OUTPUT STRUCTURE:
                     parts.push({ text: "Additional Text:\n" + textInput });
                 }
 
-                loadingText.innerText = "جاري إنشاء الملخص المنظم بواسطة الذكاء الاصطناعي...";
+                loadingText.innerText = "جاري توليد التلخيص الأكاديمي الشامل بواسطة الذكاء الاصطناعي...";
 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
@@ -230,21 +242,31 @@ REQUIRED OUTPUT STRUCTURE:
             }
         }
 
-        async function extractTextFromPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            let fullText = "";
-            for (let i = 1; i <= pdf.numPages; i++) {
+        // تحويل صفحات الـ PDF إلى صور خفيفة وواضحة ليقرأها الذكاء الاصطناعي بصرياً
+        async function renderPdfPagesToImages(pdf) {
+            let imageParts = [];
+            const totalPages = Math.min(pdf.numPages, 35); // معالجة حتى 35 صفحة
+
+            for (let i = 1; i <= totalPages; i++) {
                 const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                let pageText = textContent.items.map(item => item.str).join(" ");
+                const viewport = page.getViewport({ scale: 1.2 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
                 
-                // تنظيف الرموز المشوهة
-                pageText = pageText.replace(/[^\w\s\u0600-\u06FF.,()%+-]/g, ' ');
-                
-                fullText += `--- Page ${i} ---\n` + pageText + "\n\n";
+                // تحويل لـ JPEG مضغوط بجودة ممتازة وقليلة الحجم
+                const base64Image = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+                imageParts.push({
+                    inlineData: {
+                        mimeType: 'image/jpeg',
+                        data: base64Image
+                    }
+                });
             }
-            return fullText;
+            return imageParts;
         }
 
         function fileToBase64(file) {
@@ -263,4 +285,4 @@ REQUIRED OUTPUT STRUCTURE:
         }
     </script>
 </body>
-                </html>
+</html>
