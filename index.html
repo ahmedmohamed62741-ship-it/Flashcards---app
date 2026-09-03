@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ الروشتات الفوري وتلخيص المحاضرات 🩺📚</title>
+    <title>قارئ الروشتات والمستحضرات الفوري 🩺📚</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -44,7 +44,7 @@
         <div class="flex justify-center gap-2 mb-4">
             <button id="tabRx" onclick="switchMode('rx')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-lg cursor-pointer">
                 <i class="fa-solid fa-bolt"></i>
-                <span>قارئ الروشتات الفوري 🩺</span>
+                <span>قارئ الروشتات والمستحضرات 🩺</span>
             </button>
             <button id="tabLec" onclick="switchMode('lec')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-xl transition flex items-center gap-2 text-sm cursor-pointer">
                 <i class="fa-solid fa-book-open"></i>
@@ -56,47 +56,30 @@
             فك شفرة الروشتة في ثوانٍ 🩺
         </h1>
         <p id="mainDesc" class="text-slate-400 text-xs md:text-sm max-w-xl mx-auto">
-            قراءة دقيقة للخطوط والجرعات والأشكال الدوائية بدقة عالية.
+            قراءة الأدوية، الغسولات، الكريمات، المكملات والجرعات بدقة عالية.
         </p>
     </header>
 
     <main class="max-w-4xl mx-auto w-full space-y-4">
-
-        <!-- إعدادات المفتاح -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2">
-            <div class="flex items-center justify-between cursor-pointer" onclick="toggleKeyInput()">
-                <label class="text-xs font-bold text-amber-400 flex items-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-key"></i> مفتاح Google AI Studio (API Key):
-                </label>
-                <span class="text-xs text-slate-400 underline" id="keyToggleText">تعديل المفتاح</span>
-            </div>
-            <input type="password" id="apiKeyInput" placeholder="أدخل مفتاح Gemini API هنا..." onchange="saveApiKey()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 transition">
-            <p class="text-[11px] text-slate-500">ملاحظة: يتم حفظ المفتاح في متصفحك الخاص فقط حتى لا يتم حظره من قبل جوجل على GitHub.</p>
-        </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl space-y-4">
             
             <!-- قسم الروشتات -->
             <div id="rxInputSection" class="space-y-4">
                 
-                <!-- مدخلات الملفات المخفية -->
                 <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
                 <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    
-                    <!-- زر الكاميرا -->
                     <button type="button" onclick="triggerInput('cameraInput')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30 shadow-md cursor-pointer">
                         <i class="fa-solid fa-camera text-2xl"></i>
                         <span class="text-sm">تصوير الكاميرا المباشر 📷</span>
                     </button>
 
-                    <!-- زر المعرض -->
                     <button type="button" onclick="triggerInput('galleryInput')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-slate-700 shadow-md cursor-pointer">
                         <i class="fa-solid fa-images text-2xl text-blue-400"></i>
                         <span class="text-sm">اختيار صورة من المعرض 🖼️</span>
                     </button>
-
                 </div>
 
                 <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
@@ -151,6 +134,9 @@
     </footer>
 
     <script>
+        // 🔑 ضع مفتاح Gemini الخاص بك هنا فقط (لن يظهر أي مربع طلب مفتاح للمستخدم)
+        const MY_API_KEY = "YOUR_GEMINI_API_KEY";
+
         if (window.pdfjsLib) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
@@ -158,30 +144,9 @@
         let currentMode = 'rx';
         let compressedImageBase64 = null;
 
-        // تحميل المفتاح المحفوظ
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedKey = localStorage.getItem('user_gemini_key');
-            if (savedKey) {
-                document.getElementById('apiKeyInput').value = savedKey;
-            }
-        });
-
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) {
-                localStorage.setItem('user_gemini_key', key);
-            }
-        }
-
-        function getApiKey() {
-            const inputKey = document.getElementById('apiKeyInput').value.trim();
-            if (inputKey) return inputKey;
-            return localStorage.getItem('user_gemini_key');
-        }
-
         function triggerInput(id) {
             const input = document.getElementById(id);
-            input.value = ""; // إعادة تعيين لضمان إعادة التقاط نفس الصورة لو لزم
+            input.value = "";
             input.click();
         }
 
@@ -202,7 +167,7 @@
                 tabRx.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-lg cursor-pointer";
                 tabLec.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-xl transition flex items-center gap-2 text-sm cursor-pointer";
                 mainTitle.innerText = "فك شفرة الروشتة في ثوانٍ 🩺";
-                mainDesc.innerText = "قراءة دقيقة للخطوط والجرعات والأشكال الدوائية بدقة عالية.";
+                mainDesc.innerText = "قراءة الأدوية، الغسولات، الكريمات، المكملات والجرعات بدقة عالية.";
                 btnText.innerText = "قراءة وفحص الروشتة";
                 processBtn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-5 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 text-sm cursor-pointer";
             } else {
@@ -253,10 +218,10 @@
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
-                    statusText.innerText = "تم رفع وقراءة الصورة بنجاح ⚡ جاهزة للتحليل";
+                    statusText.innerText = "تم رفع الصورة بنجاح ⚡ جاهزة للتحليل";
                 };
                 img.onerror = function() {
-                    alert("تعذر تحميل الصورة، جرب صيغة أخرى.");
+                    alert("تعذر تحميل الصورة، جرب صورة أخرى.");
                 };
                 img.src = e.target.result;
             };
@@ -267,21 +232,19 @@
         }
 
         async function processAction() {
-            const apiKey = getApiKey();
-            if (!apiKey) {
-                alert("يرجى إدخال مفتاح Gemini API أولاً في خانة المفتاح بالأعلى!");
+            if (!MY_API_KEY || MY_API_KEY === "YOUR_GEMINI_API_KEY") {
+                alert("يرجى إضافة مفتاح الـ API داخل الكود في متغير MY_API_KEY لتشغيل التطبيق!");
                 return;
             }
-            saveApiKey();
 
             if (currentMode === 'rx') {
-                await processPrescription(apiKey);
+                await processPrescription();
             } else {
-                await processLecture(apiKey);
+                await processLecture();
             }
         }
 
-        async function processPrescription(apiKey) {
+        async function processPrescription() {
             if (!compressedImageBase64) {
                 alert("برجاء اختيار صورة أو التقاطها بالكاميرا أولاً!");
                 return;
@@ -294,30 +257,30 @@
 
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
-            loadingText.innerText = "جاري فك الشفرة وفحص الأدوية بأعلى دقة...";
+            loadingText.innerText = "جاري فك الشفرة وتحديد الأصناف والجرعات...";
 
             try {
                 const systemPrompt = `You are an expert Egyptian clinical pharmacist reading messy handwritten doctor prescriptions fast and accurately.
 Instructions:
-1. FUZZY MATCHING: Map messy handwriting accurately to EXACT REAL BRAND NAMES (Local Egyptian or Imported).
-2. DOSAGE FORM: State clearly if Cream (كريم), Ointment (مرهم), Gel (جيل), Capsule (كبسول), Tablet (أقراص), Syrup (شراب), Injection (حقن), Drop (قطرة), etc.
-3. Output in clean Arabic Markdown:
+1. FUZZY MATCHING: Map messy handwriting accurately to EXACT REAL BRAND NAMES (Local Egyptian or Imported market products).
+2. DOSAGE & PRODUCT FORM: Explicitly state the exact form, including: غاسول (Facial/Body Wash/Cleanser), لوشن (Lotion), سيروم (Serum), شامبو (Shampoo), صابونة (Soap), بخاخ (Spray), كريم (Cream), مرهم (Ointment), جيل (Gel), كبسول (Capsule), أقراص (Tablet), شراب (Syrup), نقط/قطرة (Drops), حقن (Injection), فوار (Effervescent), or any cosmetic/dermatological form.
+3. Output in clean Arabic Markdown format:
 
-## 📋 الأدوية المكتوبة:
+## 📋 المستحضرات والأدوية المكتوبة:
 
-### 1. [اسم الدواء التجاري بالإنجليزية والعربية]
-* **نوع الدواء والشكل:** [مستورد/محلي] - (كريم/مرهم/كبسول/أقراص/شراب...)
-* **المادة الفعالة:** ...
+### 1. [اسم الدواء/المستحضر التجاري بالإنجليزية والعربية]
+* **نوع المستحضر والشكل:** [غاسول / لوشن / كريم / أقراص / ...] - ([محلي / مستورد])
+* **المادة الفعالة / المكونات الرئيسية:** ...
 * **الجرعة وطريقة الاستخدام:** ...
 * **دواعي الاستعمال:** ...
-* **أبرز البدائل:** ...`;
+* **أبرز البدائل المتاحة:** ...`;
 
                 const parts = [
                     { text: systemPrompt },
                     { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } }
                 ];
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${MY_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: parts }] })
@@ -334,13 +297,13 @@ Instructions:
                 outputContainer.classList.remove('hidden');
 
             } catch (error) {
-                alert("حدث خطأ أثناء معالجة الصورة: " + error.message + "\nتأكد من صحة مفتاح الـ API.");
+                alert("حدث خطأ أثناء معالجة الصورة: " + error.message);
             } finally {
                 loading.classList.add('hidden');
             }
         }
 
-        async function processLecture(apiKey) {
+        async function processLecture() {
             const pdfInput = document.getElementById('pdfInput');
             const pdfFile = pdfInput.files && pdfInput.files[0];
             const textInput = document.getElementById('textInput').value.trim();
@@ -386,7 +349,7 @@ Instructions:
 
                 loadingText.innerText = "جاري التلخيص الشامل...";
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${MY_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: parts }] })
