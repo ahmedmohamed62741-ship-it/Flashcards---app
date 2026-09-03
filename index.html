@@ -199,50 +199,64 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            document.getElementById('imageStatus').innerText = "جاري الضغط الفوري للصورة...";
-            document.getElementById('imagePreviewContainer').classList.remove('hidden');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewImg = document.getElementById('imagePreview');
+            const statusText = document.getElementById('imageStatus');
 
-            // ضغط فائق الأداء لتقليل النقل إلى أقل من 80 كيلوبايت
-            compressedImageBase64 = await compressImage(file, 900, 900, 0.65);
-            document.getElementById('imagePreview').src = "data:image/jpeg;base64," + compressedImageBase64;
-            document.getElementById('imageStatus').innerText = "جاهزة للتحليل الفوري ⚡";
+            previewContainer.classList.remove('hidden');
+            statusText.innerText = "جاري تحضير الصورة فندم...";
+
+            try {
+                compressedImageBase64 = await compressImage(file, 900, 900, 0.65);
+                previewImg.src = "data:image/jpeg;base64," + compressedImageBase64;
+                statusText.innerText = "جاهزة للتحليل الفوري ⚡";
+            } catch (err) {
+                alert("تعذر تحميل الصورة، يرجى اختيار صورة أخرى: " + err.message);
+                statusText.innerText = "حدث خطأ أثناء تحميل الصورة";
+            } finally {
+                event.target.value = '';
+            }
         }
 
         function compressImage(file, maxWidth, maxHeight, quality) {
             return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        let width = img.width;
-                        let height = img.height;
+                const img = new Image();
+                const objectUrl = URL.createObjectURL(file);
 
-                        if (width > height) {
-                            if (width > maxWidth) {
-                                height = Math.round((height * maxWidth) / width);
-                                width = maxWidth;
-                            }
-                        } else {
-                            if (height > maxHeight) {
-                                width = Math.round((width * maxHeight) / height);
-                                height = maxHeight;
-                            }
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
                         }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
 
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
 
-                        const base64 = canvas.toDataURL('image/jpeg', quality).split(',')[1];
-                        resolve(base64);
-                    };
-                    img.onerror = (err) => reject(err);
+                    URL.revokeObjectURL(objectUrl);
+
+                    const base64 = canvas.toDataURL('image/jpeg', quality).split(',')[1];
+                    resolve(base64);
                 };
-                reader.onerror = (err) => reject(err);
+
+                img.onerror = (err) => {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error("لم نتمكن من قراءة ملف الصورة"));
+                };
+
+                img.src = objectUrl;
             });
         }
 
@@ -364,10 +378,4 @@ Instructions:
                 });
 
                 const rawMarkdown = data.candidates[0].content.parts[0].text;
-                outputContent.innerHTML = marked.parse(rawMarkdown);
-                outputContainer.classList.remove('hidden');
-
-            } catch (error) {
-                alert("حدث خطأ أثناء التلخيص: " + error.message);
-            } finally {
-                loading.cla
+                o
