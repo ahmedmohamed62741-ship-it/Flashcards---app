@@ -48,17 +48,15 @@
 
     <main class="max-w-4xl mx-auto w-full space-y-6">
 
-        <!-- حقل إدارة الـ API Key لتفادي الحظر مع الحفظ التلقائي -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg space-y-2">
             <div class="flex items-center justify-between">
                 <label class="text-xs text-slate-300 font-bold block">مفتاح API الخاص بك (Google AI Studio):</label>
-                <span id="keyStatus" class="text-[10px] text-emerald-400 font-bold">المفتاح المرفق مفعل تلقائياً ✅</span>
+                <span id="keyStatus" class="text-[10px] text-emerald-400 font-bold">المفتاح جاهز ✅</span>
             </div>
             <div class="flex gap-2">
                 <input type="password" id="apiKeyInput" placeholder="أدخل المفتاح الذي يبدأ بـ AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
                 <button onclick="saveApiKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">حفظ / تحديث</button>
             </div>
-            <p class="text-[10px] text-slate-500">تنبيه: إذا قمت برفع هذا الملف على GitHub، قد تقوم روبوتات جوجل بحظر المفتاح المدمج في الكود فوراً لحمايته. يمكنك دائماً تغيير المفتاح من هذا الحقل مباشرة دون الحاجة للتعديل في السورس كود.</p>
         </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
@@ -91,7 +89,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل ومطابقة الروشتة عبر Gemini Flash...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل ومطابقة الروشتة عبر Gemini 3.6 Flash...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -113,8 +111,8 @@
     </footer>
 
     <script>
-        // المفتاح الافتراضي الخاص بك
         const DEFAULT_API_KEY = "AIzaSyDYCVCy7SV3ce60ZLpItd0tmqDKjQF7htc";
+        const MODEL_NAME = "gemini-3.6-flash";
 
         let compressedImageBase64 = null;
 
@@ -122,7 +120,7 @@
             const savedKey = localStorage.getItem('GEMINI_API_KEY');
             if (savedKey) {
                 document.getElementById('apiKeyInput').value = savedKey;
-                document.getElementById('keyStatus').innerText = "تم تحميل المفتاح المحفوظ مسبقاً ✅";
+                document.getElementById('keyStatus').innerText = "تم تحميل المفتاح المحفوظ ✅";
             } else {
                 document.getElementById('apiKeyInput').value = DEFAULT_API_KEY;
             }
@@ -136,7 +134,7 @@
             }
             localStorage.setItem('GEMINI_API_KEY', inputVal);
             document.getElementById('keyStatus').innerText = "تم حفظ المفتاح الجديد بنجاح ✅";
-            alert("تم حفظ المفتاح بنجاح في المتصفح!");
+            alert("تم حفظ المفتاح بنجاح!");
         }
 
         function handleImageSelect(event) {
@@ -240,40 +238,27 @@ Output strictly in Arabic Markdown using this template:
                 }
             };
 
-            // تجربة النماذج المعتمدة بالترتيب لضمان أقصى توافق
-            const modelsToTry = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"];
-            let success = false;
-            let lastError = "";
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${activeApiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
 
-            for (const model of modelsToTry) {
-                try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeApiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestData)
-                    });
+                const data = await response.json();
 
-                    const data = await response.json();
-
-                    if (response.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
-                        const rawMarkdown = data.candidates[0].content.parts[0].text;
-                        outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
-                        outputContainer.classList.remove('hidden');
-                        success = true;
-                        break;
-                    } else if (data.error) {
-                        lastError = data.error.message;
-                    }
-                } catch (err) {
-                    lastError = err.message;
+                if (response.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    const rawMarkdown = data.candidates[0].content.parts[0].text;
+                    outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
+                    outputContainer.classList.remove('hidden');
+                } else if (data.error) {
+                    alert("خطأ من السيرفر:\n" + data.error.message);
                 }
+            } catch (err) {
+                alert("خطأ اتصال: " + err.message);
             }
 
             loading.classList.add('hidden');
-
-            if (!success) {
-                alert("حدث خطأ أثناء الاتصال بالسيرفر:\n" + lastError + "\n\nتنبيه: لو ظهرت لك رسالة Leaked Key، قم بعمل مفتاح جديد وضعه في الخانة بالأعلى واحفظه.");
-            }
         }
 
         function copyResult() {
@@ -283,4 +268,4 @@ Output strictly in Arabic Markdown using this template:
         }
     </script>
 </body>
-                    </html>
+            </html>
