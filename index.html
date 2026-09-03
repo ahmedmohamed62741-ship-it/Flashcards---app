@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ الروشتات الطبية السريع والملخص الأكاديمي 🩺🎓</title>
+    <title>قارئ الروشتات الفوري 🩺🎓</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -13,120 +13,120 @@
         body { font-family: 'Cairo', sans-serif; }
         
         #outputContent h2 { 
-            font-size: 1.3rem; 
+            font-size: 1.25rem; 
             font-weight: 800; 
             color: #38bdf8; 
             border-right: 4px solid #0284c7; 
-            padding-right: 0.75rem; 
-            margin-top: 1.5rem; 
-            margin-bottom: 0.75rem; 
-        }
-        #outputContent h3 { 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            color: #34d399; 
-            margin-top: 1rem; 
+            padding-right: 0.5rem; 
+            margin-top: 1.2rem; 
             margin-bottom: 0.5rem; 
         }
-        #outputContent ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; }
-        #outputContent ol { list-style-type: decimal; padding-right: 1.5rem; margin-bottom: 1rem; }
-        #outputContent li { margin-bottom: 0.4rem; line-height: 1.8; }
-        #outputContent p { margin-bottom: 0.75rem; line-height: 1.8; }
+        #outputContent h3 { 
+            font-size: 1.05rem; 
+            font-weight: 700; 
+            color: #34d399; 
+            margin-top: 0.8rem; 
+            margin-bottom: 0.4rem; 
+        }
+        #outputContent ul { list-style-type: disc; padding-right: 1.2rem; margin-bottom: 0.8rem; }
+        #outputContent ol { list-style-type: decimal; padding-right: 1.2rem; margin-bottom: 0.8rem; }
+        #outputContent li { margin-bottom: 0.3rem; line-height: 1.6; }
+        #outputContent p { margin-bottom: 0.5rem; line-height: 1.6; }
         #outputContent strong { color: #facc15; font-weight: 700; }
-        #outputContent table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: #0f172a; border-radius: 0.75rem; overflow: hidden; }
-        #outputContent th, #outputContent td { border: 1px solid #334155; padding: 0.75rem; text-align: right; }
+        #outputContent table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; background: #0f172a; border-radius: 0.5rem; overflow: hidden; }
+        #outputContent th, #outputContent td { border: 1px solid #334155; padding: 0.5rem; text-align: right; }
         #outputContent th { background: #1e293b; color: #38bdf8; font-weight: 700; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-8">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-3 md:p-6">
 
-    <header class="max-w-4xl mx-auto w-full text-center my-4">
-        <div class="flex justify-center gap-3 mb-6">
-            <button id="tabRx" onclick="switchMode('rx')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg">
-                <i class="fa-solid fa-prescription"></i>
-                <span>قارئ الروشتات السريع 🩺</span>
+    <header class="max-w-4xl mx-auto w-full text-center my-2">
+        <div class="flex justify-center gap-2 mb-4">
+            <button id="tabRx" onclick="switchMode('rx')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-lg">
+                <i class="fa-solid fa-bolt"></i>
+                <span>قارئ الروشتات الصاروخي 🩺</span>
             </button>
-            <button id="tabLec" onclick="switchMode('lec')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2">
+            <button id="tabLec" onclick="switchMode('lec')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm">
                 <i class="fa-solid fa-book-open"></i>
                 <span>تلخيص المحاضرات 📚</span>
             </button>
         </div>
 
-        <h1 id="mainTitle" class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-            فك شفرة الروشتات الفوري 🩺
+        <h1 id="mainTitle" class="text-2xl md:text-4xl font-extrabold text-white tracking-tight mb-1">
+            فك شفرة الروشتة في ثوانٍ 🩺
         </h1>
-        <p id="mainDesc" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            تحليل فائق السرعة لخط الروشتة ومعرفة الدواء ورسمه الصيدلي والبدائل المتاحة في السوق المصري.
+        <p id="mainDesc" class="text-slate-400 text-xs md:text-sm max-w-xl mx-auto">
+            تحليل نَفَاذ وقراءة فورية لخط الروشتة (مستورد أو محلي) والشكل الدوائي بدقة عالية.
         </p>
     </header>
 
-    <main class="max-w-4xl mx-auto w-full space-y-6">
+    <main class="max-w-4xl mx-auto w-full space-y-4">
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl space-y-4">
             
-            <div id="rxInputSection" class="space-y-4">
+            <div id="rxInputSection" class="space-y-3">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-4 rounded-xl cursor-pointer text-center flex flex-col items-center justify-center gap-2 transition border border-emerald-400/30">
-                        <i class="fa-solid fa-camera text-2xl"></i>
-                        <span>التقاط صورة بالكاميرا 📷</span>
+                    <label class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl cursor-pointer text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30">
+                        <i class="fa-solid fa-camera text-xl"></i>
+                        <span class="text-sm">تصوير الكاميرا المباشر 📷</span>
                         <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
                     </label>
 
-                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-4 px-4 rounded-xl cursor-pointer text-center flex flex-col items-center justify-center gap-2 transition border border-slate-700">
-                        <i class="fa-solid fa-images text-2xl text-blue-400"></i>
-                        <span>اختيار صورة من المعرض 🖼️</span>
+                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3.5 px-4 rounded-xl cursor-pointer text-center flex flex-col items-center justify-center gap-1.5 transition border border-slate-700">
+                        <i class="fa-solid fa-images text-xl text-blue-400"></i>
+                        <span class="text-sm">اختيار صورة من المعرض 🖼️</span>
                         <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
                     </label>
                 </div>
 
-                <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
-                    <img id="imagePreview" src="" class="max-h-64 mx-auto rounded-lg object-contain shadow-md">
-                    <p id="imageStatus" class="text-xs text-emerald-400 font-semibold">تم تجهيز الصورة وضغطها بنجاح ⚡</p>
+                <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <img id="imagePreview" src="" class="max-h-48 mx-auto rounded-lg object-contain shadow-md">
+                    <p id="imageStatus" class="text-xs text-emerald-400 font-semibold">جاهزة للتحليل الفوري ⚡</p>
                 </div>
             </div>
 
             <div id="lecInputSection" class="hidden space-y-4">
                 <div>
-                    <label class="block text-sm font-bold text-slate-300 mb-2">
+                    <label class="block text-xs font-bold text-slate-300 mb-2">
                         <i class="fa-solid fa-file-pdf text-emerald-400 ml-1"></i> ارفع ملف المحاضرة (PDF):
                     </label>
-                    <input type="file" id="pdfInput" accept=".pdf" class="block w-full text-sm text-slate-400 file:ml-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer bg-slate-950 rounded-xl border border-slate-800 p-2">
+                    <input type="file" id="pdfInput" accept=".pdf" class="block w-full text-xs text-slate-400 file:ml-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer bg-slate-950 rounded-xl border border-slate-800 p-1.5">
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-300 mb-2">
+                    <label class="block text-xs font-bold text-slate-300 mb-2">
                         <i class="fa-solid fa-align-right text-blue-400 ml-1"></i> أو انسخ النص هنا:
                     </label>
-                    <textarea id="textInput" rows="4" placeholder="اطبع أو انسخ محتوى المحاضرة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500 transition resize-y"></textarea>
+                    <textarea id="textInput" rows="3" placeholder="اطبع أو انسخ محتوى المحاضرة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 text-xs focus:outline-none focus:border-blue-500 transition resize-y"></textarea>
                 </div>
             </div>
 
-            <button id="processBtn" onclick="processAction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+            <button id="processBtn" onclick="processAction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-5 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 text-sm">
                 <i class="fa-solid fa-bolt"></i>
-                <span id="btnText">قراءة الروشتة السريعة</span>
+                <span id="btnText">قراءة فوريّة متقنة</span>
             </button>
         </div>
 
-        <div id="loading" class="hidden text-center py-8 space-y-3">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري مطابقة الخط مع منتجات السوق المصري...</p>
+        <div id="loading" class="hidden text-center py-6 space-y-2">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فك الشفرة والمطابقة السريعة...</p>
         </div>
 
-        <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <h3 id="resultHeader" class="text-lg font-bold text-emerald-400 flex items-center gap-2">
-                    <i class="fa-solid fa-file-medical"></i> تحليل الروشتة الطبية
+        <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 id="resultHeader" class="text-base font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-file-medical"></i> النتيجة الصيدلانية
                 </h3>
-                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-copy"></i> نسخ النتيجة
+                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1 px-2.5 rounded-lg border border-slate-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-copy"></i> نسخ
                 </button>
             </div>
-            <div id="outputContent" class="text-slate-300 text-sm md:text-base"></div>
+            <div id="outputContent" class="text-slate-300 text-xs md:text-sm"></div>
         </div>
 
     </main>
 
-    <footer class="text-center text-slate-600 text-xs my-6">
-        تنبيه: هذا التطبيق لأغراض تعليمية ولمساعدة صيدلي المستقبل والطلاب. يرجى دائماً مراجعة الصيدلي الممارس قبل صرف الدواء.
+    <footer class="text-center text-slate-600 text-xs my-4">
+        تنبيه: لأغراض تعليمية ومساعدة العمل بالصيدلية. يرجى المراجعة الدقيقة قبل الصرف.
     </footer>
 
     <script>
@@ -150,35 +150,62 @@
             if (mode === 'rx') {
                 rxSec.classList.remove('hidden');
                 lecSec.classList.add('hidden');
-                tabRx.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg";
-                tabLec.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2";
-                mainTitle.innerText = "فك شفرة الروشتات الفوري 🩺";
-                mainDesc.innerText = "تحليل فائق السرعة لخط الروشتة ومعرفة الدواء ورسمه الصيدلي والبدائل المتاحة في السوق المصري.";
-                btnText.innerText = "قراءة الروشتة السريعة";
-                processBtn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20";
+                tabRx.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-lg";
+                tabLec.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm";
+                mainTitle.innerText = "فك شفرة الروشتة في ثوانٍ 🩺";
+                mainDesc.innerText = "تحليل نَفَاذ وقراءة فورية لخط الروشتة (مستورد أو محلي) والشكل الدوائي بدقة عالية.";
+                btnText.innerText = "قراءة فوريّة متقنة";
+                processBtn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-5 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 text-sm";
             } else {
                 rxSec.classList.add('hidden');
                 lecSec.classList.remove('hidden');
-                tabLec.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg";
-                tabRx.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2";
+                tabLec.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-lg";
+                tabRx.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm";
                 mainTitle.innerText = "تلخيص المحاضرات والملفات 📚";
                 mainDesc.innerText = "تحليل دقيق وكامل للسلايدز والملفات المكتوبة أو المصورة دون إغفال التفاصيل الهامة.";
                 btnText.innerText = "بدء التلخيص الشامل";
-                processBtn.className = "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20";
+                processBtn.className = "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-5 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 text-sm";
             }
         }
 
-        // دالة ضغط الصورة وتقليل حجمها فوراً لسرعة الإرسال دون تهنيج
+        async function fetchWithRetry(url, options, maxRetries = 3) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    const data = await response.json();
+
+                    if (response.ok && !data.error) {
+                        return data;
+                    }
+
+                    if (data.error && (data.error.code === 529 || data.error.code === 429 || (data.error.message && data.error.message.includes('demand')))) {
+                        if (i < maxRetries - 1) {
+                            document.getElementById('loadingText').innerText = `إعادة محاولة سريعة... (${i + 1}/${maxRetries})`;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 1.2;
+                            continue;
+                        }
+                    }
+                    throw new Error(data.error ? data.error.message : "خطأ في الاتصال بالخدمة");
+                } catch (err) {
+                    if (i === maxRetries - 1) throw err;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
         async function handleImageSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            document.getElementById('imageStatus').innerText = "جاري معالجة وتصغير حجم الصورة للسرعة...";
+            document.getElementById('imageStatus').innerText = "جاري الضغط الفوري للصورة...";
             document.getElementById('imagePreviewContainer').classList.remove('hidden');
 
-            compressedImageBase64 = await compressImage(file, 1280, 1280, 0.75);
+            // ضغط فائق الأداء لتقليل النقل إلى أقل من 80 كيلوبايت
+            compressedImageBase64 = await compressImage(file, 900, 900, 0.65);
             document.getElementById('imagePreview').src = "data:image/jpeg;base64," + compressedImageBase64;
-            document.getElementById('imageStatus').innerText = "تم تجهيز الصورة وضغطها بنجاح ⚡ (جاهز للتحليل السريع)";
+            document.getElementById('imageStatus').innerText = "جاهزة للتحليل الفوري ⚡";
         }
 
         function compressImage(file, maxWidth, maxHeight, quality) {
@@ -229,7 +256,7 @@
 
         async function processPrescription() {
             if (!compressedImageBase64) {
-                alert("من فضلك التقط صورة للروشتة أو اختر صورة من المعرض أولاً!");
+                alert("اختر صورة أو التقطها بالكاميرا أولاً!");
                 return;
             }
 
@@ -240,46 +267,42 @@
 
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
-            loadingText.innerText = "جاري مطابقة الخط مع قاعدة أدوية السوق المصري...";
+            loadingText.innerText = "فك شفرة الخط الصعب وفحص قاعدة الأدوية...";
 
             try {
                 const API_KEY = atob(ENCODED_KEY);
                 
-                // برومبت ذكي مخصص لمطابقة الخطوط الشديدة الشخبطة مع سوق الدواء المصري
-                const systemPrompt = `You are a top Egyptian clinical pharmacist with 20+ years of experience in reading messy Egyptian doctor handwriting (روشتات مصرية).
+                const systemPrompt = `You are an expert Egyptian clinical pharmacist reading messy handwritten doctor prescriptions fast.
+Instructions:
+1. FUZZY MATCHING: Recognize messy or slightly wrong letters and map them accurately to the EXACT REAL BRAND NAME (Local Egyptian or Imported/International).
+2. DOSAGE FORM: State clearly if it is Cream (كريم), Ointment (مرهم), Gel (جيل), Capsule (كبسول), Tablet (أقراص), Syrup (شراب), Injection (حقن), Drop (قطرة), etc.
+3. Be concise and quick in Arabic Markdown:
 
-CRITICAL INSTRUCTION - FUZZY MATCHING & EGYPTIAN MARKET GROUNDING:
-1. Doctors often scribble or miss a few letters. Do NOT give up or output unrecognized gibberish. Use character shape patterns, context, and intelligent fuzzy matching to link the scribbled text to the EXACT REAL BRAND NAME in the Egyptian pharmaceutical market.
-2. ACCURATELY IDENTIFY THE DOSAGE FORM (الشكل الدوائي): State clearly whether the product is a Cream (كريم), Ointment (مرهم), Gel (جيل), Capsule (كبسولات), Tablet (أقراص), Syrup (شراب/معلق), Suppository (أقماع), Drop (قطرة), or Injection (حقن).
-3. If letters are partially wrong, map them to the closest real product (e.g. if scribbled like 'Agmentin', identify as Augmentin).
+## 📋 الأدوية المكتوبة:
 
-Format the output strictly in Arabic Markdown:
-
-## 📋 أدوية الروشتة المكتوبة:
-
-### 1. [اسم الدواء التجاري بالإنجليزية والعربية الصحيح في السوق]
-* **الشكل الدوائي والتركيز:** (تحديد دقيق: كريم / مرهم / كبسول / أقراص / شراب / جيل / إلخ)
-* **المادة الفعالة (Generic Name):** ...
-* **الجرعة وطريقة الاستخدام:** (كما هي بالروشتة، مثل: دهان مرتين يومياً / قرص بعد الأكل)
-* **دواعي الاستعمال التبسيطية:** (الاستخدام العلاجي)
-* **البدائل المتاحة في السوق المصري:** (ذكر اسمين أو ثلاثة لأدوية بديلة بنفس المادة الفعالة)
-
-## ⚠️ ملاحظات تحذيرية وإرشادات صيدلانية:
-* أي نصائح هامة تخص الجرعة أو الاستخدام.`;
+### 1. [اسم الدواء التجاري بالإنجليزية والعربية]
+* **نوع الدواء والشكل:** [مستورد/محلي] - (كريم/مرهم/كبسول/أقراص/شراب...)
+* **المادة الفعالة:** ...
+* **الجرعة وطريقة الاستخدام:** ...
+* **دواعي الاستعمال:** ...
+* **أبرز البدائل:** ...`;
 
                 const parts = [
                     { text: systemPrompt },
                     { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } }
                 ];
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: parts }] })
+                    body: JSON.stringify({
+                        contents: [{ parts: parts }],
+                        generationConfig: {
+                            temperature: 0.2,
+                            maxOutputTokens: 900
+                        }
+                    })
                 });
-
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
 
                 const rawMarkdown = data.candidates[0].content.parts[0].text;
                 outputContent.innerHTML = marked.parse(rawMarkdown);
@@ -334,14 +357,11 @@ Format the output strictly in Arabic Markdown:
 
                 loadingText.innerText = "جاري تلخيص المحاضرة أكاديمياً...";
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: parts }] })
                 });
-
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
 
                 const rawMarkdown = data.candidates[0].content.parts[0].text;
                 outputContent.innerHTML = marked.parse(rawMarkdown);
@@ -350,15 +370,4 @@ Format the output strictly in Arabic Markdown:
             } catch (error) {
                 alert("حدث خطأ أثناء التلخيص: " + error.message);
             } finally {
-                loading.classList.add('hidden');
-            }
-        }
-
-        function copyResult() {
-            const text = document.getElementById('outputContent').innerText;
-            navigator.clipboard.writeText(text);
-            alert("تم نسخ النتيجة بنجاح!");
-        }
-    </script>
-</body>
-    </html>
+                loading.cla
