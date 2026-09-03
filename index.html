@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ملخص المحاضرات الأكاديمي الشامل 🎓</title>
+    <title>قارئ الروشتات الطبية والملخص الأكاديمي 🩺🎓</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -18,101 +18,113 @@
             color: #38bdf8; 
             border-right: 4px solid #0284c7; 
             padding-right: 0.75rem; 
-            margin-top: 1.75rem; 
-            margin-bottom: 1rem; 
+            margin-top: 1.5rem; 
+            margin-bottom: 0.75rem; 
         }
         #outputContent h3 { 
-            font-size: 1.15rem; 
+            font-size: 1.1rem; 
             font-weight: 700; 
             color: #34d399; 
-            margin-top: 1.25rem; 
+            margin-top: 1rem; 
             margin-bottom: 0.5rem; 
         }
-        #outputContent ul { 
-            list-style-type: disc; 
-            padding-right: 1.5rem; 
-            margin-bottom: 1rem; 
-        }
-        #outputContent ol { 
-            list-style-type: decimal; 
-            padding-right: 1.5rem; 
-            margin-bottom: 1rem; 
-        }
-        #outputContent li { 
-            margin-bottom: 0.5rem; 
-            line-height: 1.8;
-        }
-        #outputContent p { 
-            margin-bottom: 0.85rem; 
-            line-height: 1.8;
-        }
-        #outputContent strong { 
-            color: #facc15; 
-            font-weight: 700;
-        }
+        #outputContent ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; }
+        #outputContent ol { list-style-type: decimal; padding-right: 1.5rem; margin-bottom: 1rem; }
+        #outputContent li { margin-bottom: 0.4rem; line-height: 1.8; }
+        #outputContent p { margin-bottom: 0.75rem; line-height: 1.8; }
+        #outputContent strong { color: #facc15; font-weight: 700; }
+        #outputContent table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: #0f172a; border-radius: 0.75rem; overflow: hidden; }
+        #outputContent th, #outputContent td { border: 1px solid #334155; padding: 0.75rem; text-align: right; }
+        #outputContent th { background: #1e293b; color: #38bdf8; font-weight: 700; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-8">
 
-    <header class="max-w-4xl mx-auto w-full text-center my-6">
-        <div class="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 px-4 py-2 rounded-full mb-4">
-            <i class="fa-solid fa-graduation-cap text-blue-400"></i>
-            <span class="text-xs md:text-sm text-blue-300 font-semibold">المساعد الأكاديمي الشامل للمحاضرات</span>
+    <header class="max-w-4xl mx-auto w-full text-center my-4">
+        <!-- أزرار التبديل بين قراءة الروشتات وتلخيص المحاضرات -->
+        <div class="flex justify-center gap-3 mb-6">
+            <button id="tabRx" onclick="switchMode('rx')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg">
+                <i class="fa-solid fa-prescription"></i>
+                <span>قارئ الروشتات الطبية 🩺</span>
+            </button>
+            <button id="tabLec" onclick="switchMode('lec')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2">
+                <i class="fa-solid fa-book-open"></i>
+                <span>تلخيص المحاضرات 📚</span>
+            </button>
         </div>
-        <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-            تلخيص المحاضرات والملفات بضغطة زرار 📚
+
+        <h1 id="mainTitle" class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
+            فك شفرة الروشتات بخط الدكاترة 🩺
         </h1>
-        <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            تحليل دقيق وكامل للسلايدز والملفات المكتوبة أو المصورة دون إغفال التفاصيل الهامة.
+        <p id="mainDesc" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+            صور الروشتة بالكاميرا مباشرة أو ارفعها من المعرض لمعرفة الأدوية، المادة الفعالة، والبدائل المتاحة.
         </p>
     </header>
 
     <main class="max-w-4xl mx-auto w-full space-y-6">
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
-            <div>
-                <label class="block text-sm font-bold text-slate-300 mb-2">
-                    <i class="fa-solid fa-file-pdf text-emerald-400 ml-1"></i> ارفع ملف المحاضرة (PDF أو صورة):
-                </label>
-                <input type="file" id="fileInput" accept=".pdf, image/png, image/jpeg, image/jpg, image/webp" class="block w-full text-sm text-slate-400
-                    file:ml-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0
-                    file:text-sm file:font-bold file:bg-blue-600 file:text-white
-                    hover:file:bg-blue-500 cursor-pointer bg-slate-950 rounded-xl border border-slate-800 p-2">
+            
+            <!-- قسم قراءة الروشتات -->
+            <div id="rxInputSection" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- زرار فتح الكاميرا المباشرة -->
+                    <label class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-4 rounded-xl cursor-pointer text-center flex flex-col items-center justify-center gap-2 transition border border-emerald-400/30">
+                        <i class="fa-solid fa-camera text-2xl"></i>
+                        <span>التقاط صورة بالكاميرا 📷</span>
+                        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
+                    </label>
+
+                    <!-- زرار اختيار صورة من المعرض -->
+                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-4 px-4 rounded-xl cursor-pointer text-center flex flex-col items-center justify-center gap-2 transition border border-slate-700">
+                        <i class="fa-solid fa-images text-2xl text-blue-400"></i>
+                        <span>اختيار صورة من المعرض 🖼️</span>
+                        <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
+                    </label>
+                </div>
+
+                <!-- المعاينة للصورة المختارة -->
+                <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <img id="imagePreview" src="" class="max-h-64 mx-auto rounded-lg object-contain shadow-md">
+                    <p id="imageName" class="text-xs text-slate-400 font-mono"></p>
+                </div>
             </div>
 
-            <div class="flex items-center my-2 text-slate-600">
-                <div class="flex-1 border-t border-slate-800"></div>
-                <span class="px-3 text-xs text-slate-500">أو</span>
-                <div class="flex-1 border-t border-slate-800"></div>
+            <!-- قسم تلخيص المحاضرات (PDF / نص) -->
+            <div id="lecInputSection" class="hidden space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2">
+                        <i class="fa-solid fa-file-pdf text-emerald-400 ml-1"></i> ارفع ملف المحاضرة (PDF):
+                    </label>
+                    <input type="file" id="pdfInput" accept=".pdf" class="block w-full text-sm text-slate-400 file:ml-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer bg-slate-950 rounded-xl border border-slate-800 p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2">
+                        <i class="fa-solid fa-align-right text-blue-400 ml-1"></i> أو انسخ النص هنا:
+                    </label>
+                    <textarea id="textInput" rows="4" placeholder="اطبع أو انسخ محتوى المحاضرة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500 transition resize-y"></textarea>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-bold text-slate-300 mb-2">
-                    <i class="fa-solid fa-align-right text-blue-400 ml-1"></i> انسخ نص المحاضرة هنا:
-                </label>
-                <textarea id="textInput" rows="5" placeholder="اطبع أو انسخ محتوى المحاضرة هنا..." 
-                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500 transition resize-y"></textarea>
-            </div>
-
-            <button id="summarizeBtn" onclick="processLecture()" 
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
-                <i class="fa-solid fa-bolt"></i>
-                <span>بدء التلخيص الشامل والعميق</span>
+            <!-- زر التشيغل الأساسي -->
+            <button id="processBtn" onclick="processAction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span id="btnText">قراءة الروشتة الآن</span>
             </button>
         </div>
 
         <div id="loading" class="hidden text-center py-8 space-y-3">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري تحضير المحاضرة وتحليلها...</p>
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
+            <p id="loadingText" class="text-slate-400 text-sm font-semibold animate-pulse">جاري قراءة خط الروشتة وتحليل الأدوية...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> التلخيص الأكاديمي الشامل
+                <h3 id="resultHeader" class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-file-medical"></i> تحليل الروشتة الطبية
                 </h3>
                 <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-copy"></i> نسخ الملخص
+                    <i class="fa-solid fa-copy"></i> نسخ النتيجة
                 </button>
             </div>
             <div id="outputContent" class="text-slate-300 text-sm md:text-base"></div>
@@ -121,51 +133,146 @@
     </main>
 
     <footer class="text-center text-slate-600 text-xs my-6">
-        تم التطوير لخدمة الطلاب 🚀
+        تنبيه: هذا التطبيق لأغراض تعليمية ولمساعدة صيدلي المستقبل والطلاب. يرجى دائماً مراجعة الصيدلي الممارس قبل صرف الدواء.
     </footer>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         const ENCODED_KEY = "QUl6YVN5RFlDVkN5N1NWM2NlNjBaTHBJdGQwdG1xREtqUUY3aHRj";
+        
+        let currentMode = 'rx'; // 'rx' أو 'lec'
+        let selectedImageBase64 = null;
+        let selectedImageType = null;
 
-        async function fetchWithRetry(url, options, maxRetries = 3) {
-            let delay = 2000;
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    const data = await response.json();
+        function switchMode(mode) {
+            currentMode = mode;
+            const rxSec = document.getElementById('rxInputSection');
+            const lecSec = document.getElementById('lecInputSection');
+            const tabRx = document.getElementById('tabRx');
+            const tabLec = document.getElementById('tabLec');
+            const mainTitle = document.getElementById('mainTitle');
+            const mainDesc = document.getElementById('mainDesc');
+            const btnText = document.getElementById('btnText');
+            const processBtn = document.getElementById('processBtn');
 
-                    if (response.ok && !data.error) {
-                        return data;
-                    }
-
-                    // إذا كان الخطأ بسبب الضغط الزائد، ننتظر ونعيد المحاولة
-                    if (data.error && (data.error.code === 529 || data.error.code === 429 || (data.error.message && data.error.message.includes('high demand')))) {
-                        if (i < maxRetries - 1) {
-                            document.getElementById('loadingText').innerText = `السيرفر عليه ضغط، جاري إعادة المحاولة تلقائياً... (${i + 1}/${maxRetries})`;
-                            await new Promise(resolve => setTimeout(resolve, delay));
-                            delay *= 1.5;
-                            continue;
-                        }
-                    }
-                    throw new Error(data.error ? data.error.message : "خطأ في الاتصال بالخدمة");
-                } catch (err) {
-                    if (i === maxRetries - 1) throw err;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
+            if (mode === 'rx') {
+                rxSec.classList.remove('hidden');
+                lecSec.classList.add('hidden');
+                tabRx.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg";
+                tabLec.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2";
+                mainTitle.innerText = "فك شفرة الروشتات بخط الدكاترة 🩺";
+                mainDesc.innerText = "صور الروشتة بالكاميرا مباشرة أو ارفعها من المعرض لمعرفة الأدوية، المادة الفعالة، والبدائل المتاحة.";
+                btnText.innerText = "قراءة الروشتة الآن";
+                processBtn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20";
+            } else {
+                rxSec.classList.add('hidden');
+                lecSec.classList.remove('hidden');
+                tabLec.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg";
+                tabRx.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2";
+                mainTitle.innerText = "تلخيص المحاضرات والملفات 📚";
+                mainDesc.innerText = "تحليل دقيق وكامل للسلايدز والملفات المكتوبة أو المصورة دون إغفال التفاصيل الهامة.";
+                btnText.innerText = "بدء التلخيص الشامل";
+                processBtn.className = "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20";
             }
         }
 
-        async function processLecture() {
-            const textInput = document.getElementById('textInput').value.trim();
-            const uploadedFile = document.getElementById('fileInput').files[0];
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedImageType = file.type || 'image/jpeg';
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedImageBase64 = e.target.result.split(',')[1];
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imageName').innerText = file.name || "صورة الروشتة";
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function processAction() {
+            if (currentMode === 'rx') {
+                await processPrescription();
+            } else {
+                await processLecture();
+            }
+        }
+
+        async function processPrescription() {
+            if (!selectedImageBase64) {
+                alert("من فضلك التقط صورة للروشتة أو اختر صورة من المعرض أولاً!");
+                return;
+            }
+
             const loading = document.getElementById('loading');
             const loadingText = document.getElementById('loadingText');
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            if (!textInput && !uploadedFile) {
-                alert("من فضلك ارفع ملف PDF، صورة، أو اكتب نص المحاضرة أولاً!");
+            loading.classList.remove('hidden');
+            outputContainer.classList.add('hidden');
+            loadingText.innerText = "جاري قراءة خط الروشتة وفك شفرات الأدوية...";
+
+            try {
+                const API_KEY = atob(ENCODED_KEY);
+                
+                // برومبت متخصص للغاية في قراءة الروشتات المصرية الصعبة بمهارة صيدلي إكلينيكي
+                const systemPrompt = `You are a senior clinical pharmacist expert in reading extremely poor doctor handwriting in medical prescriptions (روشتات طبعاً بالخص للخص المصري).
+Analyze the provided prescription image carefully. Even if the handwriting is heavily scribbled, decipher the drugs based on shape, active ingredients, standard Egyptian brand names, and dosage patterns.
+
+Provide the response IN ARABIC formatted strictly in Markdown:
+
+## 📋 أدوية الروشتة المكتوبة:
+(For each prescribed drug, create a structured section or table):
+
+### 1. [اسم الدواء التجاري بالإنجليزية والعربية]
+* **المادة الفعالة (Generic Name):** ...
+* **الشكل الدوائي والتركيز:** (أقراص / شرب / حفن / كبسول ...)
+* **الجرعة وطريقة الاستخدام:** (كما هي مكتوبة بالروشتة، مثل: قرص كل 12 ساعة بعد الأكل)
+* **دواعي الاستعمال التبسيطية:** (لعلاج كذا وكذا)
+* **البدائل المتاحة في السوق المصري (Egyptian Alternatives):** (اذكر اسمين أو ثلاثة لأدوية بديلة بنفس المادة الفعالة)
+
+## ⚠️ ملاحظات تحذيرية أو إرشادات للمريض:
+* اذكر أي تعارضات دارجة أو تعليمات خاصة بالجرعات (مثلاً أخذ مضاد حيوي على معدة فارغة أو التوقف تدريجياً).
+
+If any word is completely illegible even with best interpretation, mention the most likely 2 possibilities clearly.`;
+
+                const parts = [
+                    { text: systemPrompt },
+                    { inlineData: { mimeType: selectedImageType, data: selectedImageBase64 } }
+                ];
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: parts }] })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+
+                const rawMarkdown = data.candidates[0].content.parts[0].text;
+                outputContent.innerHTML = marked.parse(rawMarkdown);
+                outputContainer.classList.remove('hidden');
+
+            } catch (error) {
+                alert("حدث خطأ أثناء قراءة الروشتة: " + error.message);
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function processLecture() {
+            const pdfFile = document.getElementById('pdfInput').files[0];
+            const textInput = document.getElementById('textInput').value.trim();
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            const outputContainer = document.getElementById('outputContainer');
+            const outputContent = document.getElementById('outputContent');
+
+            if (!pdfFile && !textInput) {
+                alert("يرجى اختيار ملف PDF أو كتابة النص أولاً!");
                 return;
             }
 
@@ -176,73 +283,36 @@
                 const API_KEY = atob(ENCODED_KEY);
                 let parts = [];
                 
-                const systemPrompt = `You are a world-class professor and exam review expert.
-Provide an EXHAUSTIVE, DEEP, AND COMPREHENSIVE academic summary of this entire lecture.
-
-CRITICAL INSTRUCTIONS:
-1. Cover EVERY SINGLE concept, mechanism, drug name, diagnostic criteria, clinical note, and definition mentioned in the slides.
-2. Respond ENTIRELY IN THE LANGUAGE OF THE LECTURE (Arabic if Arabic, English if English).
-3. Do NOT omit details or give high-level summaries. Detail is critical for exam preparation.
-
-REQUIRED OUTPUT STRUCTURE:
-## 📌 1. Comprehensive Overview & Scope
-* Main concepts and foundational ideas...
-
-## 🔬 2. Exhaustive Core Content & Mechanics
-* Complete breakdown of all mechanisms, pathways, and clinical details slide by slide...
-
-## 💊 3. Practical Applications, Treatments & Clinical Notes
-* Drug names, doses, antidotes, diagnostics, or practical rules...
-
-## 🎯 4. Expected High-Yield Exam Questions
-* Practice questions and answers directly based on this material...`;
-
+                const systemPrompt = `You are an elite professor and academic summary expert. Provide an EXHAUSTIVE, DEEP, AND COMPREHENSIVE summary in the same language as the input. Use Markdown formatting.`;
                 parts.push({ text: systemPrompt });
 
-                if (uploadedFile) {
-                    if (uploadedFile.type === 'application/pdf' || uploadedFile.name.endsWith('.pdf')) {
-                        loadingText.innerText = "جاري قراءة نص الـ PDF...";
-                        const arrayBuffer = await uploadedFile.arrayBuffer();
-                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                        
-                        let extractedText = "";
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const textContent = await page.getTextContent();
-                            const pageText = textContent.items.map(item => item.str).join(" ");
-                            extractedText += `\n--- Page ${i} ---\n` + pageText;
-                        }
-
-                        const cleanText = extractedText.replace(/--- Page \d+ ---/g, '').trim();
-
-                        if (cleanText.length > 800) {
-                            parts.push({ text: "Full Lecture Text:\n" + extractedText });
-                        } else {
-                            loadingText.innerText = `جاري تجهيز سلايدز المحاضرة بصرياً بحجم خفيف...`;
-                            const imageParts = await renderPdfPagesToImages(pdf);
-                            parts = parts.concat(imageParts);
-                        }
-
-                    } else {
-                        loadingText.innerText = "جاري قراءة الصورة...";
-                        const base64Data = await fileToBase64(uploadedFile);
-                        parts.push({
-                            inlineData: { mimeType: uploadedFile.type || 'image/jpeg', data: base64Data }
-                        });
+                if (pdfFile) {
+                    loadingText.innerText = "جاري قراءة صفحات الـ PDF...";
+                    const arrayBuffer = await pdfFile.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    let extractedText = "";
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        extractedText += textContent.items.map(item => item.str).join(" ") + "\n";
                     }
+                    parts.push({ text: "Lecture Text:\n" + extractedText });
                 }
 
                 if (textInput) {
-                    parts.push({ text: "Additional Text:\n" + textInput });
+                    parts.push({ text: "Input Text:\n" + textInput });
                 }
 
-                loadingText.innerText = "جاري توليد التلخيص الأكاديمي بواسطة الذكاء الاصطناعي...";
+                loadingText.innerText = "جاري تلخيص المحاضرة أكاديمياً...";
 
-                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: parts }] })
                 });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
 
                 const rawMarkdown = data.candidates[0].content.parts[0].text;
                 outputContent.innerHTML = marked.parse(rawMarkdown);
@@ -255,46 +325,11 @@ REQUIRED OUTPUT STRUCTURE:
             }
         }
 
-        async function renderPdfPagesToImages(pdf) {
-            let imageParts = [];
-            const totalPages = Math.min(pdf.numPages, 25); // تحديد حد أقصى للحماية من التجاوز
-
-            for (let i = 1; i <= totalPages; i++) {
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 1.0 }); // أبعاد متوازنة ومناسبة جداً
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
-                
-                // ضغط الصورة إلى 0.6 لتكون خفيفة وسريعة جداً في الإرسال
-                const base64Image = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
-                imageParts.push({
-                    inlineData: {
-                        mimeType: 'image/jpeg',
-                        data: base64Image
-                    }
-                });
-            }
-            return imageParts;
-        }
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
-                reader.readAsDataURL(file);
-            });
-        }
-
         function copyResult() {
             const text = document.getElementById('outputContent').innerText;
             navigator.clipboard.writeText(text);
-            alert("تم نسخ الملخص بنجاح!");
+            alert("تم نسخ النتيجة بنجاح!");
         }
     </script>
 </body>
-    </html>
+                        </html>
