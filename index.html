@@ -81,7 +81,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل ومطابقة الروشتة عبر Gemini...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل ومطابقة الروشتة عبر Gemini 3.6 Flash...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -104,9 +104,7 @@
 
     <script>
         const MY_API_KEY = "AIzaSyDYCVCy7SV3ce60ZLpItd0tmqDKjQF7htc";
-        
-        // غير اسم الموديل من هنا لـ "gemini-2.0-flash" أو جرب أي اسم تحبه بنفسك
-        const MODEL_NAME = "gemini-2.0-flash";
+        const MODEL_NAME = "gemini-3.6-flash";
 
         let compressedImageBase64 = null;
 
@@ -217,7 +215,7 @@ Output strictly in Arabic Markdown using this template:
                     outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
                     outputContainer.classList.remove('hidden');
                 } else if (data.error) {
-                    alert(`رد السيرفر للموديل (${MODEL_NAME}):\n` + data.error.message);
+                    alert(`خطأ من السيرفر:\n` + data.error.message);
                 }
             } catch (err) {
                 alert("خطأ اتصال: " + err.message);
