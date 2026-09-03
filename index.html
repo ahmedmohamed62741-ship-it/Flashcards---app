@@ -42,7 +42,7 @@
             فك شفرة الروشتات الفورية 🩺
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            قراءة الروشتات والمنتجات الصيدلانية (محلي ومستورد) بأعلى دقة.
+            قراءة الروشتات والمنتجات الصيدلانية (محلي ومستورد) بأعلى دقة عبر Gemini.
         </p>
     </header>
 
@@ -71,7 +71,7 @@
 
                 <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800 overflow-hidden">
                     <img id="imagePreview" src="" class="max-h-80 mx-auto rounded-lg object-contain shadow-md border border-slate-800">
-                    <p id="imageStatus" class="text-xs text-emerald-400 font-bold">تم جاهزية الصورة للتحليل الفائق ⚡</p>
+                    <p id="imageStatus" class="text-xs text-emerald-400 font-bold">تم جاهزية الصورة للتحليل ⚡</p>
                 </div>
             </div>
 
@@ -105,7 +105,7 @@
     </footer>
 
     <script>
-        const MY_API_KEY = "AQ.Ab8RN6IRuHzW4YOq6vd1r-B_GDxzk06dC9AT6x2P4qSyaCalog";
+        const MY_API_KEY = "AIzaSyDYCVCy7SV3ce60ZLpItd0tmqDKjQF7htc";
 
         let compressedImageBase64 = null;
 
@@ -194,8 +194,7 @@ Output strictly in Arabic Markdown using this template:
                 { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } }
             ];
 
-            // النماذج الرسمية المدعومة بالترتيب لضمان الاستجابة
-            const modelsToTry = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro-latest"];
+            const modelsToTry = ["gemini-2.0-flash", "gemini-1.5-flash"];
             let success = false;
             let lastError = "";
 
@@ -243,4 +242,4 @@ Output strictly in Arabic Markdown using this template:
         }
     </script>
 </body>
-</html>
+    </html>
