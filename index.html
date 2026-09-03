@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ الروشتات والمستحضرات الفوري 🩺📚</title>
+    <title>قارئ الروشتات والمستحضرات الفوري🩺📚</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -64,9 +64,7 @@
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl space-y-4">
             
-            <!-- قسم الروشتات -->
             <div id="rxInputSection" class="space-y-4">
-                
                 <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
                 <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
 
@@ -75,7 +73,6 @@
                         <i class="fa-solid fa-camera text-2xl"></i>
                         <span class="text-sm">تصوير الكاميرا المباشر 📷</span>
                     </button>
-
                     <button type="button" onclick="triggerInput('galleryInput')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-slate-700 shadow-md cursor-pointer">
                         <i class="fa-solid fa-images text-2xl text-blue-400"></i>
                         <span class="text-sm">اختيار صورة من المعرض 🖼️</span>
@@ -84,11 +81,10 @@
 
                 <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
                     <img id="imagePreview" src="" class="max-h-64 mx-auto rounded-lg object-contain shadow-md border border-slate-800">
-                    <p id="imageStatus" class="text-xs text-emerald-400 font-bold">تم تحميل الصورة وجاهزة للتحليل ⚡</p>
+                    <p id="imageStatus" class="text-xs text-emerald-400 font-bold">تم تحميل الصورة وجاهزة للتحليل⚡</p>
                 </div>
             </div>
 
-            <!-- قسم المحاضرات -->
             <div id="lecInputSection" class="hidden space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-2">
@@ -135,7 +131,7 @@
 
     <script>
         // 🔑 ضع مفتاح Gemini الخاص بك هنا فقط (لن يظهر أي مربع طلب مفتاح للمستخدم)
-        const MY_API_KEY = "YOUR_GEMINI_API_KEY";
+        const MY_API_KEY = "PLACE_YOUR_API_KEY_HERE";
 
         if (window.pdfjsLib) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -175,7 +171,7 @@
                 lecSec.classList.remove('hidden');
                 tabLec.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-lg cursor-pointer";
                 tabRx.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-xl transition flex items-center gap-2 text-sm cursor-pointer";
-                mainTitle.innerText = "تلخيص المحاضرات والملفات 📚";
+                mainTitle.innerText = "تلخيص المحاضرات والملفات📚";
                 mainDesc.innerText = "تحليل دقيق وكامل للسلايدز والملفات دون إغفال التفاصيل الهامة.";
                 btnText.innerText = "بدء التلخيص الشامل";
                 processBtn.className = "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-5 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 text-sm cursor-pointer";
@@ -232,7 +228,7 @@
         }
 
         async function processAction() {
-            if (!MY_API_KEY || MY_API_KEY === "YOUR_GEMINI_API_KEY") {
+            if (!MY_API_KEY || MY_API_KEY === "PLACE_YOUR_API_KEY_HERE") {
                 alert("يرجى إضافة مفتاح الـ API داخل الكود في متغير MY_API_KEY لتشغيل التطبيق!");
                 return;
             }
@@ -373,10 +369,4 @@ Instructions:
         }
 
         function copyResult() {
-            const text = document.getElementById('outputContent').innerText;
-            navigator.clipboard.writeText(text);
-            alert("تم نسخ النتيجة بنجاح!");
-        }
-    </script>
-</body>
-</html>
+            const text = document.getElementById('outputCont
