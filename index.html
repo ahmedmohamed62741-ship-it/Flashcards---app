@@ -90,7 +90,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري مطابقة وتفكيك الخط عبر محرك Gemini 3.6 Flash...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري المطابقة مع الأدوية والتعليمات المكتوبة عبر Gemini 3.6 Flash...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -205,26 +205,31 @@
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are an expert Egyptian clinical pharmacist & specialized medical handwriting OCR engine.
+            const systemPrompt = `You are an expert Egyptian clinical pharmacist & specialized prescription OCR system.
 
-CORE ENGINE LOGIC:
-1. FUZZY CHARACTER MATCHING: Analyze the handwritten English characters letter-by-letter. Tolerating common doctor handwriting distortions (e.g., confusing 'a/o/e', 'm/n/u', 'i/l/t', 'ph/f', 'c/k').
-2. EGYPTIAN MARKET DATABASE MATCHING: Match the fuzzy reading against exact pharmaceutical and cosmeceutical trade names available in the Egyptian market (both Local & Imported).
-3. DOSAGE FORM IDENTIFICATION: Detect dosage forms strictly (أقراص, كبسولات, كريم, مرهم, لوشن, غسول, جيل, شرب, نقط, بخاخ, صابونة, أمبولات, إلخ).
-4. CONTEXTUAL DEDUCTION: If letters are distorted, use clinical context, dosage form, and active ingredients to deduce the correct exact product name.
+STRICT VERIFICATION & MATCHING RULES:
+1. EGYPTIAN MARKET TRADE NAME VERIFICATION:
+   - Carefully decipher handwritten letters.
+   - Cross-reference character combinations ONLY with valid, real pharmaceutical/cosmeceutical brand names existing in the Egyptian market (Local or Imported).
+   - If a word is distorted or slightly misspelled, match it with the closest real brand name (e.g., Antinal, Visceralgine, Augmentin, Ciprofar, Spasmo-digestin, etc.). NEVER generate random or fake words.
 
-STRICT OUTPUT RULES:
-- Never output internal thinking, self-correction, or monologues (e.g., "Wait, could it be...", "No, it looks like...").
-- Output ONLY the structured result in Arabic Markdown strictly following this format:
+2. DOCTOR'S WRITTEN DOSAGE & INSTRUCTIONS:
+   - Extract the EXACT dosage, timing, and administration route written by the doctor next to/under each medication (e.g. "قرص 3 مرات يومياً بعد الأكل", "كبسولة قبل النوم", "دهان مرتين يومياً").
+
+3. OUTPUT FORMAT:
+   - Output ONLY clean, structured Arabic Markdown following the template below.
+   - Do NOT include internal thoughts, monologues, or options (e.g., "Wait", "Could it be").
+
+TEMPLATE TO FOLLOW STRICTLY:
 
 ## 📋 المستحضرات والأدوية المكتوبة:
 
-### 1. [اسم الدواء/المستحضر التجاري بالإنجليزية والعربية]
+### 1. [اسم الدواء/المستحضر التجاري الصحيح بالإنجليزية والعربية]
 * **نوع المستحضر:** [مستورد / محلي]
 * **الشكل الدوائي والتركيز:** [أقراص / كبسول / كريم / غسول / ...]
 * **المادة الفعالة / المكونات الرئيسية:** ...
-* **الجرعة وطريقة الاستخدام:** ...
-* **دواعي الاستعمال:** ...
+* **الجرعة والتعليمات المكتوبة بالروشتة:** [اكتب بالضبط ما خطه الطبيب بجانب الدواء]
+* **دواعي الاستعمال المعتادة:** ...
 * **البدائل المتاحة بالسوق المصري:** ...
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
@@ -237,7 +242,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الروشتة المرفقة واستخرج جميع الأدوية والمستحضرات طبقاً لتعليمات المحرك الصيدلاني." }
+                        { text: "اقرأ الروشتة المرفقة، واستخرج الأسماء التجاريّة الصحيحة الموجودة بالسوق المصري والجرعة المكتوبة بخط يد الطبيب بالكامل." }
                     ]
                 }],
                 generationConfig: {
@@ -276,4 +281,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-</html>
+    </html>
