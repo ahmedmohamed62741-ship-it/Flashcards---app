@@ -48,7 +48,6 @@
 
     <main class="max-w-4xl mx-auto w-full space-y-6">
 
-        <!-- حقل إدارة الـ API Key لتفادي الحظر مع الحفظ التلقائي -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg space-y-2">
             <div class="flex items-center justify-between">
                 <label class="text-xs text-slate-300 font-bold block">مفتاح API الخاص بك (Google AI Studio):</label>
@@ -58,7 +57,7 @@
                 <input type="password" id="apiKeyInput" placeholder="أدخل المفتاح الجديد الذي يبدأ بـ AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
                 <button onclick="saveApiKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">حفظ المفتاح</button>
             </div>
-            <p class="text-[10px] text-slate-500">ملاحظة: يتم حفظ المفتاح في متصفحك الشخصي فقط ولا يتم رفعه على GitHub للفيصل التام عن الحظر.</p>
+            <p class="text-[10px] text-slate-500">ملاحظة: يتم حفظ المفتاح في متصفحك الشخصي فقط ولا يتم رفعه على GitHub لمنع الحظر.</p>
         </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
@@ -91,7 +90,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل ومطابقة الروشتة عبر Gemini 3.6 Flash...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري مطابقة وتفكيك الخط عبر محرك Gemini 3.6 Flash...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -206,16 +205,23 @@
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are an elite clinical pharmacist specializing in reading handwritten doctor prescriptions and matching them with exact pharmaceutical and cosmetic products in the Egyptian market (Local or Imported).
-Decipher the exact brand names, dosage forms (غاسول, كريم, مرهم, لوشن, كبسول, أقراص, شراب, جيل, نقط, بخاخ, صابونة, إلخ), active ingredients, and usage.
+            const systemPrompt = `You are an expert Egyptian clinical pharmacist & specialized medical handwriting OCR engine.
 
-Output strictly in Arabic Markdown using this template:
+CORE ENGINE LOGIC:
+1. FUZZY CHARACTER MATCHING: Analyze the handwritten English characters letter-by-letter. Tolerating common doctor handwriting distortions (e.g., confusing 'a/o/e', 'm/n/u', 'i/l/t', 'ph/f', 'c/k').
+2. EGYPTIAN MARKET DATABASE MATCHING: Match the fuzzy reading against exact pharmaceutical and cosmeceutical trade names available in the Egyptian market (both Local & Imported).
+3. DOSAGE FORM IDENTIFICATION: Detect dosage forms strictly (أقراص, كبسولات, كريم, مرهم, لوشن, غسول, جيل, شرب, نقط, بخاخ, صابونة, أمبولات, إلخ).
+4. CONTEXTUAL DEDUCTION: If letters are distorted, use clinical context, dosage form, and active ingredients to deduce the correct exact product name.
+
+STRICT OUTPUT RULES:
+- Never output internal thinking, self-correction, or monologues (e.g., "Wait, could it be...", "No, it looks like...").
+- Output ONLY the structured result in Arabic Markdown strictly following this format:
 
 ## 📋 المستحضرات والأدوية المكتوبة:
 
 ### 1. [اسم الدواء/المستحضر التجاري بالإنجليزية والعربية]
 * **نوع المستحضر:** [مستورد / محلي]
-* **الشكل الدوائي والتركيز:** [كريم / غاسول / لوشن / أقراص / ...]
+* **الشكل الدوائي والتركيز:** [أقراص / كبسول / كريم / غسول / ...]
 * **المادة الفعالة / المكونات الرئيسية:** ...
 * **الجرعة وطريقة الاستخدام:** ...
 * **دواعي الاستعمال:** ...
@@ -225,15 +231,18 @@ Output strictly in Arabic Markdown using this template:
 (أي تعليمات خاصة بالجرعات أو طريقة الاستخدام)`;
 
             const requestData = {
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
                 contents: [{
                     parts: [
-                        { text: systemPrompt },
-                        { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } }
+                        { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
+                        { text: "اقرأ الروشتة المرفقة واستخرج جميع الأدوية والمستحضرات طبقاً لتعليمات المحرك الصيدلاني." }
                     ]
                 }],
                 generationConfig: {
                     temperature: 0.1,
-                    maxOutputTokens: 1200
+                    maxOutputTokens: 1500
                 }
             };
 
@@ -267,4 +276,4 @@ Output strictly in Arabic Markdown using this template:
         }
     </script>
 </body>
-    </html>
+</html>
