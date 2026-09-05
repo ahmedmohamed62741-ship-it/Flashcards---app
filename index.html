@@ -123,7 +123,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1200;
+                    const maxDim = 1400;
 
                     if (width > height && width > maxDim) {
                         height = Math.round((height * maxDim) / width);
@@ -138,7 +138,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
                     statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
@@ -156,7 +156,7 @@
 
         async function processPrescription() {
             if (!PRIVATE_API_KEY || PRIVATE_API_KEY.includes("ضع_مفتاحك")) {
-                alert("برجاء وضع مفتاح الـ API الخاص بك داخل متغير PRIVATE_API_KEY في كود السكربت أولاً!");
+                alert("برجاء إنشاء مفتاح API جديد ووضعه داخل الكود أولاً!");
                 return;
             }
 
@@ -174,6 +174,9 @@
 
             const systemPrompt = `You are an elite Egyptian clinical pharmacist and ultra-precise medical handwriting OCR AI engine.
 
+CRITICAL INSTRUCTION FOR FULL OCR READ:
+Scan the image completely from TOP to BOTTOM. You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, or product written on the prescription. NEVER stop after the first item. If there are 2, 3, 5, or more items, output ALL of them numbered sequentially.
+
 CORE MATCHING & OCR LOGIC:
 1. LETTER-BY-LETTER OCR ANALYSIS: Carefully analyze each handwritten English letter, tolerating doctor handwriting noise and common letter distortions (e.g. confusion between 'a/o/e', 'm/n/u', 'cl/d', 'ph/f', 'i/l/t').
 2. EGYPTIAN MARKET DATABASE MATCHING: Match deciphered letter patterns strictly against verified real trade names available in the Egyptian market (both Local & Imported), across all forms: Tablets, Capsules, Syrups, Creams, Ointments, Drops, Injections, Cosmeceuticals, Lotions, etc.
@@ -181,21 +184,31 @@ CORE MATCHING & OCR LOGIC:
 4. ABSOLUTE PRECISE DEDUCTION: If letters are partially obscured, use clinical specialty context, dosage form, and active ingredients to verify the exact product name. NEVER make up fake or hallucinated product names.
 
 STRICT OUTPUT RULES:
-- Never output internal thinking, options, or monologues (e.g., "Wait", "Could it be", "No, it looks like").
+- Never output internal thinking, options, or monologues.
 - Output ONLY clean structured Arabic Markdown strictly matching this structure:
 
-## 📋 المستحضرات والأدوية المكتوبة:
+## 📋 المستحضرات والأدوية المكتوبة بالروشتة (كاملة):
 
-### 1. [اسم الدواء/المستحضر التجاري الصحيح بالإنجليزية والعربية]
+### 1. [اسم الدواء/المستحضر الأول]
 * **نوع المستحضر:** [مستورد / محلي]
-* **الشكل الدوائي والتركيز:** [أقراص / كبسول / كريم / غسول / ...]
-* **المادة الفعالة / المكونات الرئيسية:** ...
-* **الجرعة والتعليمات المكتوبة بالروشتة:** [اكتب بالضبط الجرعة والتعليمات المكتوبة بخط يد الطبيب]
-* **دواعي الاستعمال المعتادة:** ...
-* **البدائل المتاحة بالسوق المصري:** ...
+* **الشكل الدوائي والتركيز:** ...
+* **المادة الفعالة / المكونات:** ...
+* **الجرعة المكتوبة بالروشتة:** ...
+* **دواعي الاستعمال:** ...
+* **البدائل بالسوق المصري:** ...
+
+### 2. [اسم الدواء/المستحضر الثاني]
+* **نوع المستحضر:** ...
+* **الشكل الدوائي والتركيز:** ...
+* **المادة الفعالة / المكونات:** ...
+* **الجرعة المكتوبة بالروشتة:** ...
+* **دواعي الاستعمال:** ...
+* **البدائل بالسوق المصري:** ...
+
+(استمر بنفس النمط لكل العناصر المكتوبة بالصورة بدون استثناء)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
-(أي تعليمات خاصة بالجرعات أو طريقة الاستخدام)`;
+(أي تعارضات أو تعليمات خاصة بالجرعات)`;
 
             const requestData = {
                 systemInstruction: {
@@ -204,12 +217,12 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الروشتة المرفقة، واستخرج الأسماء التجاريّة الصحيحة الموجودة بالسوق المصري والجرعة المكتوبة بخط يد الطبيب بالكامل." }
+                        { text: "اقرأ الروشتة كاملة من البداية للنهاية واستخرج جميع الأدوية والجرعات بدون ترك أي دواء." }
                     ]
                 }],
                 generationConfig: {
                     temperature: 0.1,
-                    maxOutputTokens: 1500
+                    maxOutputTokens: 4096
                 }
             };
 
@@ -243,4 +256,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-</html>
+            </html>
