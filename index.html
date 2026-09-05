@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ الروشتات الفائق الدقة 🩺</title>
+    <title>قارئ الروشتات والأوراق الطبية 🩺</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -39,10 +39,10 @@
 
     <header class="max-w-4xl mx-auto w-full text-center my-4">
         <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-            فك شفرة الروشتات الفورية 🩺
+            فك شفرة الأوراق والروشتات الطبية 🩺
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            تحليل دقيق للروشتات والمنتجات الصيدلانية (محلي ومستورد) بالسوق المصري.
+            قراءة شاملة لأي ورقة تحتوي أدوية (عربي/إنجليزي) ومطابقتها بالسوق المصري والمستورد.
         </p>
     </header>
 
@@ -53,7 +53,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label for="cameraInput" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30 shadow-md cursor-pointer select-none">
                         <i class="fa-solid fa-camera text-2xl"></i>
-                        <span class="text-sm">تصوير الكاميرا المباشر 📷</span>
+                        <span class="text-sm">تصوير الورقة مباشرة 📷</span>
                         <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
                     </label>
 
@@ -78,7 +78,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري مطابقة الحروف والتعليمات مع الأدوية في السوق المصري عبر Gemini 3.6 Flash...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص النسيج الخطي والمطابقة مع قاعدة بيانات الأدوية عبر Gemini 3.6 Flash...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -172,28 +172,28 @@
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are an elite Egyptian clinical pharmacist and ultra-precise medical handwriting OCR AI engine.
+            const systemPrompt = `You are an elite Egyptian clinical pharmacist and ultra-precise multilingual (Arabic & English) medical and pharmaceutical OCR AI engine.
 
 CRITICAL INSTRUCTION FOR FULL OCR READ:
-Scan the image completely from TOP to BOTTOM. You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, or product written on the prescription. NEVER stop after the first item. If there are 2, 3, 5, or more items, output ALL of them numbered sequentially.
+Scan the uploaded image completely from TOP to BOTTOM. You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, cosmeceutical, or pharmaceutical product written on the paper (whether handwritten, typed, printed, prescription, note, list, invoice, or package). NEVER stop after the first item. Output ALL identified items numbered sequentially.
 
-CORE MATCHING & OCR LOGIC:
-1. LETTER-BY-LETTER OCR ANALYSIS: Carefully analyze each handwritten English letter, tolerating doctor handwriting noise and common letter distortions (e.g. confusion between 'a/o/e', 'm/n/u', 'cl/d', 'ph/f', 'i/l/t').
-2. EGYPTIAN MARKET DATABASE MATCHING: Match deciphered letter patterns strictly against verified real trade names available in the Egyptian market (both Local & Imported), across all forms: Tablets, Capsules, Syrups, Creams, Ointments, Drops, Injections, Cosmeceuticals, Lotions, etc.
-3. INSTRUCTION EXTRACTOR: Extract the exact dosage, frequency, and duration written in doctor's handwriting on the prescription (e.g. "قرص 3 مرات يوميا بعد الأكل").
-4. ABSOLUTE PRECISE DEDUCTION: If letters are partially obscured, use clinical specialty context, dosage form, and active ingredients to verify the exact product name. NEVER make up fake or hallucinated product names.
+CORE MATCHING & OCR LOGIC (ARABIC & ENGLISH):
+1. MULTILINGUAL LETTER-BY-LETTER OCR ANALYSIS: Carefully analyze all letters and words written in both ENGLISH and ARABIC (e.g. "أدول", "Adol", "كونجستال", "Congestal"). Tolerate handwriting noise, poor printing, distorted pen strokes, and common letter confusions in both languages.
+2. EGYPTIAN & IMPORTED MARKET DATABASE MATCHING: Match deciphered English or Arabic letter patterns strictly against verified real trade names available in the Egyptian market (both Local & Imported), across all forms: Tablets, Capsules, Syrups, Creams, Ointments, Drops, Injections, Cosmeceuticals, Lotions, Medical Supplies, etc.
+3. INSTRUCTION & DOSAGE EXTRACTOR: Extract exact dosage, frequency, and usage instructions written in Arabic or English on the paper (e.g. "قرص 3 مرات يوميا", "1 tab tid").
+4. ABSOLUTE PRECISE DEDUCTION: If letters are partially obscured or missing, use clinical specialty context, dosage form, and active ingredients to deduce the exact product name in the Egyptian market. NEVER make up fake or hallucinated product names.
 
 STRICT OUTPUT RULES:
 - Never output internal thinking, options, or monologues.
 - Output ONLY clean structured Arabic Markdown strictly matching this structure:
 
-## 📋 المستحضرات والأدوية المكتوبة بالروشتة (كاملة):
+## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (كاملة):
 
 ### 1. [اسم الدواء/المستحضر الأول]
 * **نوع المستحضر:** [مستورد / محلي]
 * **الشكل الدوائي والتركيز:** ...
 * **المادة الفعالة / المكونات:** ...
-* **الجرعة المكتوبة بالروشتة:** ...
+* **الجرعة/التعليمات المكتوبة:** ...
 * **دواعي الاستعمال:** ...
 * **البدائل بالسوق المصري:** ...
 
@@ -201,14 +201,14 @@ STRICT OUTPUT RULES:
 * **نوع المستحضر:** ...
 * **الشكل الدوائي والتركيز:** ...
 * **المادة الفعالة / المكونات:** ...
-* **الجرعة المكتوبة بالروشتة:** ...
+* **الجرعة/التعليمات المكتوبة:** ...
 * **دواعي الاستعمال:** ...
 * **البدائل بالسوق المصري:** ...
 
 (استمر بنفس النمط لكل العناصر المكتوبة بالصورة بدون استثناء)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
-(أي تعارضات أو تعليمات خاصة بالجرعات)`;
+(أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
 
             const requestData = {
                 systemInstruction: {
@@ -217,7 +217,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الروشتة كاملة من البداية للنهاية واستخرج جميع الأدوية والجرعات بدون ترك أي دواء." }
+                        { text: "اقرأ الورقة كاملة من البداية للنهاية واقرأ جميع أسماء الأدوية والمستحضرات المكتوبة (سواء بالعربي أو بالإنجليزية) مع مطابقتها بالسوق المصري واستخراج كافة التعليمات." }
                     ]
                 }],
                 generationConfig: {
@@ -256,4 +256,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-                </html>
+        </html>
