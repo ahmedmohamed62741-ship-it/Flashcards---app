@@ -225,10 +225,10 @@ CRITICAL INSTRUCTION FOR FULL OCR READ:
 Scan the uploaded image completely from TOP to BOTTOM. You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, cosmeceutical, or pharmaceutical product written on the paper (whether handwritten, typed, printed, prescription, note, list, invoice, or package). NEVER stop after the first item. Output ALL identified items numbered sequentially.
 
 CORE MATCHING & OCR LOGIC (ARABIC & ENGLISH):
-1. MULTILINGUAL LETTER-BY-LETTER OCR ANALYSIS: Carefully analyze all letters and words written in both ENGLISH and ARABIC (e.g. "أدول", "Adol", "كونجستال", "Congestal"). Tolerate handwriting noise, poor printing, distorted pen strokes, and common letter confusions in both languages.
-2. EGYPTIAN & IMPORTED MARKET DATABASE MATCHING: Match deciphered English or Arabic letter patterns strictly against verified real trade names available in the Egyptian market (both Local & Imported), across all forms: Tablets, Capsules, Syrups, Creams, Ointments, Drops, Injections, Cosmeceuticals, Lotions, Medical Supplies, etc.
-3. INSTRUCTION & DOSAGE EXTRACTOR: Extract exact dosage, frequency, and usage instructions written in Arabic or English on the paper (e.g. "قرص 3 مرات يوميا", "1 tab tid").
-4. ABSOLUTE PRECISE DEDUCTION: If letters are partially obscured or missing, use clinical specialty context, dosage form, and active ingredients to deduce the exact product name in the Egyptian market. NEVER make up fake or hallucinated product names.
+1. MULTILINGUAL LETTER-BY-LETTER OCR ANALYSIS: Carefully analyze all handwritten or typed letters and words written in both ENGLISH and ARABIC (e.g. "أدول", "Adol", "كونجستال", "Congestal"). Tolerate handwriting noise, poor printing, distorted pen strokes, and common doctor letter confusions in both languages.
+2. ARABIC USAGE & CLINICAL CONTEXT DEDUCTION (100% PRECISION KEY): Always carefully read the handwritten Arabic instructions, dosage notes, or usage descriptions written under or next to each medication line (e.g., "دهان مرتين daily", "قطرة للأذن", "قرص قبل الأكل", "دش مهبلي", "دهان مساج", "لبوسة مساءً"). Cross-analyze this Arabic usage context with the dosage form (cream, drops, tablets, lotion, etc.) to triangulate and confirm the EXACT product trade name from the Egyptian market with 100% accuracy, even if the English drug name handwriting is heavily distorted or ambiguous.
+3. EGYPTIAN & IMPORTED MARKET DATABASE MATCHING: Match deciphered English or Arabic letter patterns strictly against verified real trade names available in the Egyptian market (both Local & Imported), across all forms: Tablets, Capsules, Syrups, Creams, Ointments, Drops, Injections, Cosmeceuticals, Lotions, Medical Supplies, etc.
+4. ABSOLUTE PRECISE DEDUCTION: Combine the doctor's handwriting traces, Arabic instructions, specialty context, and active ingredients. NEVER make up fake or hallucinated product names.
 
 STRICT OUTPUT RULES:
 - Never output internal thinking, options, or monologues.
@@ -264,7 +264,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة كاملة من البداية للنهاية واقرأ جميع أسماء الأدوية والمستحضرات المكتوبة (سواء بالعربي أو بالإنجليزية) مع مطابقتها بالسوق المصري واستخرج كافة التعليمات." }
+                        { text: "اقرأ الورقة كاملة من البداية للنهاية. حلل خط الدكتور بدقة، واقرأ التعليمات المكتوبة باللغة العربية أسفل كل دواء لتأكيد واستنتاج اسم المنتج الدقيق بالسوق المصري بنسبة 100%، واستخرج جميع العناصر دون استثناء." }
                     ]
                 }],
                 generationConfig: {
@@ -303,4 +303,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-    </html>
+                    </html>
