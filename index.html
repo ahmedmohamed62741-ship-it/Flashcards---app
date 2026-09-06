@@ -224,11 +224,20 @@
 CRITICAL INSTRUCTION FOR FULL OCR READ:
 Scan the uploaded image completely from TOP to BOTTOM. You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, cosmeceutical, or pharmaceutical product written on the paper (whether handwritten, typed, printed, prescription, note, list, invoice, or package). NEVER stop after the first item. Output ALL identified items numbered sequentially.
 
-CORE MATCHING & OCR LOGIC (ARABIC & ENGLISH):
-1. MULTILINGUAL LETTER-BY-LETTER OCR ANALYSIS: Carefully analyze all handwritten or typed letters and words written in both ENGLISH and ARABIC (e.g. "أدول", "Adol", "كونجستال", "Congestal"). Tolerate handwriting noise, poor printing, distorted pen strokes, and common doctor letter confusions in both languages.
-2. ARABIC USAGE & CLINICAL CONTEXT DEDUCTION (100% PRECISION KEY): Always carefully read the handwritten Arabic instructions, dosage notes, or usage descriptions written under or next to each medication line (e.g., "دهان مرتين daily", "قطرة للأذن", "قرص قبل الأكل", "دش مهبلي", "دهان مساج", "لبوسة مساءً"). Cross-analyze this Arabic usage context with the dosage form (cream, drops, tablets, lotion, etc.) to triangulate and confirm the EXACT product trade name from the Egyptian market with 100% accuracy, even if the English drug name handwriting is heavily distorted or ambiguous.
-3. EGYPTIAN & IMPORTED MARKET DATABASE MATCHING: Match deciphered English or Arabic letter patterns strictly against verified real trade names available in the Egyptian market (both Local & Imported), across all forms: Tablets, Capsules, Syrups, Creams, Ointments, Drops, Injections, Cosmeceuticals, Lotions, Medical Supplies, etc.
-4. ABSOLUTE PRECISE DEDUCTION: Combine the doctor's handwriting traces, Arabic instructions, specialty context, and active ingredients. NEVER make up fake or hallucinated product names.
+STRICT CLINICAL LOGIC & ROUTE-INSTRUCTION CONSISTENCY (PREVENT FALSE MATCHES):
+1. DOSAGE FORM vs. INSTRUCTION CROSS-VALIDATION:
+   - If handwritten Arabic/English instructions indicate oral administration (e.g., "قبل الإفطار والغداء", "قبل الأكل", "بعد العشاء", "قرص", "كبسولة", "سفوف", "1 tab", "1 cap", "3 مرات يوميا بلع"): The product MUST BE AN ORAL DOSAGE FORM (Tablets, Capsules, Syrup, Oral Drops, Suspension). NEVER EVER match or output a topical Gel, Cream, Ointment, Suppository, or Injection for oral instructions!
+   - Example Case: If the letters resemble "Voltaren" but the instruction says "قبل الإفطار والغداء", it MUST be Voltaren Tablets (e.g. Voltaren 50mg or 75mg tablets) or a similar oral anti-inflammatory, NOT "Voltaren Gel"!
+   - If instructions say "دهان", "مساج", "موضعي", "دهان مساءً": The product MUST be a topical form (Cream, Gel, Ointment, Lotion, Spray).
+   - If instructions say "حقنة", "عضل", "وريد": The product MUST be an injectable formulation (Ampoules, Vials).
+   - If instructions say "قطرة عين/أذن/أنف": The product MUST be Otic/Ophthalmic/Nasal drops.
+
+2. MULTILINGUAL LETTER-BY-LETTER OCR & GOOGLE DATABASE MATCHING:
+   - Carefully analyze all handwritten or typed letters written in both ENGLISH and ARABIC.
+   - Match deciphered patterns strictly against verified real trade names available in the Egyptian & Global pharmaceutical databases (both Local & Imported).
+   - Tolerate handwriting noise, distorted pen strokes, doctor abbreviations, and common character confusions in both languages.
+
+3. ABSOLUTE PRECISE DEDUCTION: Combine handwriting strokes, dosage form logic, Arabic instruction notes, and active ingredients to deduce the exact product name with 100% precision. NEVER hallucinate fake drug names.
 
 STRICT OUTPUT RULES:
 - Never output internal thinking, options, or monologues.
@@ -264,7 +273,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة كاملة من البداية للنهاية. حلل خط الدكتور بدقة، واقرأ التعليمات المكتوبة باللغة العربية أسفل كل دواء لتأكيد واستنتاج اسم المنتج الدقيق بالسوق المصري بنسبة 100%، واستخرج جميع العناصر دون استثناء." }
+                        { text: "اقرأ الورقة كاملة من البداية للنهاية. حلل خط الدكتور بدقة، وطابق طريقة الاستخدام المكتوبة (مثل قبل الإفطار والغداء) مع الشكل الدوائي الصحيح (أقراص/كبسولات وليس جيل أو دهان) للوصول للاسم الدقيق بالسوق المصري بنسبة 100%." }
                     ]
                 }],
                 generationConfig: {
@@ -303,4 +312,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-                    </html>
+    </html>
