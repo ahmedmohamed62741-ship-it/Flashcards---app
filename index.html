@@ -49,6 +49,21 @@
     <main class="max-w-4xl mx-auto w-full space-y-6">
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
+            
+            <!-- خانة إدخال مفتاح الـ API -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <label for="apiKeyInput" class="block text-xs font-bold text-slate-300 flex items-center justify-between">
+                    <span>🔑 مفتاح API الخاص بك (Gemini API Key):</span>
+                    <span class="text-[10px] text-emerald-400 font-normal">يُحفظ تلقائياً في متصفحك</span>
+                </label>
+                <div class="relative">
+                    <input type="password" id="apiKeyInput" oninput="saveApiKey()" placeholder="أدخل مفتاح AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono tracking-wider pl-10">
+                    <button type="button" onclick="toggleKeyVisibility()" class="absolute left-3 top-2.5 text-slate-400 hover:text-slate-200 text-xs">
+                        <i id="keyVisibilityIcon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
             <div id="rxInputSection" class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label for="cameraInput" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30 shadow-md cursor-pointer select-none">
@@ -101,9 +116,39 @@
 
     <script>
         const MODEL_NAME = "gemini-3.6-flash";
-        const PRIVATE_API_KEY = "AIzaSyD27DPVo13eAUyI7et0gSDx0Vv9a5q2LYU"; 
+        const DEFAULT_API_KEY = "AIzaSyD27DPVo13eAUyI7et0gSDx0Vv9a5q2LYU"; 
         
         let compressedImageBase64 = null;
+
+        // تحميل المفتاح المحفوظ أو تعبئة المفتاح الافتراضي عند فتح الموقع
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('user_gemini_api_key');
+            const keyInput = document.getElementById('apiKeyInput');
+            if (savedKey && savedKey.trim() !== "") {
+                keyInput.value = savedKey;
+            } else {
+                keyInput.value = DEFAULT_API_KEY;
+            }
+        });
+
+        function saveApiKey() {
+            const keyInput = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('user_gemini_api_key', keyInput);
+        }
+
+        function toggleKeyVisibility() {
+            const keyInput = document.getElementById('apiKeyInput');
+            const icon = document.getElementById('keyVisibilityIcon');
+            if (keyInput.type === "password") {
+                keyInput.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                keyInput.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
 
         function handleImageSelect(event) {
             const file = event.target.files && event.target.files[0];
@@ -155,8 +200,10 @@
         }
 
         async function processPrescription() {
-            if (!PRIVATE_API_KEY || PRIVATE_API_KEY.includes("ضع_مفتاحك")) {
-                alert("برجاء إنشاء مفتاح API جديد ووضعه داخل الكود أولاً!");
+            const activeApiKey = document.getElementById('apiKeyInput').value.trim();
+
+            if (!activeApiKey) {
+                alert("برجاء أدخل مفتاح API في الخانة المخصصة بالأعلى أولاً!");
                 return;
             }
 
@@ -227,7 +274,7 @@ STRICT OUTPUT RULES:
             };
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${PRIVATE_API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${activeApiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestData)
@@ -240,7 +287,7 @@ STRICT OUTPUT RULES:
                     outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
                     outputContainer.classList.remove('hidden');
                 } else if (data.error) {
-                    alert("خطأ من السيرفر:\n" + data.error.message);
+                    alert("خطأ من السيرفر:\n" + data.error.message + "\n\n💡 إذا كان المفتاح محظوراً، يرجى كتابة مفتاح جديد في خانة المفتاح بالأعلى.");
                 }
             } catch (err) {
                 alert("خطأ اتصال: " + err.message);
@@ -256,4 +303,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-</html>
+    </html>
