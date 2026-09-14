@@ -230,9 +230,9 @@
                 const response = await fetch(url, options);
                 
                 if (response.status === 429 && attempt < maxRetries) {
-                    loadingText.innerText = `السيرفر مشغول حالياً بطلبات متتالية، جاري الانتظار تلقائياً وإعادة المحاولة (${attempt}/${maxRetries})... ⏳`;
-                    await new Promise(resolve => setTimeout(resolve, 12000));
-                    loadingText.innerText = "جاري إعادة الفحص والمطابقة الصيدلانية...";
+                    loadingText.innerText = `السيرفر مشغول، جاري إعادة المحاولة الفورية (${attempt}/${maxRetries})... ⏳`;
+                    await new Promise(resolve => setTimeout(resolve, 4000));
+                    loadingText.innerText = "جاري فحص الروشتة والمطابقة الصيدلانية...";
                     continue;
                 }
                 return response;
@@ -265,25 +265,22 @@
 
 CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
 
-1. ABSOLUTE LETTER ACCURACY, MID-WORD ANCHORING & VISUAL FIDELITY:
-   - Microscopically inspect every letter stroke, ascender, descender, and internal character sequence.
-   - USE CLEAR INTERIOR / MID-WORD LETTERS AS ANCHORS:
-     * If the start or end of a handwritten drug name is scribbled, look for clear, distinct characters inside the MIDDLE of the word (e.g., 'z', 'x', 'p', 'q', 'y', 'ph', 'th', 'cef', 'vir', 'card').
-     * Treat these distinct interior letters as solid anchor points to search and match against standard registered drug databases (e.g., Egyptian Drug Authority EDA / FDA).
+1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY:
+   - Microscopically inspect every letter stroke, ascender, and descender.
    - RESPECT VISIBLE DISTINCT LETTERS STRICTLY:
      * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran".
      * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha', 'Ezacard' vs 'ezasa'.
 
 2. MANDATORY REAL DRUG MAPPING & PHONETIC CORRECTION (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
    - ABSOLUTELY FORBIDDEN to output non-existent, typos, or fake phonetic words (e.g. NEVER output "ezasa", "dolibran", "cefotac", "alphintren").
-   - IF OCR generates a string that does NOT exist in registered drug databases (like Egyptian Drug Authority EDA / Global FDA catalogs), YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name that matches the handwriting pattern, mid-word anchors, and dosage context.
-     * Example: If handwritten strokes look like "ezasa" or "Eza-card" but have clear 'z' and 'card' anchors, map it to the REAL registered drug "Ezacard" (or "Ezetrol" / "Ezasmart" depending on strength/context).
+   - IF OCR generates a string that does NOT exist in registered drug databases (like Egyptian Drug Authority EDA / Global FDA catalogs), YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name that matches the handwriting pattern and dosage context.
+     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to the REAL registered drug "Ezacard" (or "Ezetrol" / "Ezasmart" depending on strength/context).
      * Example: If handwritten strokes look like "Dolipran" / "Doliprane", output "Doliprane" with 'p'.
    - Every identified drug MUST be an EXACT real registered product available in pharmacies.
 
 3. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
    - For EVERY medication line, inspect:
-     a) Handwritten trade name letters and mid-word anchors.
+     a) Handwritten trade name letters.
      b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab").
      c) Handwritten instructions directly underneath ("قرص يومياً", "قرص بعد الأكل", "قرص كل 8 ساعات").
    - COMBINE these 3 data points to confirm the EXACT REAL REGISTERED DRUG (e.g., "Ezacard 75mg Tab" for blood thinner/aspirin).
@@ -327,7 +324,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. ركّز على الحروف الواضحة في منتصف اسم الدواء عند وجود أي شخبطة لاستخراج الاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard بدل ezasa)، مع الحفاظ على دقة الحروف مثل p في Doliprane والمسح الكامل لجميع الأصناف." }
+                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. يمنع منعاً باتاً كِتابة أسماء وهمية مثل ezasa بل يجب مطابقتها وتصحيحها فوراً للاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard)، مع الحفاظ على دقة الحروف مثل p في Doliprane والمسح الكامل لجميع الأصناف." }
                     ]
                 }],
                 generationConfig: {
@@ -369,4 +366,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-    </html>
+                    </html>
