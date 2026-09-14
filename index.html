@@ -93,7 +93,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل حواف الخط والنصوص المحيطة بالمنتج والمطابقة مع دليل الأدوية...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -231,35 +231,42 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري فحص الحروف مع النصوص المكتوبة بجانب وتحت كل صنف ومطابقتها مع الدليل الدوائي...";
+            loadingText.innerText = "جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة والمطابقة مع قواعد البيانات...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are a Chief Clinical Pharmacist and an ultra-precise Medical OCR engine trained on Egyptian and Global Pharmaceutical Databases.
+            const systemPrompt = `You are a Senior Expert Clinical Pharmacist with decades of experience and an ultra-precise Medical OCR AI engine.
 
-CRITICAL MANDATORY PHARMACEUTICAL & OCR RULES:
+CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
 
-1. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
-   - For EVERY medication line, you MUST inspect:
-     a) The handwritten trade name letters.
-     b) Any numbers, strengths, or dosage forms written DIRECTLY BESIDE the name (e.g., "1g", "500mg", "75mg", "Vial", "Amp", "Tab", "Cap", "Syr", "Susp", "Drops").
-     c) Any handwritten instructions, dosage frequencies, or notes written DIRECTLY UNDERNEATH the name (e.g., "حقنة كل 12 ساعة عضل/وريد", "قرص قبل الأكل", "كيس على نصف كوب ماء", "1x2").
-   - COMBINE these 3 data points to deduce the EXACT, UNAMBIGUOUS REAL DRUG NAME.
-   - Example: If the name starts with "Cef..." and beside it says "1g Vial" and underneath says "حقنة عضل/وريد", it MUST be a Cephalosporin Vial such as "Cefobid 1g" or "Ceftriaxone 1g" or "Cefotax 1g". NEVER EVER misread "Cefobid" as "alphabid" or "Alphintern" because "Alphintern" is a tablet, not a 1g injection!
+1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY (EXPERT PHARMACIST DEDUCTION):
+   - Microscopically inspect every letter stroke, ascender, and descender.
+   - RESPECT VISIBLE DISTINCT LETTERS STRICTLY:
+     * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran" or fake words.
+     * Recognize common top-tier Egyptian & global brand names immediately when letter strokes match:
+       - Paracetamol brands: Doliprane / Dolipran, Panadol, Cetal, Paramol, Abimol.
+       - Cephalosporins: Cefobid, Cefotax, Ceftriaxone, Cefzone, Cefzil, Cefurox, Cefodox.
+       - NSAIDs / Analgesics: Voltaren, Cataflam, Brufen, Ketofan.
+       - Anti-inflammatory enzymes: Alphintern, Ambezim.
+     * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha'.
 
-2. STRICT MATCHING WITH REAL REGISTERED DRUG DATABASES (ZERO HALLUCINATIONS):
-   - Every identified name MUST match a REAL registered product in the Egyptian Drug Authority (EDA) database or official global pharmaceutical catalogs.
-   - STRICT PROHIBITION against inventing fake brand names, combined phonetic garbage, or guessing non-existent products.
-   - RECOGNIZE PHARMACEUTICAL PREFIXES STRICTLY:
-     * 'Cef-' / 'Ceph-' = Cephalosporins (Cefobid, Cefotax, Ceftriaxone, Cefzone, Cefzil, Cefurox, Cefodox, Cefaclor, Cefdinir).
-     * 'Alpha-' / 'Amb-' = Anti-inflammatory enzymes (Alphintern, Ambezim).
-     * 'Amox-' / 'Aug-' = Amoxicillin / Augmentin / Unasyn.
-     * 'Volt-' / 'Cata-' = Diclofenac (Voltaren, Cataflam, Catafly).
-     * 'Pant-' / 'Om-' / 'Gastr-' = PPIs (Pantonix, Controloc, Omepral, Gastrozole).
+2. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
+   - For EVERY medication line, inspect:
+     a) Handwritten trade name letters.
+     b) Any numbers, strengths, or dosage forms written DIRECTLY BESIDE the name (e.g., "1000mg", "500mg", "1g", "Vial", "Amp", "Tab", "Cap", "Syr", "Susp", "Supp", "Drops").
+     c) Any handwritten instructions or dosage frequencies written DIRECTLY UNDERNEATH the name (e.g., "قرص عند اللزوم", "قرص كل 8 ساعات", "حقنة عضل").
+   - COMBINE these 3 data points to deduce the EXACT REAL REGISTERED DRUG NAME (e.g. "Doliprane 1000mg Tab" for pain/fever).
 
-3. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
+3. STRICT MATCHING WITH REAL REGISTERED DRUG DATABASES (ZERO HALLUCINATIONS):
+   - Every identified name MUST match an EXACT real registered product in the Egyptian Drug Authority (EDA) database or official global drug catalogs.
+   - ABSOLUTELY FORBIDDEN to output fake names, phonetically invented garbage, or non-existent pharmacy items.
+
+4. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
    - Process ALL items written on the sheet sequentially from top to bottom.
-   - Treat the first item, middle items, and the very last item with the EXACT same level of intense scrutiny and accuracy. Do not skip or truncate any item.
+   - Treat every single item—from the first line down to the very last line—with the exact same level of intense scrutiny and accuracy.
+
+5. CLINICAL ROUTE & DOSAGE FORM CROSS-VALIDATION:
+   - Match written directions with dosage forms (Oral instructions = Tablets/Capsules/Syrup; Topical instructions = Creams/Gels; Injections = Ampoules/Vials).
 
 STRICT OUTPUT RULES:
 - Never output internal thinking, alternative options, or conversational preamble.
@@ -295,7 +302,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "افحص كل صنف بالروشتة بدقة صيدلي خبير. اقرأ حروف اسم الدواء مع التركيز والشكل الدوائي المكتوب بجانبه والتعليمات المكتوبة تحته لربطها ببعض والوصول للاسم التجاري الحقيقي الموجود بالصيدليات وقاعدة بيانات هيئة الدواء المصرية دون أي خطأ أو تخمين، مع تطبيق ذلك على جميع الأصناف بالكامل." }
+                        { text: "اقرأ الورقة بالكامل صنفاً صنفاً بدقة صيدلي خبير. ركز على دقة الحروف الواضحة مثل حرف p في Doliprane وعدم التخمين الخاطئ، واجمع بين اسم الدواء والتركيز بجانبه والتعليمات تحته لمطابقتها مع المنتجات الحقيقية المسجلة بالسوق المصري والعالمي." }
                     ]
                 }],
                 generationConfig: {
@@ -337,4 +344,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-</html>
+    </html>
