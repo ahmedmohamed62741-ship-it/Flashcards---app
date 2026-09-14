@@ -93,7 +93,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري التدقيق الصيدلاني الشامل وتفكيك الخط والمطابقة مع قواعد البيانات...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تحليل حواف الخط والنصوص المحيطة بالمنتج والمطابقة مع دليل الأدوية...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -158,7 +158,7 @@
             const statusText = document.getElementById('imageStatus');
 
             previewContainer.classList.remove('hidden');
-            statusText.innerText = "جاري تحسين وضوح الصورة ودقة الحروف...";
+            statusText.innerText = "جاري تحسين وضوح الصورة وتجهيز حواف الخط...";
 
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -167,7 +167,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1800; // وضوح ألياف الخط لمطابقة الحروف المتشابهة
+                    const maxDim = 1800;
 
                     if (width > height && width > maxDim) {
                         height = Math.round((height * maxDim) / width);
@@ -231,45 +231,43 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري التدقيق الصيدلاني الشامل لكل أصناف الروشتة بالتساوي والمطابقة مع محركات الدواء...";
+            loadingText.innerText = "جاري فحص الحروف مع النصوص المكتوبة بجانب وتحت كل صنف ومطابقتها مع الدليل الدوائي...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are a Senior Expert Clinical Pharmacist with 20+ years of experience in reading difficult handwritten prescriptions and an ultra-precise medical OCR AI engine.
+            const systemPrompt = `You are a Chief Clinical Pharmacist and an ultra-precise Medical OCR engine trained on Egyptian and Global Pharmaceutical Databases.
 
-CRITICAL INSTRUCTIONS FOR BALANCED & ACCURATE PRESCRIPTION READING:
+CRITICAL MANDATORY PHARMACEUTICAL & OCR RULES:
 
-1. EQUAL HIGH-PRECISION SCANNING (EVERY SINGLE ITEM):
-   - Scan the entire paper from TOP to BOTTOM.
-   - Treat EVERY SINGLE ITEM with equal clinical scrutiny and microscopic precision.
-   - Do NOT focus on one item at the expense of others. Item 1, Item 2, Item 3... and the final item MUST ALL be transcribed with 100% accuracy and complete details.
+1. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
+   - For EVERY medication line, you MUST inspect:
+     a) The handwritten trade name letters.
+     b) Any numbers, strengths, or dosage forms written DIRECTLY BESIDE the name (e.g., "1g", "500mg", "75mg", "Vial", "Amp", "Tab", "Cap", "Syr", "Susp", "Drops").
+     c) Any handwritten instructions, dosage frequencies, or notes written DIRECTLY UNDERNEATH the name (e.g., "حقنة كل 12 ساعة عضل/وريد", "قرص قبل الأكل", "كيس على نصف كوب ماء", "1x2").
+   - COMBINE these 3 data points to deduce the EXACT, UNAMBIGUOUS REAL DRUG NAME.
+   - Example: If the name starts with "Cef..." and beside it says "1g Vial" and underneath says "حقنة عضل/وريد", it MUST be a Cephalosporin Vial such as "Cefobid 1g" or "Ceftriaxone 1g" or "Cefotax 1g". NEVER EVER misread "Cefobid" as "alphabid" or "Alphintern" because "Alphintern" is a tablet, not a 1g injection!
 
-2. STRICT REAL-WORLD PHARMACEUTICAL MATCHING (ZERO FAKE OR HALLUCINATED NAMES):
-   - Cross-verify deciphered visual letter sequences ONLY against genuine, officially registered trade names in Egyptian (EDA) and Global pharmaceutical databases.
-   - NEVER output fake, phonetically invented, or incorrect trade names (e.g., misreading "Cefobid" as "alphabid" is FORBIDDEN).
-   - RECOGNIZE PHARMACEUTICAL PREFIXES, SUFFIXES, AND DRUG FAMILIES:
-     * Cephalosporins / Antibiotics: 'Cef-' (e.g., Cefobid, Cefotax, Ceftriaxone, Cefzone, Cefzil). Do NOT confuse 'Cef-' with 'Alpha-' or 'Alp-'.
-     * Penicillins / Beta-lactams: 'Amox-', 'Augmentin', 'Unasyn'.
-     * NSAIDs / Painkillers: 'Volt-'/'-fenac' (Voltaren, Cataflam), 'Cata-'.
-     * Gastro-protective: '-prazole' (Controloc, Antodine, Gastrozole).
-     * Enzymes / Anti-edema: Alphintern, Ambezim.
-   - Inspect letter strokes meticulously to differentiate: 'Cef' vs 'Alpha', 'b' vs 'p', 'd' vs 'cl', 'o' vs 'a', 'rn' vs 'm'.
+2. STRICT MATCHING WITH REAL REGISTERED DRUG DATABASES (ZERO HALLUCINATIONS):
+   - Every identified name MUST match a REAL registered product in the Egyptian Drug Authority (EDA) database or official global pharmaceutical catalogs.
+   - STRICT PROHIBITION against inventing fake brand names, combined phonetic garbage, or guessing non-existent products.
+   - RECOGNIZE PHARMACEUTICAL PREFIXES STRICTLY:
+     * 'Cef-' / 'Ceph-' = Cephalosporins (Cefobid, Cefotax, Ceftriaxone, Cefzone, Cefzil, Cefurox, Cefodox, Cefaclor, Cefdinir).
+     * 'Alpha-' / 'Amb-' = Anti-inflammatory enzymes (Alphintern, Ambezim).
+     * 'Amox-' / 'Aug-' = Amoxicillin / Augmentin / Unasyn.
+     * 'Volt-' / 'Cata-' = Diclofenac (Voltaren, Cataflam, Catafly).
+     * 'Pant-' / 'Om-' / 'Gastr-' = PPIs (Pantonix, Controloc, Omepral, Gastrozole).
 
-3. CLINICAL ROUTE & DOSAGE FORM CROSS-VALIDATION:
-   - Match written directions (Arabic/English) with dosage forms:
-     * If instructions say "حقنة", "عضل", "وريد", "vial", "amp": MUST match an injectable form (e.g., Cefobid 1g Vial/Ampoule).
-     * If instructions say "قبل الأكل", "بعد الغداء", "قرص", "كبسولة", "tab", "cap": MUST match an oral form.
-     * If instructions say "دهان", "مساج": MUST match a topical form (Cream/Gel).
-     * If instructions say "قطرة": MUST match Eye/Ear/Nasal drops.
-   - If handwriting is distorted, select the EXACT real-world registered drug that matches BOTH the visual pen strokes and the clinical usage/dosage form.
+3. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
+   - Process ALL items written on the sheet sequentially from top to bottom.
+   - Treat the first item, middle items, and the very last item with the EXACT same level of intense scrutiny and accuracy. Do not skip or truncate any item.
 
 STRICT OUTPUT RULES:
-- Never output internal thinking, alternative guesses, or monologues.
+- Never output internal thinking, alternative options, or conversational preamble.
 - Output ONLY clean structured Arabic Markdown strictly matching this structure:
 
 ## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (كاملة):
 
-### 1. [اسم الدواء/المستحضر الأول - بدقة صيدلانية 100%]
+### 1. [اسم الدواء/المستحضر الأول - اسم حقيقي مطابق 100%]
 * **نوع المستحضر:** [مستورد / محلي]
 * **الشكل الدوائي والتركيز:** ...
 * **المادة الفعالة / المكونات:** ...
@@ -297,11 +295,11 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل صنفاً صنفاً بدقة صيدلي خبير من أول سطر إلى آخر سطر. طابق الحروف والمقاطع الطبية (مثل Cef- لـ Cefobid) مع المنتجات المسجلة في قواعد بيانات الأدوية الحقيقية بالسوق المصري والعالمي لمنع أي خطأ في اسم الدواء، مع الاهتمام بجميع الأصناف بالتساوي." }
+                        { text: "افحص كل صنف بالروشتة بدقة صيدلي خبير. اقرأ حروف اسم الدواء مع التركيز والشكل الدوائي المكتوب بجانبه والتعليمات المكتوبة تحته لربطها ببعض والوصول للاسم التجاري الحقيقي الموجود بالصيدليات وقاعدة بيانات هيئة الدواء المصرية دون أي خطأ أو تخمين، مع تطبيق ذلك على جميع الأصناف بالكامل." }
                     ]
                 }],
                 generationConfig: {
-                    temperature: 0.05, // تم تقليل درجة الحرارة للحد الأقصى لمنع التخمين والالتزام التام بالحقائق
+                    temperature: 0.05,
                     maxOutputTokens: 4096
                 }
             };
