@@ -265,28 +265,26 @@
 
 CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
 
-1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY:
-   - Microscopically inspect every letter stroke, ascender, and descender.
-   - RESPECT VISIBLE DISTINCT LETTERS STRICTLY:
-     * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran".
-     * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha', 'Ezacard' vs 'ezasa'.
+1. EXPERT PHARMACIST HANDWRITING PATTERN ANALYSIS (FIRST/LAST LETTER & SHAPE PROXIMITY DEDUCTION):
+   - Analyze clear segments of the handwriting: Examine the STARTING letter/prefix (e.g., 'Eza...', 'Doli...', 'Cef...') and ENDING letter/suffix (e.g., '...card', '...prane', '...flam').
+   - When middle letters or strokes are cursive/blurry, use VISUAL SHAPE PROXIMITY logic (pharmacist deduction):
+     * Infer what letter the stroke is visually closest to (e.g., 'z' vs 's', 'c' vs 'e', 'r' vs 'v', 'p' vs 'b', ascenders vs descenders).
+     * Strictly preserve distinct visual markers like 'p' descenders (e.g. "Doliprane", "Panadol", "Plavix"). NEVER turn 'p' into 'b' or create fake words like "dolibran".
+     * Triangulate [First Letter(s) + Visual Middle Stroke Proximity + Last Letter(s)] to determine the intended trade name.
 
-2. MANDATORY REAL DRUG MAPPING & PHONETIC CORRECTION (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
-   - ABSOLUTELY FORBIDDEN to output non-existent, typos, or fake phonetic words (e.g. NEVER output "ezasa", "dolibran", "cefotac", "alphintren").
-   - IF OCR generates a string that does NOT exist in registered drug databases (like Egyptian Drug Authority EDA / Global FDA catalogs), YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name that matches the handwriting pattern and dosage context.
-     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to the REAL registered drug "Ezacard" (or "Ezetrol" / "Ezasmart" depending on strength/context).
-     * Example: If handwritten strokes look like "Dolipran" / "Doliprane", output "Doliprane" with 'p'.
-   - Every identified drug MUST be an EXACT real registered product available in pharmacies.
+2. MANDATORY REAL DRUG MAPPING & ZERO HALLUCINATIONS:
+   - FORBIDDEN to output non-existent phonetic errors or typos (e.g., NEVER output "ezasa" instead of "Ezacard", NEVER output "dolibran" instead of "Doliprane").
+   - Match your visual handwriting deduction against real registered drugs (Egyptian Drug Authority EDA / Global FDA databases). If visual strokes resemble "ezasa", correct it to the REAL registered drug "Ezacard" (or matching trade name).
 
 3. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
    - For EVERY medication line, inspect:
-     a) Handwritten trade name letters.
-     b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab").
-     c) Handwritten instructions directly underneath ("قرص يومياً", "قرص بعد الأكل", "قرص كل 8 ساعات").
-   - COMBINE these 3 data points to confirm the EXACT REAL REGISTERED DRUG (e.g., "Ezacard 75mg Tab" for blood thinner/aspirin).
+     a) Handwritten trade name.
+     b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab", "Cap").
+     c) Handwritten instructions directly underneath ("قرص يومياً", "قرص كل 8 ساعات", "حقنة عضل").
+   - Combine these 3 data points to confirm the EXACT REAL REGISTERED DRUG.
 
 4. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
-   - Process ALL items written on the sheet sequentially from top to bottom without skipping a single line.
+   - Process ALL items written on the sheet sequentially from top to bottom without skipping any line.
 
 STRICT OUTPUT RULES:
 - In each medication header (###), include an HTML link button to view real images of the drug package on Google Images formatted exactly as:
@@ -324,7 +322,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. يمنع منعاً باتاً كِتابة أسماء وهمية مثل ezasa بل يجب مطابقتها وتصحيحها فوراً للاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard)، مع الحفاظ على دقة الحروف مثل p في Doliprane والمسح الكامل لجميع الأصناف." }
+                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. حلل أول حرف وآخر حرف ورسمة الحروف المتشابهة لمنع أي أخطاء، وطابق الاستنتاج مع الأدوية الحقيقية المسجلة بالصيدليات (مثل Ezacard وDoliprane)، مع المسح الكامل لجميع أصناف الروشتة وإضافة روابط الصور." }
                     ]
                 }],
                 generationConfig: {
@@ -366,4 +364,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-            </html>
+                        </html>
