@@ -59,16 +59,24 @@
             background-color: #0369a1;
             transform: translateY(-1px);
         }
+        .low-confidence {
+            background-color: #451a03;
+            border: 1px solid #b45309;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            color: #fde68a;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-8">
 
     <header class="max-w-4xl mx-auto w-full text-center my-4">
         <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-            فك شفرة الأوراق والروشتات الطبية 🩺
+            قارئ الروشتات بالتحليل الترابطي 🩺
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            قراءة شاملة فائقة الدقة لأي ورقة أدوية (عربي/إنجليزي) ومطابقتها بالسوق مع إمكانية معاينة صور الدواء.
+            فحص دقيق يُطابق الأدوية بالدليل الدوائي الفعلي ويفحص منطقية الأدوية المكتوبة معاً.
         </p>
     </header>
 
@@ -76,7 +84,6 @@
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
             
-            <!-- خانة إدخال مفتاح الـ API -->
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
                 <label for="apiKeyInput" class="block text-xs font-bold text-slate-300 flex items-center justify-between">
                     <span>🔑 مفتاح API الخاص بك (Gemini API Key):</span>
@@ -112,20 +119,20 @@
             </div>
 
             <button id="processBtn" onclick="processPrescription()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3.5 px-6 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 text-sm cursor-pointer select-none">
-                <i class="fa-solid fa-microscope text-xl"></i>
-                <span>قراءة وفحص عالي الدقة</span>
+                <i class="fa-solid fa-stethoscope text-xl"></i>
+                <span>تدقيق ومطابقة صيدلانية صارمة</span>
             </button>
         </div>
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري التحقق من وجود الأدوية في الدليل الصيدلاني وتدقيق التوافق العلاجي...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 id="resultHeader" class="text-base font-bold text-emerald-400 flex items-center gap-2 border-0 bg-transparent p-0 m-0">
-                    <i class="fa-solid fa-file-medical text-lg"></i> النتيجة الصيدلانية المعتمدة
+                    <i class="fa-solid fa-capsules text-lg"></i> النتيجة الصيدلانية المدققة
                 </h3>
                 <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700 transition flex items-center gap-1 cursor-pointer select-none">
                     <i class="fa-solid fa-copy"></i> نسخ النتيجة
@@ -184,7 +191,7 @@
             const statusText = document.getElementById('imageStatus');
 
             previewContainer.classList.remove('hidden');
-            statusText.innerText = "جاري تحسين وضوح الصورة وتجهيز حواف الخط...";
+            statusText.innerText = "جاري معالجة الصورة وتحسين التباين...";
 
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -211,7 +218,7 @@
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
-                    statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
+                    statusText.innerText = "جاهزة للتحليل الصيدلاني الصارم ⚡";
                 };
                 img.onerror = function() {
                     alert("تعذر تحميل الصورة، جرب صورة أخرى.");
@@ -219,7 +226,7 @@
                 img.src = e.target.result;
             };
             reader.onerror = function() {
-                alert("تعذر قراءة ملف الصورة من الجهاز.");
+                alert("تعذر قراءة ملف الصورة.");
             };
             reader.readAsDataURL(file);
         }
@@ -228,11 +235,9 @@
             const loadingText = document.getElementById('loadingText');
             for (let attempt = 1; attempt <= maxRetries; attempt++) {
                 const response = await fetch(url, options);
-                
                 if (response.status === 429 && attempt < maxRetries) {
-                    loadingText.innerText = `السيرفر مشغول حالياً بطلبات متتالية، جاري الانتظار تلقائياً وإعادة المحاولة (${attempt}/${maxRetries})... ⏳`;
-                    await new Promise(resolve => setTimeout(resolve, 12000));
-                    loadingText.innerText = "جاري إعادة الفحص والمطابقة الصيدلانية...";
+                    loadingText.innerText = `السيرفر مشغول، جاري الانتظار والتكرار تلقائياً (${attempt}/${maxRetries})... ⏳`;
+                    await new Promise(resolve => setTimeout(resolve, 10000));
                     continue;
                 }
                 return response;
@@ -248,7 +253,7 @@
             }
 
             if (!compressedImageBase64) {
-                alert("برجاء اختيار صورة أو التقاطها بالكاميرا أولاً!");
+                alert("برجاء اختيار صورة أولاً!");
                 return;
             }
 
@@ -257,63 +262,64 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة والمطابقة مع قواعد البيانات...";
+            loadingText.innerText = "جاري مطابقة الأدوية مع الدليل الدوائي وفحص التوافق العلاجي بين الأصناف المكتوبة...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are a Senior Expert Clinical Pharmacist with decades of experience and an ultra-precise Medical OCR AI engine.
+            const systemPrompt = `You are a Senior Pharmacist Expert and Medical OCR Engine operating under STRICT CLINICAL SAFETY AND DATABASE-VERIFICATION RULES.
 
-CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
+CRITICAL RULES TO ELIMINATE HALLUCINATIONS & INCORRECT DRUG GUESSING:
 
-1. EXPERT PHARMACIST HANDWRITING PATTERN ANALYSIS (FIRST/LAST LETTER & SHAPE PROXIMITY DEDUCTION):
-   - Analyze clear segments of the handwriting: Examine the STARTING letter/prefix (e.g., 'Eza...', 'Doli...', 'Cef...') and ENDING letter/suffix (e.g., '...card', '...prane', '...flam').
-   - When middle letters or strokes are cursive/blurry, use VISUAL SHAPE PROXIMITY logic (pharmacist deduction):
-     * Infer what letter the stroke is visually closest to (e.g., 'z' vs 's', 'c' vs 'e', 'r' vs 'v', 'p' vs 'b', ascenders vs descenders).
-     * Strictly preserve distinct visual markers like 'p' descenders (e.g. "Doliprane", "Panadol", "Plavix"). NEVER turn 'p' into 'b' or create fake words like "dolibran".
-     * Triangulate [First Letter(s) + Visual Middle Stroke Proximity + Last Letter(s)] to determine the intended trade name.
+1. ABSOLUTE REAL-DRUG DATABASE MATCHING:
+   - EVERY trade name you identify MUST be a real, registered commercial pharmaceutical drug in official drug databases (e.g., Egyptian Drug Authority - EDA, Middle East Registries, or Global FDA).
+   - NEVER output fake, misspelled, or hallucinated words (e.g., NEVER output invented names like "ezasa", "dolibran", "amoxilil"). You MUST output the verified real trade name like "Ezacard", "Doliprane", "Amoxil".
 
-2. MANDATORY REAL DRUG MAPPING & ZERO HALLUCINATIONS:
-   - FORBIDDEN to output non-existent phonetic errors or typos (e.g., NEVER output "ezasa" instead of "Ezacard", NEVER output "dolibran" instead of "Doliprane").
-   - Match your visual handwriting deduction against real registered drugs (Egyptian Drug Authority EDA / Global FDA databases). If visual strokes resemble "ezasa", correct it to the REAL registered drug "Ezacard" (or matching trade name).
+2. CROSS-MEDICATION CLINICAL TRIANGULATION (THERAPEUTIC CONTEXT):
+   - Prescriptions are written for specific medical conditions. Use the ENTIRE PRESCRIPTION as a clinical unit:
+     * If one drug is an Antibiotic (e.g. Augmentin/Cefotax), examine nearby items for Anti-inflammatories, Antipyretics, or Mucolytics.
+     * If one drug is an Antihypertensive/Cardiac medication (e.g. Concor/Ezacard), examine nearby items for Statin, Antiplatelet, or Antidiabetic drugs.
+     * If one drug is for GI/Stomach (e.g. Controloc/Antinal), look for complementary GI treatments.
+   - Use this therapeutic harmony to resolve ambiguous or sloppy handwriting. If a word looks vaguely like two candidates, CHOOSE THE ONE THAT MAKES THERAPEUTIC SENSE with the other drugs in the prescription.
 
-3. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
-   - For EVERY medication line, inspect:
-     a) Handwritten trade name.
-     b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab", "Cap").
-     c) Handwritten instructions directly underneath ("قرص يومياً", "قرص كل 8 ساعات", "حقنة عضل").
-   - Combine these 3 data points to confirm the EXACT REAL REGISTERED DRUG.
+3. STRICT UNCERTAINTY & CONFIDENCE HANDLING:
+   - If a handwritten drug name is extremely smudged or cut off, AND no therapeutic context guarantees a 100% match, DO NOT LIE OR GUESS CONFIDENTLY.
+   - Explicitly write the most probable REAL DRUG candidate and add a caution note: "[غير مؤكد بدقة 100% - يرجى التأكيد مع المريض/الصيدلي]".
 
-4. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
-   - Process ALL items written on the sheet sequentially from top to bottom without skipping any line.
+4. DETAILED PRESCRIPTION EXTRACTION:
+   - Read top-to-bottom without skipping any line.
+   - Include strength (e.g. 75mg, 500mg, 1g) and dosage form (Tab, Cap, Syrup, Injection, Cream) only as actually written or standardly manufactured.
 
-STRICT OUTPUT RULES:
-- In each medication header (###), include an HTML link button to view real images of the drug package on Google Images formatted exactly as:
-  <a href="https://www.google.com/search?tbm=isch&q=[EXACT_CORRECT_ENGLISH_DRUG_NAME]+[STRENGTH]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+FORMATTING REQUIREMENTS:
+- For every drug line (### header), generate a direct image search URL using the EXACT verified English trade name and strength:
+  <a href="https://www.google.com/search?tbm=isch&q=[VERIFIED_ENGLISH_NAME]+[STRENGTH]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
 
-- Output ONLY clean structured Arabic Markdown strictly matching this structure:
+- Respond strictly in structured Arabic Markdown as follows:
 
-## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (كاملة):
+## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (مدققة صيدلانياً):
 
-### 1. [اسم الدواء الصحيح المسجل بالإنجليزية والعربية] <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
-* **نوع المستحضر:** [مستورد / محلي]
+### 1. [اسم الدواء الصحيح المسجل بالإنجليزية والعربية] <a href="https://www.google.com/search?tbm=isch&q=[VERIFIED_ENGLISH_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+* **درجة المطابقة:** [مؤكد 100% / متوافق علاجياً مع باقي الروشتة]
+* **نوع المستحضر:** [محلّي / مستورد]
 * **الشكل الدوائي والتركيز:** ...
-* **المادة الفعالة / المكونات:** ...
-* **الجرعة/التعليمات المكتوبة:** ...
+* **المادة الفعالة:** ...
+* **الجرعة والتعليمات بالروشتة:** ...
 * **دواعي الاستعمال:** ...
-* **البدائل بالسوق المصري:** ...
+* **البدائل المتاحة بالسوق:** ...
 
-### 2. [اسم الدواء الثاني الصحيح المسجل] <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+### 2. [اسم الدواء الثاني المسجل] <a href="https://www.google.com/search?tbm=isch&q=[VERIFIED_ENGLISH_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+* **درجة المطابقة:** ...
 * **نوع المستحضر:** ...
 * **الشكل الدوائي والتركيز:** ...
-* **المادة الفعالة / المكونات:** ...
-* **الجرعة/التعليمات المكتوبة:** ...
+* **المادة الفعالة:** ...
+* **الجرعة والتعليمات بالروشتة:** ...
 * **دواعي الاستعمال:** ...
-* **البدائل بالسوق المصري:** ...
+* **البدائل المتاحة بالسوق:** ...
 
-(استمر بنفس النمط لكل العناصر دون استثناء صنف واحد)
+## 🩺 القراءة العلاجية للروشتة (التشخيص المتوقع):
+(توضيح الحالة المرضية المستهدفة من مجموعة الأدوية المكتوبة معاً لتأكيد الترابط العلاجي)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
-(أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
+(أي تنبيهات تخص التداخلات الدوائية أو أوقات الاستخدام)`;
 
             const requestData = {
                 systemInstruction: {
@@ -322,11 +328,11 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. حلل أول حرف وآخر حرف ورسمة الحروف المتشابهة لمنع أي أخطاء، وطابق الاستنتاج مع الأدوية الحقيقية المسجلة بالصيدليات (مثل Ezacard وDoliprane)، مع المسح الكامل لجميع أصناف الروشتة وإضافة روابط الصور." }
+                        { text: "حلل الروشتة صيدلانياً بأعلى درجة تدقيق. طابق كل كلمة مع الأدوية المسجلة فعلياً فقط، واستخدم الترابط العلاجي بين الأدوية لمعرفة الأدوية المكتوبة معاً ومنع أي تخمين خاطئ." }
                     ]
                 }],
                 generationConfig: {
-                    temperature: 0.05,
+                    temperature: 0.0, // Strict zero-temperature to eliminate guessing and hallucinations
                     maxOutputTokens: 4096
                 }
             };
@@ -364,4 +370,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-                        </html>
+</html>
