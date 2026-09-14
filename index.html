@@ -93,7 +93,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص النسيج الخطي والمطابقة مع قاعدة بيانات الأدوية عبر Gemini...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري التدقيق الصيدلاني الشامل وتفكيك الخط والمطابقة مع قواعد البيانات...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -158,7 +158,7 @@
             const statusText = document.getElementById('imageStatus');
 
             previewContainer.classList.remove('hidden');
-            statusText.innerText = "جاري تحسين الصورة للتحليل...";
+            statusText.innerText = "جاري تحسين وضوح الصورة ودقة الحروف...";
 
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -167,7 +167,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1600; // تم زيادة الأبعاد قليلاً لضمان وضوح الأحرف الصغيرة في الدواء الأخير
+                    const maxDim = 1800; // وضوح ألياف الخط لمطابقة الحروف المتشابهة
 
                     if (width > height && width > maxDim) {
                         height = Math.round((height * maxDim) / width);
@@ -182,7 +182,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
                     statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
@@ -206,7 +206,7 @@
                 if (response.status === 429 && attempt < maxRetries) {
                     loadingText.innerText = `السيرفر مشغول حالياً بطلبات متتالية، جاري الانتظار تلقائياً وإعادة المحاولة (${attempt}/${maxRetries})... ⏳`;
                     await new Promise(resolve => setTimeout(resolve, 12000));
-                    loadingText.innerText = "جاري إعادة الفحص والمطابقة...";
+                    loadingText.innerText = "جاري إعادة الفحص والمطابقة الصيدلانية...";
                     continue;
                 }
                 return response;
@@ -231,36 +231,37 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري التمحيص الدقيق للحروف والتأكد من الصنف الأخير والمطابقة الدوائية...";
+            loadingText.innerText = "جاري التدقيق الصيدلاني الشامل لكل أصناف الروشتة بالتساوي والمطابقة مع محركات الدواء...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
-            const systemPrompt = `You are an elite Egyptian clinical pharmacist and ultra-precise multilingual (Arabic & English) medical and pharmaceutical OCR AI engine.
+            const systemPrompt = `You are a Senior Expert Clinical Pharmacist with 20+ years of experience in reading difficult handwritten prescriptions and an ultra-precise medical OCR AI engine.
 
-CRITICAL OCR & COMPLETE READING INSTRUCTIONS:
-1. FULL EXHAUSTIVE SCANNING & ZERO TRUNCATION (SPECIAL FOCUS ON THE LAST ITEM):
-   - Scan the uploaded image completely from TOP to BOTTOM.
-   - You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, cosmeceutical, or pharmaceutical product written on the paper.
-   - ABSOLUTE FOCUS ON THE LAST/BOTTOM ITEM: Pay ultra-high precision attention to the final item written at the very bottom of the prescription. NEVER rush, truncate, misread, skip, or guess the last item. Treat the last item with equal or greater accuracy than the top items.
-   - Output ALL identified items numbered sequentially without missing any item.
+CRITICAL INSTRUCTIONS FOR BALANCED & ACCURATE PRESCRIPTION READING:
 
-2. LETTER-BY-LETTER CHARACTER MATCHING & AMBIGUITY RESOLUTION:
-   - Perform microscopic letter-by-letter visual verification for handwritten English and Arabic script.
-   - Resolve medical handwriting confusions strictly by inspecting subtle pen strokes:
-     * Differentiate: 'cl' vs 'd', 'rn' vs 'm', 'i' vs 'l', 'v' vs 'r', 'n' vs 'u', 'ex' vs 'ox', 'a' vs 'o', 'ph' vs 'f'.
-     * Differentiate medical abbreviations: 'tab', 'cap', 'syr', 'amp', 'vial', 'oint', 'susp', 'drops'.
-   - Match deciphered visual letter sequences against established pharmaceutical prefixes/suffixes (e.g., -prazole, -statin, -cef, -mycin, -fenac, -olol, -sartan, -floxacin, -tidine, -zole, -cort, -derm, etc.).
+1. EQUAL HIGH-PRECISION SCANNING (EVERY SINGLE ITEM):
+   - Scan the entire paper from TOP to BOTTOM.
+   - Treat EVERY SINGLE ITEM with equal clinical scrutiny and microscopic precision.
+   - Do NOT focus on one item at the expense of others. Item 1, Item 2, Item 3... and the final item MUST ALL be transcribed with 100% accuracy and complete details.
 
-3. CROSS-MATCHING WITH REAL PHARMACEUTICAL & GOOGLE DRUG DATABASES:
-   - Cross-verify every deciphered trade name against registered real drugs in the Egyptian Drug Authority (EDA) database, Egyptian market trade names, and Google-indexed medical reference databases (both Local & Imported).
-   - If handwriting has distorted characters, find the closest EXACT registered drug trade name available in pharmacies that matches the letters and context.
+2. STRICT REAL-WORLD PHARMACEUTICAL MATCHING (ZERO FAKE OR HALLUCINATED NAMES):
+   - Cross-verify deciphered visual letter sequences ONLY against genuine, officially registered trade names in Egyptian (EDA) and Global pharmaceutical databases.
+   - NEVER output fake, phonetically invented, or incorrect trade names (e.g., misreading "Cefobid" as "alphabid" is FORBIDDEN).
+   - RECOGNIZE PHARMACEUTICAL PREFIXES, SUFFIXES, AND DRUG FAMILIES:
+     * Cephalosporins / Antibiotics: 'Cef-' (e.g., Cefobid, Cefotax, Ceftriaxone, Cefzone, Cefzil). Do NOT confuse 'Cef-' with 'Alpha-' or 'Alp-'.
+     * Penicillins / Beta-lactams: 'Amox-', 'Augmentin', 'Unasyn'.
+     * NSAIDs / Painkillers: 'Volt-'/'-fenac' (Voltaren, Cataflam), 'Cata-'.
+     * Gastro-protective: '-prazole' (Controloc, Antodine, Gastrozole).
+     * Enzymes / Anti-edema: Alphintern, Ambezim.
+   - Inspect letter strokes meticulously to differentiate: 'Cef' vs 'Alpha', 'b' vs 'p', 'd' vs 'cl', 'o' vs 'a', 'rn' vs 'm'.
 
-4. STRICT CLINICAL LOGIC & ROUTE-INSTRUCTION CONSISTENCY:
-   - DOSAGE FORM vs. INSTRUCTION CROSS-VALIDATION:
-     * If handwritten instructions indicate oral administration (e.g., "قبل الإفطار", "بعد الأكل", "قرص", "كبسولة", "1 tab", "1 cap", "بلع"): The product MUST BE AN ORAL DOSAGE FORM (Tablets, Capsules, Syrup, Oral Drops). NEVER match or output a topical Gel, Cream, Ointment, Suppository, or Injection for oral instructions!
-     * If instructions say "دهان", "مساج", "موضعي": The product MUST be topical (Cream, Gel, Ointment, Lotion).
-     * If instructions say "حقنة", "عضل", "وريد": The product MUST be injectable (Ampoules/Vials).
-     * If instructions say "قطرة": The product MUST be Otic/Ophthalmic/Nasal drops.
+3. CLINICAL ROUTE & DOSAGE FORM CROSS-VALIDATION:
+   - Match written directions (Arabic/English) with dosage forms:
+     * If instructions say "حقنة", "عضل", "وريد", "vial", "amp": MUST match an injectable form (e.g., Cefobid 1g Vial/Ampoule).
+     * If instructions say "قبل الأكل", "بعد الغداء", "قرص", "كبسولة", "tab", "cap": MUST match an oral form.
+     * If instructions say "دهان", "مساج": MUST match a topical form (Cream/Gel).
+     * If instructions say "قطرة": MUST match Eye/Ear/Nasal drops.
+   - If handwriting is distorted, select the EXACT real-world registered drug that matches BOTH the visual pen strokes and the clinical usage/dosage form.
 
 STRICT OUTPUT RULES:
 - Never output internal thinking, alternative guesses, or monologues.
@@ -268,7 +269,7 @@ STRICT OUTPUT RULES:
 
 ## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (كاملة):
 
-### 1. [اسم الدواء/المستحضر الأول]
+### 1. [اسم الدواء/المستحضر الأول - بدقة صيدلانية 100%]
 * **نوع المستحضر:** [مستورد / محلي]
 * **الشكل الدوائي والتركيز:** ...
 * **المادة الفعالة / المكونات:** ...
@@ -284,7 +285,7 @@ STRICT OUTPUT RULES:
 * **دواعي الاستعمال:** ...
 * **البدائل بالسوق المصري:** ...
 
-(استمر بنفس النمط لكل العناصر المكتوبة بالصورة حتى آخر صنف بأسفل الورقة بدون استثناء)
+(استمر بنفس النمط لكل العناصر المكتوبة بالصورة من الأول إلى الأخير دون استثناء صنف واحد)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
 (أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
@@ -296,11 +297,11 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة كاملة من أعلى نقطة إلى آخر صنف مكتوب في الأسفل بدقة فائقة. قُم بفحص الحروف حرفاً بحرف ومطابقتها مع الدليل الدوائي ومحرك الأدوية بالسوق المصري والعالمي، وركّز بشكل خاص جداً على قراءة الدواء الأخير المكتوب بأسفل الورقة بدون أي خطأ." }
+                        { text: "اقرأ الورقة بالكامل صنفاً صنفاً بدقة صيدلي خبير من أول سطر إلى آخر سطر. طابق الحروف والمقاطع الطبية (مثل Cef- لـ Cefobid) مع المنتجات المسجلة في قواعد بيانات الأدوية الحقيقية بالسوق المصري والعالمي لمنع أي خطأ في اسم الدواء، مع الاهتمام بجميع الأصناف بالتساوي." }
                     ]
                 }],
                 generationConfig: {
-                    temperature: 0.1,
+                    temperature: 0.05, // تم تقليل درجة الحرارة للحد الأقصى لمنع التخمين والالتزام التام بالحقائق
                     maxOutputTokens: 4096
                 }
             };
