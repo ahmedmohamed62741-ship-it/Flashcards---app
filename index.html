@@ -265,45 +265,38 @@
 
 CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
 
-1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY (EXPERT PHARMACIST DEDUCTION):
+1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY:
    - Microscopically inspect every letter stroke, ascender, and descender.
    - RESPECT VISIBLE DISTINCT LETTERS STRICTLY:
-     * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran" or fake words.
-     * Recognize common top-tier Egyptian & global brand names immediately when letter strokes match:
-       - Paracetamol brands: Doliprane / Dolipran, Panadol, Cetal, Paramol, Abimol.
-       - Cephalosporins: Cefobid, Cefotax, Ceftriaxone, Cefzone, Cefzil, Cefurox, Cefodox.
-       - NSAIDs / Analgesics: Voltaren, Cataflam, Brufen, Ketofan.
-       - Anti-inflammatory enzymes: Alphintern, Ambezim.
-     * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha'.
+     * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran".
+     * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha', 'Ezacard' vs 'ezasa'.
 
-2. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
+2. MANDATORY REAL DRUG MAPPING & PHONETIC CORRECTION (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
+   - ABSOLUTELY FORBIDDEN to output non-existent, typos, or fake phonetic words (e.g. NEVER output "ezasa", "dolibran", "cefotac", "alphintren").
+   - IF OCR generates a string that does NOT exist in registered drug databases (like Egyptian Drug Authority EDA / Global FDA catalogs), YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name that matches the handwriting pattern and dosage context.
+     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to the REAL registered drug "Ezacard" (or "Ezetrol" / "Ezasmart" depending on strength/context).
+     * Example: If handwritten strokes look like "Dolipran" / "Doliprane", output "Doliprane" with 'p'.
+   - Every identified drug MUST be an EXACT real registered product available in pharmacies.
+
+3. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
    - For EVERY medication line, inspect:
      a) Handwritten trade name letters.
-     b) Any numbers, strengths, or dosage forms written DIRECTLY BESIDE the name (e.g., "1000mg", "500mg", "1g", "Vial", "Amp", "Tab", "Cap", "Syr", "Susp", "Supp", "Drops").
-     c) Any handwritten instructions or dosage frequencies written DIRECTLY UNDERNEATH the name (e.g., "قرص عند اللزوم", "قرص كل 8 ساعات", "حقنة عضل").
-   - COMBINE these 3 data points to deduce the EXACT REAL REGISTERED DRUG NAME (e.g. "Doliprane 1000mg Tab" for pain/fever).
-
-3. STRICT MATCHING WITH REAL REGISTERED DRUG DATABASES (ZERO HALLUCINATIONS):
-   - Every identified name MUST match an EXACT real registered product in the Egyptian Drug Authority (EDA) database or official global drug catalogs.
-   - ABSOLUTELY FORBIDDEN to output fake names, phonetically invented garbage, or non-existent pharmacy items.
+     b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab").
+     c) Handwritten instructions directly underneath ("قرص يومياً", "قرص بعد الأكل", "قرص كل 8 ساعات").
+   - COMBINE these 3 data points to confirm the EXACT REAL REGISTERED DRUG (e.g., "Ezacard 75mg Tab" for blood thinner/aspirin).
 
 4. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
-   - Process ALL items written on the sheet sequentially from top to bottom.
-   - Treat every single item—from the first line down to the very last line—with the exact same level of intense scrutiny and accuracy.
-
-5. CLINICAL ROUTE & DOSAGE FORM CROSS-VALIDATION:
-   - Match written directions with dosage forms (Oral instructions = Tablets/Capsules/Syrup; Topical instructions = Creams/Gels; Injections = Ampoules/Vials).
+   - Process ALL items written on the sheet sequentially from top to bottom without skipping a single line.
 
 STRICT OUTPUT RULES:
-- Never output internal thinking, alternative options, or conversational preamble.
 - In each medication header (###), include an HTML link button to view real images of the drug package on Google Images formatted exactly as:
-  <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]+[STRENGTH]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+  <a href="https://www.google.com/search?tbm=isch&q=[EXACT_CORRECT_ENGLISH_DRUG_NAME]+[STRENGTH]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
 
 - Output ONLY clean structured Arabic Markdown strictly matching this structure:
 
 ## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (كاملة):
 
-### 1. [اسم الدواء بالإنجليزية والعربية] <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+### 1. [اسم الدواء الصحيح المسجل بالإنجليزية والعربية] <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
 * **نوع المستحضر:** [مستورد / محلي]
 * **الشكل الدوائي والتركيز:** ...
 * **المادة الفعالة / المكونات:** ...
@@ -311,7 +304,7 @@ STRICT OUTPUT RULES:
 * **دواعي الاستعمال:** ...
 * **البدائل بالسوق المصري:** ...
 
-### 2. [اسم الدواء الثاني بالإنجليزية والعربية] <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
+### 2. [اسم الدواء الثاني الصحيح المسجل] <a href="https://www.google.com/search?tbm=isch&q=[EXACT_ENGLISH_DRUG_NAME]" target="_blank" class="img-link-btn"><i class="fa-solid fa-image"></i> عرض صور المنتج 🖼️</a>
 * **نوع المستحضر:** ...
 * **الشكل الدوائي والتركيز:** ...
 * **المادة الفعالة / المكونات:** ...
@@ -319,7 +312,7 @@ STRICT OUTPUT RULES:
 * **دواعي الاستعمال:** ...
 * **البدائل بالسوق المصري:** ...
 
-(استمر بنفس النمط لكل العناصر المكتوبة بالصورة من الأول إلى الأخير دون استثناء صنف واحد)
+(استمر بنفس النمط لكل العناصر دون استثناء صنف واحد)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
 (أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
@@ -331,7 +324,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل صنفاً صنفاً بدقة صيدلي خبير. ركز على دقة الحروف الواضحة مثل حرف p في Doliprane وعدم التخمين الخاطئ، واجمع بين اسم الدواء والتركيز بجانبه والتعليمات تحته لمطابقتها مع المنتجات الحقيقية المسجلة بالسوق المصري والعالمي، وأضف رابط معاينة صور الدواء لكل صنف." }
+                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. يمنع منعاً باتاً كِتابة أسماء وهمية مثل ezasa بل يجب مطابقتها وتصحيحها فوراً للاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard)، مع الحفاظ على دقة الحروف مثل p في Doliprane والمسح الكامل لجميع الأصناف." }
                     ]
                 }],
                 generationConfig: {
@@ -373,4 +366,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-</html>
+            </html>
