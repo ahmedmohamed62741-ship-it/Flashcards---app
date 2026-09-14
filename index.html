@@ -42,7 +42,7 @@
             فك شفرة الأوراق والروشتات الطبية 🩺
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            قراءة شاملة لأي ورقة تحتوي أدوية (عربي/إنجليزي) ومطابقتها بالسوق المصري والمستورد.
+            قراءة شاملة فائقة الدقة لأي ورقة أدوية (عربي/إنجليزي) ومطابقتها بالسوق المصري والمستورد.
         </p>
     </header>
 
@@ -57,7 +57,7 @@
                     <span class="text-[10px] text-emerald-400 font-normal">يُحفظ تلقائياً في متصفحك</span>
                 </label>
                 <div class="relative">
-                    <input type="password" id="apiKeyInput" oninput="saveApiKey()" placeholder="أدخل مفتاح AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono tracking-wider pl-10">
+                    <input type="password" id="apiKeyInput" oninput="saveApiKey()" placeholder="أدخل مفتاح AIzaSy الخاص بك..." class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono tracking-wider pl-10">
                     <button type="button" onclick="toggleKeyVisibility()" class="absolute left-3 top-2.5 text-slate-400 hover:text-slate-200 text-xs">
                         <i id="keyVisibilityIcon" class="fa-solid fa-eye"></i>
                     </button>
@@ -93,7 +93,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص النسيج الخطي والمطابقة مع قاعدة بيانات الأدوية عبر Gemini 3.6 Flash...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص النسيج الخطي والمطابقة مع قاعدة بيانات الأدوية عبر Gemini...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -120,7 +120,6 @@
         
         let compressedImageBase64 = null;
 
-        // تحميل المفتاح المحفوظ أو تعبئة المفتاح الافتراضي عند فتح الموقع
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('user_gemini_api_key');
             const keyInput = document.getElementById('apiKeyInput');
@@ -168,7 +167,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1400;
+                    const maxDim = 1600; // تم زيادة الأبعاد قليلاً لضمان وضوح الأحرف الصغيرة في الدواء الأخير
 
                     if (width > height && width > maxDim) {
                         height = Math.round((height * maxDim) / width);
@@ -183,7 +182,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
                     statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
@@ -197,6 +196,21 @@
                 alert("تعذر قراءة ملف الصورة من الجهاز.");
             };
             reader.readAsDataURL(file);
+        }
+
+        async function fetchWithAutoRetry(url, options, maxRetries = 3) {
+            const loadingText = document.getElementById('loadingText');
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                const response = await fetch(url, options);
+                
+                if (response.status === 429 && attempt < maxRetries) {
+                    loadingText.innerText = `السيرفر مشغول حالياً بطلبات متتالية، جاري الانتظار تلقائياً وإعادة المحاولة (${attempt}/${maxRetries})... ⏳`;
+                    await new Promise(resolve => setTimeout(resolve, 12000));
+                    loadingText.innerText = "جاري إعادة الفحص والمطابقة...";
+                    continue;
+                }
+                return response;
+            }
         }
 
         async function processPrescription() {
@@ -213,34 +227,43 @@
             }
 
             const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
+            loadingText.innerText = "جاري التمحيص الدقيق للحروف والتأكد من الصنف الأخير والمطابقة الدوائية...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
             const systemPrompt = `You are an elite Egyptian clinical pharmacist and ultra-precise multilingual (Arabic & English) medical and pharmaceutical OCR AI engine.
 
-CRITICAL INSTRUCTION FOR FULL OCR READ:
-Scan the uploaded image completely from TOP to BOTTOM. You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, cosmeceutical, or pharmaceutical product written on the paper (whether handwritten, typed, printed, prescription, note, list, invoice, or package). NEVER stop after the first item. Output ALL identified items numbered sequentially.
+CRITICAL OCR & COMPLETE READING INSTRUCTIONS:
+1. FULL EXHAUSTIVE SCANNING & ZERO TRUNCATION (SPECIAL FOCUS ON THE LAST ITEM):
+   - Scan the uploaded image completely from TOP to BOTTOM.
+   - You MUST identify and transcribe EVERY SINGLE ITEM, medication, supplement, cosmeceutical, or pharmaceutical product written on the paper.
+   - ABSOLUTE FOCUS ON THE LAST/BOTTOM ITEM: Pay ultra-high precision attention to the final item written at the very bottom of the prescription. NEVER rush, truncate, misread, skip, or guess the last item. Treat the last item with equal or greater accuracy than the top items.
+   - Output ALL identified items numbered sequentially without missing any item.
 
-STRICT CLINICAL LOGIC & ROUTE-INSTRUCTION CONSISTENCY (PREVENT FALSE MATCHES):
-1. DOSAGE FORM vs. INSTRUCTION CROSS-VALIDATION:
-   - If handwritten Arabic/English instructions indicate oral administration (e.g., "قبل الإفطار والغداء", "قبل الأكل", "بعد العشاء", "قرص", "كبسولة", "سفوف", "1 tab", "1 cap", "3 مرات يوميا بلع"): The product MUST BE AN ORAL DOSAGE FORM (Tablets, Capsules, Syrup, Oral Drops, Suspension). NEVER EVER match or output a topical Gel, Cream, Ointment, Suppository, or Injection for oral instructions!
-   - Example Case: If the letters resemble "Voltaren" but the instruction says "قبل الإفطار والغداء", it MUST be Voltaren Tablets (e.g. Voltaren 50mg or 75mg tablets) or a similar oral anti-inflammatory, NOT "Voltaren Gel"!
-   - If instructions say "دهان", "مساج", "موضعي", "دهان مساءً": The product MUST be a topical form (Cream, Gel, Ointment, Lotion, Spray).
-   - If instructions say "حقنة", "عضل", "وريد": The product MUST be an injectable formulation (Ampoules, Vials).
-   - If instructions say "قطرة عين/أذن/أنف": The product MUST be Otic/Ophthalmic/Nasal drops.
+2. LETTER-BY-LETTER CHARACTER MATCHING & AMBIGUITY RESOLUTION:
+   - Perform microscopic letter-by-letter visual verification for handwritten English and Arabic script.
+   - Resolve medical handwriting confusions strictly by inspecting subtle pen strokes:
+     * Differentiate: 'cl' vs 'd', 'rn' vs 'm', 'i' vs 'l', 'v' vs 'r', 'n' vs 'u', 'ex' vs 'ox', 'a' vs 'o', 'ph' vs 'f'.
+     * Differentiate medical abbreviations: 'tab', 'cap', 'syr', 'amp', 'vial', 'oint', 'susp', 'drops'.
+   - Match deciphered visual letter sequences against established pharmaceutical prefixes/suffixes (e.g., -prazole, -statin, -cef, -mycin, -fenac, -olol, -sartan, -floxacin, -tidine, -zole, -cort, -derm, etc.).
 
-2. MULTILINGUAL LETTER-BY-LETTER OCR & GOOGLE DATABASE MATCHING:
-   - Carefully analyze all handwritten or typed letters written in both ENGLISH and ARABIC.
-   - Match deciphered patterns strictly against verified real trade names available in the Egyptian & Global pharmaceutical databases (both Local & Imported).
-   - Tolerate handwriting noise, distorted pen strokes, doctor abbreviations, and common character confusions in both languages.
+3. CROSS-MATCHING WITH REAL PHARMACEUTICAL & GOOGLE DRUG DATABASES:
+   - Cross-verify every deciphered trade name against registered real drugs in the Egyptian Drug Authority (EDA) database, Egyptian market trade names, and Google-indexed medical reference databases (both Local & Imported).
+   - If handwriting has distorted characters, find the closest EXACT registered drug trade name available in pharmacies that matches the letters and context.
 
-3. ABSOLUTE PRECISE DEDUCTION: Combine handwriting strokes, dosage form logic, Arabic instruction notes, and active ingredients to deduce the exact product name with 100% precision. NEVER hallucinate fake drug names.
+4. STRICT CLINICAL LOGIC & ROUTE-INSTRUCTION CONSISTENCY:
+   - DOSAGE FORM vs. INSTRUCTION CROSS-VALIDATION:
+     * If handwritten instructions indicate oral administration (e.g., "قبل الإفطار", "بعد الأكل", "قرص", "كبسولة", "1 tab", "1 cap", "بلع"): The product MUST BE AN ORAL DOSAGE FORM (Tablets, Capsules, Syrup, Oral Drops). NEVER match or output a topical Gel, Cream, Ointment, Suppository, or Injection for oral instructions!
+     * If instructions say "دهان", "مساج", "موضعي": The product MUST be topical (Cream, Gel, Ointment, Lotion).
+     * If instructions say "حقنة", "عضل", "وريد": The product MUST be injectable (Ampoules/Vials).
+     * If instructions say "قطرة": The product MUST be Otic/Ophthalmic/Nasal drops.
 
 STRICT OUTPUT RULES:
-- Never output internal thinking, options, or monologues.
+- Never output internal thinking, alternative guesses, or monologues.
 - Output ONLY clean structured Arabic Markdown strictly matching this structure:
 
 ## 📋 المستحضرات والأدوية المكتوبة بالورقة/الروشتة (كاملة):
@@ -261,7 +284,7 @@ STRICT OUTPUT RULES:
 * **دواعي الاستعمال:** ...
 * **البدائل بالسوق المصري:** ...
 
-(استمر بنفس النمط لكل العناصر المكتوبة بالصورة بدون استثناء)
+(استمر بنفس النمط لكل العناصر المكتوبة بالصورة حتى آخر صنف بأسفل الورقة بدون استثناء)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
 (أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
@@ -273,7 +296,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة كاملة من البداية للنهاية. حلل خط الدكتور بدقة، وطابق طريقة الاستخدام المكتوبة (مثل قبل الإفطار والغداء) مع الشكل الدوائي الصحيح (أقراص/كبسولات وليس جيل أو دهان) للوصول للاسم الدقيق بالسوق المصري بنسبة 100%." }
+                        { text: "اقرأ الورقة كاملة من أعلى نقطة إلى آخر صنف مكتوب في الأسفل بدقة فائقة. قُم بفحص الحروف حرفاً بحرف ومطابقتها مع الدليل الدوائي ومحرك الأدوية بالسوق المصري والعالمي، وركّز بشكل خاص جداً على قراءة الدواء الأخير المكتوب بأسفل الورقة بدون أي خطأ." }
                     ]
                 }],
                 generationConfig: {
@@ -283,11 +306,14 @@ STRICT OUTPUT RULES:
             };
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${activeApiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestData)
-                });
+                const response = await fetchWithAutoRetry(
+                    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${activeApiKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    }
+                );
 
                 const data = await response.json();
 
@@ -296,7 +322,7 @@ STRICT OUTPUT RULES:
                     outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
                     outputContainer.classList.remove('hidden');
                 } else if (data.error) {
-                    alert("خطأ من السيرفر:\n" + data.error.message + "\n\n💡 إذا كان المفتاح محظوراً، يرجى كتابة مفتاح جديد في خانة المفتاح بالأعلى.");
+                    alert("خطأ من السيرفر:\n" + data.error.message);
                 }
             } catch (err) {
                 alert("خطأ اتصال: " + err.message);
@@ -312,4 +338,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-    </html>
+</html>
