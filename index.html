@@ -119,7 +119,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تقييم خط الروشتة وفحص المقاطع والأحرف الوسطية وتدقيق الأصناف مع قواعد البيانات...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -257,7 +257,7 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة والمطابقة مع قواعد البيانات...";
+            loadingText.innerText = "جاري تقييم خط الروشتة وفحص المقاطع والأحرف الوسطية وتدقيق الأصناف مع قواعد البيانات...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
@@ -372,6 +372,4 @@ STRICT OUTPUT RULES:
         function copyResult() {
             const text = document.getElementById('outputContent').innerText;
             navigator.clipboard.writeText(text);
-            alert("تم نسخ النتيجة بنجاح!");
-        }
-                        
+            alert("تم نسخ النتيجة 
