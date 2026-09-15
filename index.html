@@ -127,7 +127,7 @@
     </footer>
 
     <script>
-        const MODEL_NAME = "gemini-3.6-flash";
+        const MODEL_NAME = "gemini-2.5-flash";
         const API_KEY = "AQ.Ab8RN6JSauF03CsF6QJwln_OyIJ9skYrDmFVFMEaT5tUzY2XdA"; 
         
         let compressedImageBase64 = null;
@@ -246,20 +246,16 @@ STRICT OUTPUT RULES:
                 }
             };
 
-            let fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
-            let fetchHeaders = { 'Content-Type': 'application/json' };
-
             const cleanKey = API_KEY.trim();
-            if (cleanKey.startsWith("AQ") || cleanKey.startsWith("ya29")) {
-                fetchHeaders['Authorization'] = `Bearer ${cleanKey}`;
-            } else {
-                fetchUrl += `?key=${cleanKey}`;
-            }
+            const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${cleanKey}`;
 
             try {
                 const response = await fetch(fetchUrl, {
                     method: 'POST',
-                    headers: fetchHeaders,
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-goog-api-key': cleanKey
+                    },
                     body: JSON.stringify(requestData)
                 });
 
@@ -291,4 +287,4 @@ STRICT OUTPUT RULES:
         }
     </script>
 </body>
-                        </html>
+</html>
