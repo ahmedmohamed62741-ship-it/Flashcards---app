@@ -141,7 +141,7 @@
     </footer>
 
     <script>
-        const MODEL_NAME = "gemini-2.5-flash";
+        const MODEL_NAME = "gemini-3.6-flash";
         const DEFAULT_API_KEY = "AIzaSyD27DPVo13eAUyI7et0gSDx0Vv9a5q2LYU"; 
         
         let compressedImageBase64 = null;
@@ -257,7 +257,7 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري تقييم خط الروشتة وفحص المقاطع والأحرف الوسطية وتدقيق الأصناف مع قواعد البيانات...";
+            loadingText.innerText = "جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة والمطابقة مع قواعد البيانات...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
@@ -265,32 +265,37 @@
 
 CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
 
-1. ADAPTIVE HANDWRITING STRATEGY (CLEAR VS. ILLEGIBLE / SCRIBBLED):
-   - ASSESS HANDWRITING QUALITY FIRST:
-     a) IF HANDWRITING IS CLEAR & NEAT: Perform direct, high-precision OCR tokenization and match directly with registered drug databases.
-     b) IF HANDWRITING IS MESSY, SCRIBBLED, OR CURSIVE ("خط متلعبك وشخبطة"):
-        * DO NOT rely solely on start or end letters which doctors often scribble.
-        * MID-WORD INFIX EXTRACTION: Scan for sharp, distinct mid-word characters, vertical strokes, descenders, or syllables inside the scribble (e.g. inner letters like '-praz-', '-cl-', '-cin-', '-vasc-', '-trin-').
-        * MULTI-ANGLE CLINICAL TRIANGULATION: Combine recognized inner letters/stems with:
-            1. Concentration & Dosage Form written beside it ("75mg", "10mg", "Amp", "Tab", "Syr").
-            2. Dosage/Frequency instructions below it ("قرص قبل الأكل", "مرة يومياً").
-            3. Therapeutic class context derived from other clearly identified drugs in the same sheet.
-        * Query and map these combined clues strictly against official drug directories (Egyptian Drug Authority EDA / FDA / Google Medical Index) to pinpoint the EXACT real trade name.
-
-2. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY:
-   - Microscopically inspect every letter stroke, ascender, and descender.
+1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY:
+   - Microscopically inspect every letter stroke, ascender, descender, and middle-word letter pattern.
    - RESPECT VISIBLE DISTINCT LETTERS STRICTLY:
      * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran".
      * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha', 'Ezacard' vs 'ezasa'.
 
-3. MANDATORY REAL DRUG MAPPING & PHONETIC CORRECTION (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
+2. MIDDLE-LETTER ANCHORING & PARTIAL MATCHING:
+   - Identify clearly visible letter clusters or key middle/infix patterns within messy handwriting (e.g., "-card", "-zole", "cef-", "-ast", "-olol", "-tin").
+   - Use these anchor letters as fixed structural constraints to filter and cross-reference against official drug databases (like Egyptian Drug Authority EDA / FDA), ensuring partial or scrawled words are accurately reconstructed to real registered trade names.
+
+3. ADAPTIVE HANDWRITING REASONING:
+   - FOR CLEAR / GOOD HANDWRITING:
+     * Focus on precise direct OCR translation and provide immediate high-yield practical clinical pearls and execution tips for each item.
+   - FOR MESSY / SCRAWLED / UNREADABLE HANDWRITING:
+     * Activate deep forensic triangulation. Combine readable middle/anchor letters, dosage strength (e.g., 75mg, 500mg), form (tab, syrup, vial), and usage instructions ("قرص بعد الأكل") to deduce and map to the single most probable, real registered trade name in the drug database.
+
+4. MANDATORY REAL DRUG MAPPING (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
    - ABSOLUTELY FORBIDDEN to output non-existent, typos, or fake phonetic words (e.g. NEVER output "ezasa", "dolibran", "cefotac", "alphintren").
-   - IF OCR generates a string that does NOT exist in registered drug databases (like Egyptian Drug Authority EDA / Global FDA catalogs), YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name that matches the handwriting pattern and dosage context.
-     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to the REAL registered drug "Ezacard" (or "Ezetrol" / "Ezasmart" depending on strength/context).
+   - IF OCR generates a string that does NOT exist in registered drug databases, YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name.
+     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to "Ezacard" (or "Ezetrol" / "Ezasmart").
      * Example: If handwritten strokes look like "Dolipran" / "Doliprane", output "Doliprane" with 'p'.
    - Every identified drug MUST be an EXACT real registered product available in pharmacies.
 
-4. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
+5. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
+   - For EVERY medication line, inspect:
+     a) Handwritten trade name letters & middle anchors.
+     b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab").
+     c) Handwritten instructions directly underneath ("قرص يومياً", "قرص بعد الأكل", "قرص كل 8 ساعات").
+   - COMBINE these data points to confirm the EXACT REAL REGISTERED DRUG.
+
+6. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
    - Process ALL items written on the sheet sequentially from top to bottom without skipping a single line.
 
 STRICT OUTPUT RULES:
@@ -320,7 +325,7 @@ STRICT OUTPUT RULES:
 (استمر بنفس النمط لكل العناصر دون استثناء صنف واحد)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
-(أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
+(أي تعارضات، تنبيهات، أو نصائح واستشارات صيدلانية خاصة بالاستخدام)`;
 
             const requestData = {
                 systemInstruction: {
@@ -329,7 +334,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "حلل الروشتة بأسلوب صيدلي خبير: قيم جودة الخط أولاً، وإذا كان الخط متلعبكاً أو شخبطة استخرج الحروف الوسطية الواضحة والتركيز وطابقها بالدليل الدوائي المصري/العالمي لكتابة الاسم التجاري الصحيح والمسجل بدون أي اختراعات." }
+                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. استغل أي حروف أو مقاطع واضحة في منتصف الكلمة لتحديد الدواء، وإذا كان الخط متلعبكاً استعين بالتركيز والتعليمات والمطابقة بالدليل الدوائي لإخراج الاسم التجاري المسجل الصحيح (مثل Ezacard وDoliprane). إذا كان الخط واضحاً قدّم مع النتيجة نصائح واستشارات صيدلانية مفيدة." }
                     ]
                 }],
                 generationConfig: {
@@ -369,6 +374,4 @@ STRICT OUTPUT RULES:
             navigator.clipboard.writeText(text);
             alert("تم نسخ النتيجة بنجاح!");
         }
-    </script>
-</body>
-                            </html>
+                        
