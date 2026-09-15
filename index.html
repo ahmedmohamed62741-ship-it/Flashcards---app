@@ -1,202 +1,19 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ الروشتات والأوراق الطبية 🩺</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
-        body { font-family: 'Cairo', sans-serif; }
-        
-        #outputContent h2 { 
-            font-size: 1.3rem; 
-            font-weight: 800; 
-            color: #38bdf8; 
-            border-right: 4px solid #0284c7; 
-            padding-right: 0.75rem; 
-            margin-top: 1.5rem; 
-            margin-bottom: 0.75rem; 
-        }
-        #outputContent h3 { 
-            font-size: 1.15rem; 
-            font-weight: 700; 
-            color: #34d399; 
-            margin-top: 1.25rem; 
-            margin-bottom: 0.5rem; 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            background: #1e293b;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.5rem;
-            border: 1px solid #334155;
-        }
-        #outputContent ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; }
-        #outputContent li { margin-bottom: 0.4rem; line-height: 1.8; }
-        #outputContent strong { color: #facc15; font-weight: 700; }
-        #outputContent table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: #0f172a; border-radius: 0.75rem; overflow: hidden; }
-        #outputContent th, #outputContent td { border: 1px solid #334155; padding: 0.75rem; text-align: right; }
-        #outputContent th { background: #1e293b; color: #38bdf8; font-weight: 700; }
-        .img-link-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background-color: #0284c7;
-            color: #ffffff !important;
-            padding: 0.3rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .img-link-btn:hover {
-            background-color: #0369a1;
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-8">
+async function processPrescription() {
+    if (!compressedImageBase64) {
+        alert("برجاء اختيار صورة أو التقاطها بالكاميرا أولاً!");
+        return;
+    }
 
-    <header class="max-w-4xl mx-auto w-full text-center my-4">
-        <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-            فك شفرة الأوراق والروشتات الطبية 🩺
-        </h1>
-        <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            قراءة شاملة فائقة الدقة لأي ورقة أدوية (عربي/إنجليزي) ومطابقتها بالسوق مع إمكانية معاينة صور الدواء.
-        </p>
-    </header>
+    const loading = document.getElementById('loading');
+    const loadingText = document.getElementById('loadingText');
+    const outputContainer = document.getElementById('outputContainer');
+    const outputContent = document.getElementById('outputContent');
 
-    <main class="max-w-4xl mx-auto w-full space-y-6">
+    loadingText.innerText = "جاري فحص الحروف وتدقيق الأصناف والمطابقة الصيدلانية...";
+    loading.classList.remove('hidden');
+    outputContainer.classList.add('hidden');
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
-            
-            <div id="rxInputSection" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label for="cameraInput" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30 shadow-md cursor-pointer select-none">
-                        <i class="fa-solid fa-camera text-2xl"></i>
-                        <span class="text-sm">تصوير الورقة مباشرة 📷</span>
-                        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
-                    </label>
-
-                    <label for="galleryInput" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-slate-700 shadow-md cursor-pointer select-none">
-                        <i class="fa-solid fa-images text-2xl text-blue-400"></i>
-                        <span class="text-sm">اختيار صورة من المعرض 🖼️</span>
-                        <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
-                    </label>
-                </div>
-
-                <div id="imagePreviewContainer" class="hidden text-center space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800 overflow-hidden">
-                    <img id="imagePreview" src="" class="max-h-80 mx-auto rounded-lg object-contain shadow-md border border-slate-800">
-                    <p id="imageStatus" class="text-xs text-emerald-400 font-bold">جاهزية الصورة للتحليل ⚡</p>
-                </div>
-            </div>
-
-            <button id="processBtn" onclick="processPrescription()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3.5 px-6 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 text-sm cursor-pointer select-none">
-                <i class="fa-solid fa-microscope text-xl"></i>
-                <span>قراءة وفحص الروشتة</span>
-            </button>
-        </div>
-
-        <div id="loading" class="hidden text-center py-6 space-y-2">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص الحروف بدقة صيدلانية وتدقيق الأصناف...</p>
-        </div>
-
-        <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 id="resultHeader" class="text-base font-bold text-emerald-400 flex items-center gap-2 border-0 bg-transparent p-0 m-0">
-                    <i class="fa-solid fa-file-medical text-lg"></i> النتيجة الصيدلانية المعتمدة
-                </h3>
-                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700 transition flex items-center gap-1 cursor-pointer select-none">
-                    <i class="fa-solid fa-copy"></i> نسخ النتيجة
-                </button>
-            </div>
-            <div id="outputContent" class="text-slate-300 text-xs md:text-sm leading-relaxed"></div>
-        </div>
-
-    </main>
-
-    <footer class="text-center text-slate-600 text-xs my-6">
-        تنبيه: هذا التطبيق لأغراض تعليمية ومساعدة العمل بالصيدلية. يرجى دائماً المراجعة الدقيقة قبل صرف الدواء.
-    </footer>
-
-    <script>
-        const MODEL_NAME = "gemini-2.5-flash";
-        const API_KEY = "AQ.Ab8RN6JSauF03CsF6QJwln_OyIJ9skYrDmFVFMEaT5tUzY2XdA"; 
-        
-        let compressedImageBase64 = null;
-
-        function handleImageSelect(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            const previewImg = document.getElementById('imagePreview');
-            const statusText = document.getElementById('imageStatus');
-
-            previewContainer.classList.remove('hidden');
-            statusText.innerText = "جاري ضغط الصورة وتجهيز الحواف...";
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = new Image();
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const maxDim = 1280;
-
-                    if (width > height && width > maxDim) {
-                        height = Math.round((height * maxDim) / width);
-                        width = maxDim;
-                    } else if (height > maxDim) {
-                        width = Math.round((width * maxDim) / height);
-                        height = maxDim;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                    compressedImageBase64 = dataUrl.split(',')[1];
-                    previewImg.src = dataUrl;
-                    statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
-                };
-                img.onerror = function() {
-                    alert("تعذر تحميل الصورة، جرب صورة أخرى.");
-                };
-                img.src = e.target.result;
-            };
-            reader.onerror = function() {
-                alert("تعذر قراءة ملف الصورة من الجهاز.");
-            };
-            reader.readAsDataURL(file);
-        }
-
-        async function processPrescription() {
-            if (!compressedImageBase64) {
-                alert("برجاء اختيار صورة أو التقاطها بالكاميرا أولاً!");
-                return;
-            }
-
-            const loading = document.getElementById('loading');
-            const loadingText = document.getElementById('loadingText');
-            const outputContainer = document.getElementById('outputContainer');
-            const outputContent = document.getElementById('outputContent');
-
-            loadingText.innerText = "جاري فحص الحروف وتدقيق الأصناف والمطابقة الصيدلانية...";
-            loading.classList.remove('hidden');
-            outputContainer.classList.add('hidden');
-
-            const systemPrompt = `You are a Senior Expert Clinical Pharmacist with decades of experience and an ultra-precise Medical OCR AI engine.
+    const systemPrompt = `You are a Senior Expert Clinical Pharmacist with decades of experience and an ultra-precise Medical OCR AI engine.
 
 DYNAMIC HANDWRITING ADAPTATION STRATEGY:
 1. PRIMARY MODE (CLEAR HANDWRITING): Scan and read each medication line sequentially top-to-bottom using standard OCR visual pattern matching.
@@ -230,61 +47,61 @@ STRICT OUTPUT RULES:
 ## ⚠️ إرشادات وملاحظات صيدلانية:
 (أي تعارضات أو تنبيهات خاصة)`;
 
-            const requestData = {
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-                contents: [{
-                    parts: [
-                        { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل بدقة. إذا كان الخط واضحاً اقرأه مباشرة، وإذا كان الخط منكعبل اعتمد على الحروف الوسطية المميزة لتحديد الاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard بدل ezasa) واستخرج كل الأصناف." }
-                    ]
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 3000
-                }
-            };
+    const requestData = {
+        systemInstruction: {
+            parts: [{ text: systemPrompt }]
+        },
+        contents: [{
+            parts: [
+                { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
+                { text: "اقرأ الورقة بالكامل بدقة. إذا كان الخط واضحاً اقرأه مباشرة، وإذا كان الخط منكعبل اعتمد على الحروف الوسطية المميزة لتحديد الاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard بدل ezasa) واستخرج كل الأصناف." }
+            ]
+        }],
+        generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 3000
+        }
+    };
 
-            const cleanKey = API_KEY.trim();
-            const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${cleanKey}`;
+    const cleanKey = API_KEY.trim();
+    
+    // تجهيز الهيدر والـ URL بحسب نوع المفتاح
+    const headers = { 'Content-Type': 'application/json' };
+    let fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
 
-            try {
-                const response = await fetch(fetchUrl, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'x-goog-api-key': cleanKey
-                    },
-                    body: JSON.stringify(requestData)
-                });
+    if (cleanKey.startsWith("AQ.") || cleanKey.startsWith("ya29.")) {
+        // توكن توثيق OAuth
+        headers['Authorization'] = `Bearer ${cleanKey}`;
+    } else {
+        // مفتاح API عادي (AIzaSy)
+        headers['x-goog-api-key'] = cleanKey;
+        fetchUrl += `?key=${cleanKey}`;
+    }
 
-                const data = await response.json();
+    try {
+        const response = await fetch(fetchUrl, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestData)
+        });
 
-                if (response.status === 429) {
-                    alert("⚠️ تم استهلاك الحد الأقصى لطلبات السيرفر، يرجى المحاولة بعد قليل.");
-                    loading.classList.add('hidden');
-                    return;
-                }
+        const data = await response.json();
 
-                if (response.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
-                    const rawMarkdown = data.candidates[0].content.parts[0].text;
-                    outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
-                    outputContainer.classList.remove('hidden');
-                } else if (data.error) {
-                    alert("خطأ من السيرفر:\n" + (data.error.message || "حدث خطأ أثناء معالجة الطلب"));
-                }
-            } catch (err) {
-                alert("خطأ اتصال بالشبكة: " + err.message);
-            }
+        if (response.status === 429) {
+            alert("⚠️ تم استهلاك الحد الأقصى لطلبات السيرفر، يرجى المحاولة بعد قليل.");
             loading.classList.add('hidden');
+            return;
         }
 
-        function copyResult() {
-            const text = document.getElementById('outputContent').innerText;
-            navigator.clipboard.writeText(text);
-            alert("تم نسخ النتيجة بنجاح!");
+        if (response.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
+            const rawMarkdown = data.candidates[0].content.parts[0].text;
+            outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
+            outputContainer.classList.remove('hidden');
+        } else if (data.error) {
+            alert("خطأ من السيرفر:\n" + (data.error.message || "حدث خطأ أثناء معالجة الطلب"));
         }
-    </script>
-</body>
-</html>
+    } catch (err) {
+        alert("خطأ اتصال بالشبكة: " + err.message);
+    }
+    loading.classList.add('hidden');
+}
