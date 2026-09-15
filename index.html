@@ -93,14 +93,14 @@
             <div id="rxInputSection" class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label for="cameraInput" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30 shadow-md cursor-pointer select-none">
-                        <i class="fa-solid fa-camera text-2xl pointer-events-none"></i>
-                        <span class="text-sm pointer-events-none">تصوير الورقة مباشرة 📷</span>
-                        <input type="file" id="cameraInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
+                        <i class="fa-solid fa-camera text-2xl"></i>
+                        <span class="text-sm">تصوير الورقة مباشرة 📷</span>
+                        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
                     </label>
 
                     <label for="galleryInput" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-slate-700 shadow-md cursor-pointer select-none">
-                        <i class="fa-solid fa-images text-2xl text-blue-400 pointer-events-none"></i>
-                        <span class="text-sm pointer-events-none">اختيار صورة من المعرض 🖼️</span>
+                        <i class="fa-solid fa-images text-2xl text-blue-400"></i>
+                        <span class="text-sm">اختيار صورة من المعرض 🖼️</span>
                         <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
                     </label>
                 </div>
@@ -119,7 +119,7 @@
 
         <div id="loading" class="hidden text-center py-6 space-y-2">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
-            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري تقييم خط الروشتة وفحص المقاطع والأحرف الوسطية وتدقيق الأصناف مع قواعد البيانات...</p>
+            <p id="loadingText" class="text-slate-400 text-xs font-semibold animate-pulse">جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة...</p>
         </div>
 
         <div id="outputContainer" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
@@ -193,7 +193,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1400;
+                    const maxDim = 1800;
 
                     if (width > height && width > maxDim) {
                         height = Math.round((height * maxDim) / width);
@@ -208,7 +208,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
                     statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
@@ -222,8 +222,6 @@
                 alert("تعذر قراءة ملف الصورة من الجهاز.");
             };
             reader.readAsDataURL(file);
-
-            event.target.value = '';
         }
 
         async function fetchWithAutoRetry(url, options, maxRetries = 3) {
@@ -259,7 +257,7 @@
             const outputContainer = document.getElementById('outputContainer');
             const outputContent = document.getElementById('outputContent');
 
-            loadingText.innerText = "جاري تقييم خط الروشتة وفحص المقاطع والأحرف الوسطية وتدقيق الأصناف مع قواعد البيانات...";
+            loadingText.innerText = "جاري فحص الحروف بدقة صيدلانية فائقة وتدقيق الأصناف المكتوبة والمطابقة مع قواعد البيانات...";
             loading.classList.remove('hidden');
             outputContainer.classList.add('hidden');
 
@@ -268,36 +266,26 @@
 CRITICAL MANDATORY OCR & PHARMACEUTICAL RULES:
 
 1. ABSOLUTE LETTER ACCURACY & VISUAL FIDELITY:
-   - Microscopically inspect every letter stroke, ascender, descender, and middle-word letter pattern.
+   - Microscopically inspect every letter stroke, ascender, and descender.
    - RESPECT VISIBLE DISTINCT LETTERS STRICTLY:
      * If the descender letter 'p' is visible (e.g. in "Doliprane", "Dolipran", "Panadol", "Plavix", "Prospan"), NEVER ignore or substitute 'p' with 'b' or invent a non-existent brand name like "dolibran".
      * Differentiate: 'p' vs 'b', 'd' vs 'cl', 't' vs 'l', 'Cef' vs 'Alpha', 'Ezacard' vs 'ezasa'.
 
-2. MIDDLE-LETTER ANCHORING & PARTIAL MATCHING:
-   - Identify clearly visible letter clusters or key middle/infix patterns within messy handwriting (e.g., "-card", "-zole", "cef-", "-ast", "-olol", "-tin").
-   - Use these anchor letters as fixed structural constraints to filter and cross-reference against official drug databases (like Egyptian Drug Authority EDA / FDA), ensuring partial or scrawled words are accurately reconstructed to real registered trade names.
-
-3. ADAPTIVE HANDWRITING REASONING:
-   - FOR CLEAR / GOOD HANDWRITING:
-     * Focus on precise direct OCR translation and provide immediate high-yield practical clinical pearls and execution tips for each item.
-   - FOR MESSY / SCRAWLED / UNREADABLE HANDWRITING:
-     * Activate deep forensic triangulation. Combine readable middle/anchor letters, dosage strength (e.g., 75mg, 500mg), form (tab, syrup, vial), and usage instructions ("قرص بعد الأكل") to deduce and map to the single most probable, real registered trade name in the drug database.
-
-4. MANDATORY REAL DRUG MAPPING (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
+2. MANDATORY REAL DRUG MAPPING & PHONETIC CORRECTION (ZERO PSEUDO-NAMES / ZERO HALLUCINATIONS):
    - ABSOLUTELY FORBIDDEN to output non-existent, typos, or fake phonetic words (e.g. NEVER output "ezasa", "dolibran", "cefotac", "alphintren").
-   - IF OCR generates a string that does NOT exist in registered drug databases, YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name.
-     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to "Ezacard" (or "Ezetrol" / "Ezasmart").
+   - IF OCR generates a string that does NOT exist in registered drug databases (like Egyptian Drug Authority EDA / Global FDA catalogs), YOU MUST IMMEDIATELY CROSS-CHECK & CORRECT IT to the real registered commercial trade name that matches the handwriting pattern and dosage context.
+     * Example: If handwritten strokes look like "ezasa" or "Eza-card", map it to the REAL registered drug "Ezacard" (or "Ezetrol" / "Ezasmart" depending on strength/context).
      * Example: If handwritten strokes look like "Dolipran" / "Doliprane", output "Doliprane" with 'p'.
    - Every identified drug MUST be an EXACT real registered product available in pharmacies.
 
-5. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
+3. CONTEXTUAL TRIANGULATION (READ NEXT TO & BELOW EACH ITEM):
    - For EVERY medication line, inspect:
-     a) Handwritten trade name letters & middle anchors.
+     a) Handwritten trade name letters.
      b) Numbers, strengths, or dosage forms beside the name ("75mg", "1000mg", "500mg", "Vial", "Tab").
      c) Handwritten instructions directly underneath ("قرص يومياً", "قرص بعد الأكل", "قرص كل 8 ساعات").
-   - COMBINE these data points to confirm the EXACT REAL REGISTERED DRUG.
+   - COMBINE these 3 data points to confirm the EXACT REAL REGISTERED DRUG (e.g., "Ezacard 75mg Tab" for blood thinner/aspirin).
 
-6. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
+4. BALANCED & COMPLETE SCANNING (TOP TO BOTTOM):
    - Process ALL items written on the sheet sequentially from top to bottom without skipping a single line.
 
 STRICT OUTPUT RULES:
@@ -327,7 +315,7 @@ STRICT OUTPUT RULES:
 (استمر بنفس النمط لكل العناصر دون استثناء صنف واحد)
 
 ## ⚠️ إرشادات وملاحظات صيدلانية:
-(أي تعارضات، تنبيهات، أو نصائح واستشارات صيدلانية خاصة بالاستخدام)`;
+(أي تعارضات، تنبيهات، أو ملاحظات خاصة بالاستخدام)`;
 
             const requestData = {
                 systemInstruction: {
@@ -336,7 +324,7 @@ STRICT OUTPUT RULES:
                 contents: [{
                     parts: [
                         { inlineData: { mimeType: 'image/jpeg', data: compressedImageBase64 } },
-                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. استغل أي حروف أو مقاطع واضحة في منتصف الكلمة لتحديد الدواء، وإذا كان الخط متلعبكاً استعين بالتركيز والتعليمات والمطابقة بالدليل الدوائي لإخراج الاسم التجاري المسجل الصحيح (مثل Ezacard وDoliprane). إذا كان الخط واضحاً قدّم مع النتيجة نصائح واستشارات صيدلانية مفيدة." }
+                        { text: "اقرأ الورقة بالكامل بدقة صيدلي خبير. يمنع منعاً باتاً كِتابة أسماء وهمية مثل ezasa بل يجب مطابقتها وتصحيحها فوراً للاسم التجاري الحقيقي المسجل في الصيدليات (مثل Ezacard)، مع الحفاظ على دقة الحروف مثل p في Doliprane والمسح الكامل لجميع الأصناف." }
                     ]
                 }],
                 generationConfig: {
@@ -372,4 +360,10 @@ STRICT OUTPUT RULES:
         }
 
         function copyResult() {
-            const text = document.getElementById('outputContent'
+            const text = document.getElementById('outputContent').innerText;
+            navigator.clipboard.writeText(text);
+            alert("تم نسخ النتيجة بنجاح!");
+        }
+    </script>
+</body>
+                        </html>
