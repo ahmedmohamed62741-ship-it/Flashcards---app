@@ -93,14 +93,14 @@
             <div id="rxInputSection" class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label for="cameraInput" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-emerald-400/30 shadow-md cursor-pointer select-none">
-                        <i class="fa-solid fa-camera text-2xl"></i>
-                        <span class="text-sm">تصوير الورقة مباشرة 📷</span>
-                        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
+                        <i class="fa-solid fa-camera text-2xl pointer-events-none"></i>
+                        <span class="text-sm pointer-events-none">تصوير الورقة مباشرة 📷</span>
+                        <input type="file" id="cameraInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
                     </label>
 
                     <label for="galleryInput" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-bold py-4 px-4 rounded-xl text-center flex flex-col items-center justify-center gap-1.5 transition border border-slate-700 shadow-md cursor-pointer select-none">
-                        <i class="fa-solid fa-images text-2xl text-blue-400"></i>
-                        <span class="text-sm">اختيار صورة من المعرض 🖼️</span>
+                        <i class="fa-solid fa-images text-2xl text-blue-400 pointer-events-none"></i>
+                        <span class="text-sm pointer-events-none">اختيار صورة من المعرض 🖼️</span>
                         <input type="file" id="galleryInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
                     </label>
                 </div>
@@ -193,7 +193,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1800;
+                    const maxDim = 1400;
 
                     if (width > height && width > maxDim) {
                         height = Math.round((height * maxDim) / width);
@@ -208,7 +208,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
                     compressedImageBase64 = dataUrl.split(',')[1];
                     previewImg.src = dataUrl;
                     statusText.innerText = "تم رفع الصورة بنجاح وجاهزة للتحليل ⚡";
@@ -222,6 +222,8 @@
                 alert("تعذر قراءة ملف الصورة من الجهاز.");
             };
             reader.readAsDataURL(file);
+
+            event.target.value = '';
         }
 
         async function fetchWithAutoRetry(url, options, maxRetries = 3) {
@@ -370,6 +372,4 @@ STRICT OUTPUT RULES:
         }
 
         function copyResult() {
-            const text = document.getElementById('outputContent').innerText;
-            navigator.clipboard.writeText(text);
-            alert("تم نسخ النتيجة 
+            const text = document.getElementById('outputContent'
