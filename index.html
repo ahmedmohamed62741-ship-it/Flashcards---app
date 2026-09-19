@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مصنع الجرافيك والملابس بالذكاء الاصطناعي - AI Art Studio</title>
+    <title>استوديو الإعلانات والجرافيك بالذكاء الاصطناعي - AI Ad Studio</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -11,11 +11,11 @@
     <!-- Fabric.js Canvas Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800&family=Amiri:wght@700&family=El+Messiri:wght@700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; }
         .loader {
-            border: 4px solid #374151;
+            border: 4px solid #334155;
             border-top: 4px solid #6366f1;
             border-radius: 50%;
             width: 36px;
@@ -28,22 +28,22 @@
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 flex justify-between items-center">
+    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg text-white">
-                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-rectangle-ad text-2xl"></i>
             </div>
             <div>
-                <h1 class="text-xl font-black text-white">AI Apparel Studio</h1>
-                <p class="text-xs text-indigo-400">توليد رسومات وجرافيك بالذكاء الاصطناعي</p>
+                <h1 class="text-xl font-black text-white">AI Product Ad Studio</h1>
+                <p class="text-xs text-indigo-400">تصميم إعلانات المنتجات والجرافيك بالذكاء الاصطناعي</p>
             </div>
         </div>
         <div class="flex gap-2">
-            <button onclick="exportPNG()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg text-xs md:text-sm flex items-center gap-2 transition">
-                <i class="fa-solid fa-download"></i> تنزيل التصميم (PNG)
+            <button onclick="exportAd('png')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg text-xs md:text-sm flex items-center gap-2 transition shadow-md">
+                <i class="fa-solid fa-download"></i> تصدير إعلان (PNG 4K)
             </button>
-            <button onclick="exportMockup()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg text-xs md:text-sm flex items-center gap-2 transition">
-                <i class="fa-solid fa-image"></i> تنزيل الموك آب
+            <button onclick="exportAd('jpg')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg text-xs md:text-sm flex items-center gap-2 transition shadow-md">
+                <i class="fa-solid fa-file-image"></i> حفظ صورة (JPG)
             </button>
         </div>
     </header>
@@ -54,81 +54,114 @@
         <!-- Left Controls Panel -->
         <div class="w-full lg:w-1/3 bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-5 overflow-y-auto max-h-[85vh]">
             
-            <!-- AI Image Generator Section -->
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/30 space-y-3">
+            <!-- 1. AI Background Generator -->
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-indigo-500/30 space-y-3">
                 <h2 class="text-md font-bold text-indigo-300 flex items-center gap-2">
-                    <i class="fa-solid fa-palette text-amber-400"></i> مولّد الرسومات والجرافيك بالذكاء الاصطناعي
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 1. خلفية إعلانية بالذكاء الاصطناعي
                 </h2>
-                <p class="text-xs text-slate-400">اكتب وصف الرسمة التي تتخيلها بالإنجليزية أو العربية، وسيقوم الذكاء الاصطناعي برسمها فوراً:</p>
+                <p class="text-xs text-slate-400">اكتب فكرة الخلفية المناسبة لمنتجك وسيرسمها الذكاء الاصطناعي سينمائياً:</p>
                 
-                <div>
-                    <textarea id="aiPromptInput" rows="3" placeholder="مثال: Cyberpunk futuristic lion head, streetwear vector design, t-shirt graphic..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-indigo-500"></textarea>
-                </div>
+                <textarea id="aiPromptInput" rows="2" placeholder="مثال: Luxurious podium with tropical leaves and golden sunlight for perfume..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"></textarea>
 
-                <!-- Style Presets -->
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">ستايل الرسمة:</label>
+                    <label class="block text-xs text-slate-400 mb-1">نوع المنتج / الاستايل الإعلاني:</label>
                     <select id="styleSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
-                        <option value="streetwear vector illustration, t-shirt design, isolated on black background">ستريت وير / فتكات (Streetwear)</option>
-                        <option value="anime style graphic, bold lines, high detail, t-shirt print">أنمي / جرافيك أنمي (Anime Art)</option>
-                        <option value="cyberpunk neon lighting, detailed vector art">سايبربانك نيون (Cyberpunk Neon)</option>
-                        <option value="vintage retro 90s t-shirt graphic, distressed style">ريترو تسعينات (Vintage Retro)</option>
-                        <option value="minimalist modern logo vector, clean shapes">شعارات ولوجو مودرن (Minimalist Logo)</option>
+                        <option value="luxury podium display, soft studio lighting, cinematic ad background, high detail">عطور ومستحضرات تجميل (Luxury & Perfume)</option>
+                        <option value="modern urban streetwear background, neon lights, asphalt, cinematic shadow">أحذية وموضة (Shoes & Fashion)</option>
+                        <option value="futuristic tech display, glowing neon accents, dark sleek background">إلكترونيات وساعات (Electronics & Tech)</option>
+                        <option value="rustic wooden table, fresh ingredients background, warm studio lighting">أطعمة ومطاعم (Food & Dining)</option>
+                        <option value="clean minimalist background, pastel colors, professional product photography studio">استوديو مودرن بسيط (Minimalist Studio)</option>
                     </select>
                 </div>
 
-                <!-- Generate Button -->
-                <button id="generateBtn" onclick="generateAIArtwork()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/25">
-                    <i class="fa-solid fa-bolt text-yellow-300"></i> ارسم وانشئ الرسمة بالذكاء الاصطناعي
+                <button id="generateBgBtn" onclick="generateAIBackground()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-bolt text-yellow-300"></i> توليد الخلفية الإعلانية
                 </button>
 
-                <!-- Loading Spinner -->
                 <div id="loadingBox" class="hidden flex flex-col items-center justify-center p-3 gap-2">
                     <div class="loader"></div>
-                    <span class="text-xs text-indigo-300 font-bold">جاري رسم وتوليد الجرافيك بالذكاء الاصطناعي...</span>
+                    <span class="text-xs text-indigo-300 font-bold">جاري رسم الخلفية السينمائية بالذكاء الاصطناعي...</span>
                 </div>
             </div>
 
-            <!-- Custom Text & Garment Settings -->
-            <div class="space-y-4">
+            <!-- 2. Product Image Upload -->
+            <div class="space-y-3 bg-slate-900/50 p-3 rounded-xl border border-slate-700">
                 <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-indigo-400"></i> تخصيص القماش والنصوص
+                    <i class="fa-solid fa-box-open text-emerald-400"></i> 2. رفع صورة منتجك (PNG بدون خلفية)
                 </h2>
-
-                <!-- Add Text -->
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">إضافة اسم الماركة / عبارة فوق الرسمة:</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="customTextInput" placeholder="اسم الماركة أو الجملة..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
-                        <button onclick="addCustomText()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold">إضافة</button>
-                    </div>
-                </div>
-
-                <!-- Garment Color Picker -->
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">لون القطعة (التيشرت/الهودي):</label>
-                    <div class="flex gap-2">
-                        <button onclick="setGarmentColor('#111827')" class="w-8 h-8 rounded-full bg-gray-900 border-2 border-white" title="أسود"></button>
-                        <button onclick="setGarmentColor('#ffffff')" class="w-8 h-8 rounded-full bg-white border-2 border-gray-400" title="أبيض"></button>
-                        <button onclick="setGarmentColor('#7f1d1d')" class="w-8 h-8 rounded-full bg-red-900 border-2 border-white" title="عنابي"></button>
-                        <button onclick="setGarmentColor('#1e3a8a')" class="w-8 h-8 rounded-full bg-blue-900 border-2 border-white" title="كحلي"></button>
-                        <button onclick="setGarmentColor('#065f46')" class="w-8 h-8 rounded-full bg-emerald-800 border-2 border-white" title="زيتي"></button>
-                    </div>
-                </div>
-
-                <!-- Delete Selected Object -->
-                <button onclick="deleteSelected()" class="w-full bg-red-900/40 hover:bg-red-800/60 border border-red-700/50 text-red-300 py-2 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-trash"></i> حذف العنصر المحدد من الشاشة
-                </button>
+                <input type="file" id="productUpload" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
             </div>
+
+            <!-- 3. Ad Badges & CTAs -->
+            <div class="space-y-2">
+                <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-tags text-amber-400"></i> 3. إشارة وتخفيضات الإعلان
+                </h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="addBadge('خصم 50% SALE', '#ef4444')" class="bg-red-600/30 border border-red-500/50 hover:bg-red-600 text-red-200 p-2 rounded-lg text-xs font-bold transition">
+                        🏷️ شارة خصم 50%
+                    </button>
+                    <button onclick="addBadge('اطلب الآن 🛒', '#2563eb')" class="bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600 text-blue-200 p-2 rounded-lg text-xs font-bold transition">
+                        🛒 زر طلب الآن
+                    </button>
+                    <button onclick="addBadge('شحن مجاني 🚚', '#10b981')" class="bg-emerald-600/30 border border-emerald-500/50 hover:bg-emerald-600 text-emerald-200 p-2 rounded-lg text-xs font-bold transition">
+                        🚚 شحن مجاني
+                    </button>
+                    <button onclick="addBadge('عرض لفترة محدودة ⏳', '#f59e0b')" class="bg-amber-600/30 border border-amber-500/50 hover:bg-amber-600 text-amber-200 p-2 rounded-lg text-xs font-bold transition">
+                        ⏳ عرض محدود
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Text & Typography -->
+            <div class="space-y-3">
+                <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-font text-indigo-400"></i> 4. نصوص وعناوين الإعلان
+                </h2>
+                <div class="flex gap-2">
+                    <input type="text" id="customTextInput" placeholder="عنوان الإعلان الرئيسي..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    <button onclick="addCustomText()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold">إضافة</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">الخط العربي:</label>
+                        <select id="fontSelect" onchange="updateSelectedText()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+                            <option value="Cairo">القاهرة (Cairo)</option>
+                            <option value="Tajawal">تجوال (Tajawal)</option>
+                            <option value="El Messiri">المسيري (El Messiri)</option>
+                            <option value="Amiri">الأميري (Amiri)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">لون النص:</label>
+                        <input type="color" id="textColorInput" value="#ffffff" onchange="updateSelectedText()" class="w-full h-9 bg-slate-900 border border-slate-700 rounded-lg p-1 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Canvas Aspect Ratio -->
+            <div class="space-y-2">
+                <label class="block text-xs text-slate-400">مقاس الإعلان للسوشيال ميديا:</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setCanvasRatio(500, 500)" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs font-bold">1:1 بوست</button>
+                    <button onclick="setCanvasRatio(400, 600)" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs font-bold">9:16 ستوري</button>
+                    <button onclick="setCanvasRatio(600, 350)" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs font-bold">16:9 غلاف</button>
+                </div>
+            </div>
+
+            <!-- Delete Element Button -->
+            <button onclick="deleteSelected()" class="w-full bg-red-900/40 hover:bg-red-800/60 border border-red-700/50 text-red-300 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-trash"></i> حذف العنصر المالي المحُدد
+            </button>
         </div>
 
-        <!-- Right Canvas Preview -->
+        <!-- Right Canvas Workspace -->
         <div class="flex-1 bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col items-center justify-center relative min-h-[500px]">
-            <div id="canvasWrapper" class="relative">
-                <canvas id="tshirtCanvas" width="380" height="480"></canvas>
+            <div id="canvasWrapper" class="relative shadow-2xl rounded-lg overflow-hidden border border-slate-600">
+                <canvas id="adCanvas" width="500" height="500"></canvas>
             </div>
-            <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-hand-pointer me-1"></i> يمكنك سحب الرسمة أو النص، تكبيرها، تدويرها، أو وضعها في أي مكان على الملابس.</p>
+            <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-hand-pointer me-1"></i> اضغط على أي عنصر (منتج، نص، شارة) لسحبه، تكبيره، تدويره، أو ضبط مقاسه.</p>
         </div>
 
     </div>
@@ -136,32 +169,32 @@
     <!-- Script Implementation -->
     <script>
         let canvas;
-        let garmentColor = '#111827';
 
         window.onload = function() {
-            canvas = new fabric.Canvas('tshirtCanvas', {
-                backgroundColor: garmentColor,
+            canvas = new fabric.Canvas('adCanvas', {
+                backgroundColor: '#0f172a',
                 selection: true
             });
-            
-            // Initial Design Demo
-            document.getElementById('aiPromptInput').value = "Cyberpunk neon tiger head, streetwear vector t-shirt art";
-            generateAIArtwork();
+
+            // Initial Setup
+            document.getElementById('aiPromptInput').value = "Luxurious podium display with soft cinematic lighting and golden palm leaves";
+            generateAIBackground();
         };
 
-        function setGarmentColor(color) {
-            garmentColor = color;
-            canvas.backgroundColor = color;
+        // Resize Canvas Aspect Ratio
+        function setCanvasRatio(w, h) {
+            canvas.setWidth(w);
+            canvas.setHeight(h);
             canvas.renderAll();
         }
 
-        // --- AI Image Generator (Text to Image) --- //
-        function generateAIArtwork() {
+        // 1. AI Background Generator
+        function generateAIBackground() {
             const promptInput = document.getElementById('aiPromptInput').value.trim();
             const styleSelect = document.getElementById('styleSelect').value;
 
             if (!promptInput) {
-                alert("من فضلك اكتب وصف الرسمة أولاً!");
+                alert("برجاء كتابة وصف الخلفية أولاً!");
                 return;
             }
 
@@ -169,58 +202,120 @@
             const encodedPrompt = encodeURIComponent(fullPrompt);
             const seed = Math.floor(Math.random() * 1000000);
             
-            // Pollinations AI Text-to-Image Endpoint (Free, Unlimited, No Key Required)
-            const aiImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=800&seed=${seed}&nologo=true`;
+            const aiImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1000&height=1000&seed=${seed}&nologo=true`;
 
-            // UI Loading state
             document.getElementById('loadingBox').classList.remove('hidden');
-            document.getElementById('generateBtn').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('generateBgBtn').classList.add('opacity-50', 'pointer-events-none');
 
-            // Load generated image onto Fabric canvas
             fabric.Image.fromURL(aiImageUrl, function(img) {
-                // Scale image to fit inside canvas
-                img.scaleToWidth(260);
-                img.set({
-                    left: 190,
-                    top: 220,
-                    originX: 'center',
-                    originY: 'center',
-                    cornerColor: '#6366f1',
-                    transparentCorners: false
-                });
+                img.scaleToWidth(canvas.width);
+                img.scaleToHeight(canvas.height);
+                
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
 
-                canvas.add(img);
-                canvas.setActiveObject(img);
-                canvas.renderAll();
-
-                // Reset UI Loading state
                 document.getElementById('loadingBox').classList.add('hidden');
-                document.getElementById('generateBtn').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('generateBgBtn').classList.remove('opacity-50', 'pointer-events-none');
             }, { crossOrigin: 'anonymous' });
         }
 
-        // Add Custom Brand Text
+        // 2. Product Image Upload
+        document.getElementById('productUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(f) {
+                fabric.Image.fromURL(f.target.result, function(img) {
+                    img.scaleToWidth(240);
+                    img.set({
+                        left: canvas.width / 2,
+                        top: canvas.height / 2,
+                        originX: 'center',
+                        originY: 'center',
+                        cornerColor: '#6366f1',
+                        transparentCorners: false
+                    });
+
+                    canvas.add(img);
+                    canvas.setActiveObject(img);
+                    canvas.renderAll();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 3. Add Ad Badges
+        function addBadge(textStr, bgColor) {
+            const text = new fabric.Text(textStr, {
+                fontSize: 18,
+                fill: '#ffffff',
+                fontFamily: 'Cairo',
+                fontWeight: 'bold',
+                originX: 'center',
+                originY: 'center',
+                top: 0,
+                left: 0
+            });
+
+            const rect = new fabric.Rect({
+                width: text.width + 30,
+                height: text.height + 16,
+                fill: bgColor,
+                rx: 8,
+                ry: 8,
+                originX: 'center',
+                originY: 'center',
+                top: 0,
+                left: 0
+            });
+
+            const group = new fabric.Group([rect, text], {
+                left: canvas.width / 2,
+                top: 80,
+                cornerColor: '#6366f1'
+            });
+
+            canvas.add(group);
+            canvas.setActiveObject(group);
+            canvas.renderAll();
+        }
+
+        // 4. Add Custom Typography
         function addCustomText() {
             const input = document.getElementById('customTextInput');
             if(!input.value.trim()) return;
 
             const text = new fabric.Text(input.value, {
-                left: 190,
-                top: 80,
+                left: canvas.width / 2,
+                top: canvas.height - 80,
                 originX: 'center',
                 originY: 'center',
-                fill: '#ffffff',
-                fontSize: 28,
-                fontFamily: 'Cairo',
+                fill: document.getElementById('textColorInput').value,
+                fontSize: 32,
+                fontFamily: document.getElementById('fontSelect').value,
                 fontWeight: '900',
+                shadow: 'rgba(0,0,0,0.8) 2px 2px 10px',
                 cornerColor: '#6366f1'
             });
+
             canvas.add(text);
             canvas.setActiveObject(text);
             input.value = '';
             canvas.renderAll();
         }
 
+        function updateSelectedText() {
+            const activeObj = canvas.getActiveObject();
+            if(activeObj && activeObj.type === 'text') {
+                activeObj.set({
+                    fontFamily: document.getElementById('fontSelect').value,
+                    fill: document.getElementById('textColorInput').value
+                });
+                canvas.renderAll();
+            }
+        }
+
+        // Delete Object
         function deleteSelected() {
             const activeObj = canvas.getActiveObject();
             if(activeObj) {
@@ -230,33 +325,21 @@
         }
 
         // Export Functions
-        function exportPNG() {
-            canvas.discardActiveObject();
-            const originalBg = canvas.backgroundColor;
-            canvas.backgroundColor = null; // Transparent
-            canvas.renderAll();
-
-            const dataURL = canvas.toDataURL({ format: 'png', multiplier: 2 });
-            
-            canvas.backgroundColor = originalBg;
-            canvas.renderAll();
-
-            const link = document.createElement('a');
-            link.download = 'ai-graphic-design.png';
-            link.href = dataURL;
-            link.click();
-        }
-
-        function exportMockup() {
+        function exportAd(format) {
             canvas.discardActiveObject();
             canvas.renderAll();
 
-            const dataURL = canvas.toDataURL({ format: 'jpeg', quality: 0.9, multiplier: 2 });
+            const dataURL = canvas.toDataURL({
+                format: format === 'png' ? 'png' : 'jpeg',
+                quality: 0.95,
+                multiplier: 3 // High resolution multiplier (4K Output)
+            });
+
             const link = document.createElement('a');
-            link.download = 'tshirt-ai-mockup.jpg';
+            link.download = `product-ad-design.${format}`;
             link.href = dataURL;
             link.click();
         }
     </script>
 </body>
-    </html>
+                    </html>
