@@ -40,7 +40,7 @@
             صانع عروض البوربوينت الاحترافية AI 📊✨
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            توليد شرائح بقوالب تصميم عصرية (تشبه تصاميم Canva) مع إضاءات وكروت منسقة تلقائياً بصيغة (.pptx).
+            توليد شرائح بقوالب تصميم عصرية مع كروت منسقة تلقائياً بصيغة (.pptx).
         </p>
     </header>
 
@@ -106,7 +106,7 @@
         <!-- Loading Indicator -->
         <div id="loading" class="hidden text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري هندسة القوالب وتصميم الشرائح بأسلوب Canva...</p>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري هندسة القوالب وتصميم الشرائح...</p>
         </div>
 
         <!-- Success Preview Container -->
@@ -127,11 +127,10 @@
 
     <script>
         const MODELS = [
-            "gemini-3.8-flash",
-            "gemini-3.6-flash",
             "gemini-2.5-flash",
             "gemini-2.0-flash",
             "gemini-1.5-flash",
+            "gemini-1.5-pro",
             "gemini-2.1-flash"
         ];
 
@@ -163,7 +162,7 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري التوليد والقوالب باستخدام (${modelName})... ⚡`;
+                            loadingText.innerText = `جاري التوليد باستخدام (${modelName})... ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             const res = await fetch(endpoint, {
@@ -221,12 +220,12 @@
                 loading.classList.remove('hidden');
                 outputContainer.classList.add('hidden');
 
-                const systemPrompt = `You are an elite Presentation Architect and Canva-Style Template Designer.
+                const systemPrompt = `You are an elite Presentation Architect and Template Designer.
 Your task is to take the user's input and generate exactly ${slideCount} slides formatted as a strict JSON object.
 
 CRITICAL INSTRUCTIONS:
 1. LANGUAGE FIDELITY: Match the user's input language (Arabic or English completely).
-2. LAYOUT VARIETY: For each slide, assign a professional visual layout style in the "layout" property: either "cards" (great for multiple distinct points in separate boxes), "split" (title on side, content boxes), or "grid" (2x2 structured boxes).
+2. LAYOUT: For each slide, assign "cards" or "list".
 3. STRICT JSON ONLY: Output ONLY valid JSON, wrapped in NO other text or markdown blocks.
 4. STRUCTURE:
 {
@@ -264,7 +263,7 @@ Ensure exactly ${slideCount} slides are generated.`;
                 const presentationData = JSON.parse(rawText);
 
                 let pptx = new PptxGenJS();
-                pptx.layout = '16x9'; // تم تصحيح تخطيط الشباك لتجنب أي خطأ
+                pptx.layout = 'LAYOUT_16X9'; // التصحيح الجذري هنا لمنع خطأ الـ UNKNOWN-LAYOUT
 
                 let bgCol = "030712", titleCol = "38BDF8", textCol = "F8FAFC", cardBg = "1E293B", accentCol = "8B5CF6", cardBorder = "334155";
                 if (designMood === 'navy-gold') {
@@ -273,7 +272,6 @@ Ensure exactly ${slideCount} slides are generated.`;
                     bgCol = "022C22"; titleCol = "34D399"; textCol = "F0FDF4"; cardBg = "064E3B"; accentCol = "10B981"; cardBorder = "065F46";
                 }
 
-                // 1. Cover Slide (تصميم غلاف فخم يشبه منصات التصميم)
                 let coverSlide = pptx.addSlide();
                 coverSlide.background = { color: bgCol };
                 coverSlide.addShape(pptx.shapes.RECTANGLE, { x: 0.8, y: 0.8, w: 11.7, h: 5.625, line: { color: accentCol, width: 2 }, fill: { color: bgCol } });
@@ -289,13 +287,11 @@ Ensure exactly ${slideCount} slides are generated.`;
                     });
                 }
 
-                // 2. Content Slides with Canva-Style Cards / Layouts
                 if (presentationData.slides && Array.isArray(presentationData.slides)) {
                     presentationData.slides.forEach((slideInfo) => {
                         let slide = pptx.addSlide();
                         slide.background = { color: bgCol };
 
-                        // Header Title & Accent Line
                         slide.addText(slideInfo.title || `Slide ${slideInfo.slideNumber}`, {
                             x: 0.8, y: 0.5, w: '85%', h: 0.7,
                             fontSize: 24, bold: true, color: titleCol
@@ -308,18 +304,15 @@ Ensure exactly ${slideCount} slides are generated.`;
                         let layoutType = slideInfo.layout || 'cards';
 
                         if (layoutType === 'cards' && points.length > 1) {
-                            // قالب الكروت المتجاورة (مثل تصاميم العروض الحديثة)
                             let totalCards = Math.min(points.length, 4);
                             let cardWidth = (11.0 - (totalCards - 1) * 0.3) / totalCards;
                             
                             for (let i = 0; i < totalCards; i++) {
                                 let xPos = 0.8 + i * (cardWidth + 0.3);
-                                // رسم كارت خلفي
                                 slide.addShape(pptx.shapes.RECTANGLE, {
                                     x: xPos, y: 1.6, w: cardWidth, h: 4.5,
                                     fill: { color: cardBg }, line: { color: cardBorder, width: 1 }
                                 });
-                                // رقم مميز داخل الكارت
                                 slide.addShape(pptx.shapes.OVAL, {
                                     x: xPos + 0.3, y: 1.9, w: 0.5, h: 0.5,
                                     fill: { color: accentCol }
@@ -328,14 +321,12 @@ Ensure exactly ${slideCount} slides are generated.`;
                                     x: xPos + 0.3, y: 1.9, w: 0.5, h: 0.5,
                                     fontSize: 12, bold: true, color: "FFFFFF", align: 'center', valign: 'middle'
                                 });
-                                // نص النقطة
                                 slide.addText(points[i], {
                                     x: xPos + 0.2, y: 2.6, w: cardWidth - 0.4, h: 3.3,
                                     fontSize: 14, color: textCol, valign: 'top'
                                 });
                             }
                         } else {
-                            // قالب قائمة الصفوف المنظمة داخل صندوق أنيق
                             slide.addShape(pptx.shapes.RECTANGLE, {
                                 x: 0.8, y: 1.5, w: 11.7, h: 4.8,
                                 fill: { color: cardBg }, line: { color: cardBorder, width: 1 }
@@ -356,7 +347,7 @@ Ensure exactly ${slideCount} slides are generated.`;
 
                 await pptx.writeFile({ fileName: `${presentationData.presentationTitle || 'Presentation'}.pptx` });
 
-                summaryPreview.innerHTML = `<strong>عنوان العرض:</strong> ${presentationData.presentationTitle}<br><strong>عدد الشرائح بتصاميم Canva:</strong> ${presentationData.slides.length}`;
+                summaryPreview.innerHTML = `<strong>عنوان العرض:</strong> ${presentationData.presentationTitle}<br><strong>عدد الشرائح:</strong> ${presentationData.slides.length}`;
                 outputContainer.classList.remove('hidden');
 
             } catch (err) {
