@@ -76,8 +76,8 @@
                         </label>
                         <select id="slideCount" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
                             <option value="3">3 شرائح</option>
-                            <option value="5" selected>5 شرائح</option>
-                            <option value="7">7 شرائح</option>
+                            <option value="5">5 شرائح</option>
+                            <option value="7" selected>7 شرائح</option>
                             <option value="10">10 شرائح</option>
                             <option value="15">15 شريحة</option>
                             <option value="20">20 شريحة</option>
@@ -90,7 +90,7 @@
                         </label>
                         <select id="designMood" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
                             <option value="dark-neon">نيون أسود ومستقبلي (Dark Neon)</option>
-                            <option value="navy-gold">كحلي وذهبي فاخر (Executive)</option>
+                            <option value="navy-gold" selected>كحلي وذهبي فاخر (Executive)</option>
                             <option value="emerald-clean">أخضر زمردي وهادئ (Clean Mint)</option>
                         </select>
                     </div>
@@ -126,7 +126,7 @@
     </footer>
 
     <script>
-        const MODEL_NAME = "gemini-3.6-flash";
+        const MODEL_NAME = "gemini-2.0-flash";
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('user_gemini_api_keys');
@@ -185,26 +185,32 @@
         }
 
         async function generateAndDownloadPPTX() {
-            const topic = document.getElementById('topicInput').value.trim();
-            const slideCount = document.getElementById('slideCount').value;
-            const designMood = document.getElementById('designMood').value;
+            try {
+                if (typeof PptxGenJS === 'undefined') {
+                    alert("مكتبة توليد البوربوينت لم تتمكن من التحميل من الإنترنت. تأكد من اتصالك بالشبكة ثم حاول مرة أخرى.");
+                    return;
+                }
 
-            if (!topic) {
-                alert("برجاء إدخال تفاصيل أو محتوى الشرائح أولاً!");
-                return;
-            }
+                const topic = document.getElementById('topicInput').value.trim();
+                const slideCount = document.getElementById('slideCount').value;
+                const designMood = document.getElementById('designMood').value;
 
-            const processBtn = document.getElementById('processBtn');
-            const loading = document.getElementById('loading');
-            const outputContainer = document.getElementById('outputContainer');
-            const summaryPreview = document.getElementById('summaryPreview');
+                if (!topic) {
+                    alert("برجاء إدخال تفاصيل أو محتوى الشرائح أولاً!");
+                    return;
+                }
 
-            processBtn.disabled = true;
-            processBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            loading.classList.remove('hidden');
-            outputContainer.classList.add('hidden');
+                const processBtn = document.getElementById('processBtn');
+                const loading = document.getElementById('loading');
+                const outputContainer = document.getElementById('outputContainer');
+                const summaryPreview = document.getElementById('summaryPreview');
 
-            const systemPrompt = `You are an elite Presentation Architect and JSON Generator.
+                processBtn.disabled = true;
+                processBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                loading.classList.remove('hidden');
+                outputContainer.classList.add('hidden');
+
+                const systemPrompt = `You are an elite Presentation Architect and JSON Generator.
 Your task is to take the user's input text (which may specify exact slide-by-slide content or a general topic) and generate exactly ${slideCount} slides formatted as a strict JSON object.
 
 CRITICAL INSTRUCTIONS:
@@ -222,21 +228,19 @@ CRITICAL INSTRUCTIONS:
     }
   ]
 }
-Ensure there are exactly ${slideCount} slides in the "slides" array. Follow any specific instructions the user provided for individual slides (e.g. Slide 1, Slide 2, etc.).`;
+Ensure there are exactly ${slideCount} slides in the "slides" array. Follow any specific instructions the user provided for individual slides.`;
 
-            const requestData = {
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                contents: [{
-                    parts: [{ text: `مطلوب إنشاء شرائح عددها ${slideCount بناءً على التفاصيل التالية:\n${topic}` }]
-                }],
-                generationConfig: { temperature: 0.2, maxOutputTokens: 8192 }
-            };
+                const requestData = {
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: [{
+                        parts: [{ text: `مطلوب إنشاء شرائح عددها ${slideCount} بناءً على التفاصيل التالية:\n${topic}` }]
+                    }],
+                    generationConfig: { temperature: 0.2, maxOutputTokens: 8192 }
+                };
 
-            try {
                 const data = await fetchWithKeyRotation(requestData);
                 let rawText = data.candidates[0].content.parts[0].text;
                 
-                // Clean markdown code blocks if any
                 rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
                 const jsonStart = rawText.indexOf('{');
                 const jsonEnd = rawText.lastIndexOf('}');
@@ -246,11 +250,9 @@ Ensure there are exactly ${slideCount} slides in the "slides" array. Follow any 
 
                 const presentationData = JSON.parse(rawText);
 
-                // Build PPTX using PptxGenJS
                 let pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16X9';
 
-                // Color Themes Configuration
                 let bgCol = "030712", titleCol = "38BDF8", textCol = "F8FAFC", cardBg = "1E293B", accentCol = "8B5CF6";
                 if (designMood === 'navy-gold') {
                     bgCol = "0A1128"; titleCol = "FBBF24"; textCol = "FFFFFF"; cardBg = "172554"; accentCol = "F59E0B";
@@ -258,7 +260,6 @@ Ensure there are exactly ${slideCount} slides in the "slides" array. Follow any 
                     bgCol = "022C22"; titleCol = "34D399"; textCol = "F0FDF4"; cardBg = "064E3B"; accentCol = "10B981";
                 }
 
-                // 1. Cover Slide
                 let coverSlide = pptx.addSlide();
                 coverSlide.background = { color: bgCol };
                 coverSlide.addText(presentationData.presentationTitle || "Presentation", {
@@ -272,24 +273,20 @@ Ensure there are exactly ${slideCount} slides in the "slides" array. Follow any 
                     });
                 }
 
-                // 2. Content Slides
                 if (presentationData.slides && Array.isArray(presentationData.slides)) {
                     presentationData.slides.forEach((slideInfo) => {
                         let slide = pptx.addSlide();
                         slide.background = { color: bgCol };
 
-                        // Header / Title
                         slide.addText(slideInfo.title || `Slide ${slideInfo.slideNumber}`, {
                             x: 0.8, y: 0.6, w: '85%', h: 0.8,
                             fontSize: 26, bold: true, color: titleCol
                         });
 
-                        // Decorative accent bar
                         slide.addShape(pptx.shapes.RECTANGLE, {
                             x: 0.8, y: 1.5, w: 1.5, h: 0.08, fill: { color: accentCol }
                         });
 
-                        // Points formatting
                         if (slideInfo.points && slideInfo.points.length > 0) {
                             let formattedPoints = slideInfo.points.map(pt => ({
                                 text: pt,
@@ -304,19 +301,18 @@ Ensure there are exactly ${slideCount} slides in the "slides" array. Follow any 
                     });
                 }
 
-                // Save presentation file
                 await pptx.writeFile({ fileName: `${presentationData.presentationTitle || 'Presentation'}.pptx` });
 
-                // Show success summary
-                summaryPreview.innerHTML = `<strong>عنوان العرض:</strong> ${presentationData.presentationTitle}<br><strong>عدد الشرائح المולدة:</strong> ${presentationData.slides.length}`;
+                summaryPreview.innerHTML = `<strong>عنوان العرض:</strong> ${presentationData.presentationTitle}<br><strong>عدد الشرائح المولدة:</strong> ${presentationData.slides.length}`;
                 outputContainer.classList.remove('hidden');
 
             } catch (err) {
                 alert("حدث خطأ أثناء التوليد: " + err.message);
             } finally {
-                loading.classList.add('hidden');
-                processBtn.disabled = false;
-                processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('loading').classList.add('hidden');
+                const btn = document.getElementById('processBtn');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
     </script>
