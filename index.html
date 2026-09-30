@@ -126,12 +126,11 @@
     </footer>
 
     <script>
+        // موديلات حقيقية ومستقرة تماماً تدعم v1beta
         const MODELS = [
-            "gemini-2.5-flash",
             "gemini-2.0-flash",
             "gemini-1.5-flash",
-            "gemini-1.5-pro",
-            "gemini-2.1-flash"
+            "gemini-1.5-pro"
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -263,7 +262,7 @@ Ensure exactly ${slideCount} slides are generated.`;
                 const presentationData = JSON.parse(rawText);
 
                 let pptx = new PptxGenJS();
-                pptx.layout = 'LAYOUT_16X9'; // التصحيح الجذري هنا لمنع خطأ الـ UNKNOWN-LAYOUT
+                pptx.layout = 'LAYOUT_16X9';
 
                 let bgCol = "030712", titleCol = "38BDF8", textCol = "F8FAFC", cardBg = "1E293B", accentCol = "8B5CF6", cardBorder = "334155";
                 if (designMood === 'navy-gold') {
@@ -361,4 +360,4 @@ Ensure exactly ${slideCount} slides are generated.`;
         }
     </script>
 </body>
-</html>
+                    </html>
