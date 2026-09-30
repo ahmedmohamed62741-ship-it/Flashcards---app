@@ -126,11 +126,10 @@
     </footer>
 
     <script>
-        // موديلات حقيقية ومستقرة تماماً تدعم v1beta
+        // الاعتماد حصرياً على موديلات 3.8 و 3.6 كما طلبت
         const MODELS = [
-            "gemini-2.0-flash",
-            "gemini-1.5-flash",
-            "gemini-1.5-pro"
+            "gemini-3.8-flash",
+            "gemini-3.6-flash"
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -224,7 +223,7 @@ Your task is to take the user's input and generate exactly ${slideCount} slides 
 
 CRITICAL INSTRUCTIONS:
 1. LANGUAGE FIDELITY: Match the user's input language (Arabic or English completely).
-2. LAYOUT: For each slide, assign "cards" or "list".
+2. LAYOUT: For each slide, assign layout strictly as either "cards" or "list".
 3. STRICT JSON ONLY: Output ONLY valid JSON, wrapped in NO other text or markdown blocks.
 4. STRUCTURE:
 {
@@ -300,7 +299,10 @@ Ensure exactly ${slideCount} slides are generated.`;
                         });
 
                         let points = slideInfo.points || [];
-                        let layoutType = slideInfo.layout || 'cards';
+                        let layoutType = slideInfo.layout ? slideInfo.layout.toLowerCase().trim() : 'cards';
+                        if (layoutType !== 'cards' && layoutType !== 'list') {
+                            layoutType = 'cards';
+                        }
 
                         if (layoutType === 'cards' && points.length > 1) {
                             let totalCards = Math.min(points.length, 4);
@@ -360,4 +362,4 @@ Ensure exactly ${slideCount} slides are generated.`;
         }
     </script>
 </body>
-                    </html>
+</html>
