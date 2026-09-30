@@ -126,7 +126,7 @@
     </footer>
 
     <script>
-        // الاعتماد حصرياً على موديلات 3.8 و 3.6 كما طلبت
+        // الموديلات المطلوبة حصرياً
         const MODELS = [
             "gemini-3.8-flash",
             "gemini-3.6-flash"
@@ -192,6 +192,28 @@
             throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
         }
 
+        function parseJSONSafely(rawText) {
+            // تنظيف أي زوائد مهارية
+            let cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonStart = cleaned.indexOf('{');
+            const jsonEnd = cleaned.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+                cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+            }
+
+            try {
+                return JSON.parse(cleaned);
+            } catch (err1) {
+                // محاولة إصلاح تلقائي للفاصلة الزائدة في المصفوفات أو الكائنات
+                try {
+                    let fixed = cleaned.replace(/,\s*([\]}])/g, '$1');
+                    return JSON.parse(fixed);
+                } catch (err2) {
+                    throw new Error("خطأ في صياغة JSON الراجع من النموذج: " + err1.message);
+                }
+            }
+        }
+
         async function generateAndDownloadPPTX() {
             try {
                 if (typeof PptxGenJS === 'undefined') {
@@ -224,7 +246,7 @@ Your task is to take the user's input and generate exactly ${slideCount} slides 
 CRITICAL INSTRUCTIONS:
 1. LANGUAGE FIDELITY: Match the user's input language (Arabic or English completely).
 2. LAYOUT: For each slide, assign layout strictly as either "cards" or "list".
-3. STRICT JSON ONLY: Output ONLY valid JSON, wrapped in NO other text or markdown blocks.
+3. STRICT JSON ONLY: Output ONLY valid JSON structure.
 4. STRUCTURE:
 {
   "presentationTitle": "Main Title",
@@ -245,20 +267,17 @@ Ensure exactly ${slideCount} slides are generated.`;
                     contents: [{
                         parts: [{ text: `مطلوب إنشاء شرائح عددها ${slideCount} بقوالب وتصاميم احترافية بناءً على:\n${topic}` }]
                     }],
-                    generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
+                    generationConfig: { 
+                        temperature: 0.3, 
+                        maxOutputTokens: 8192,
+                        responseMimeType: "application/json" // إجبار الموديل على إخراج JSON سليم 100%
+                    }
                 };
 
                 const data = await fetchWithKeyRotation(requestData);
                 let rawText = data.candidates[0].content.parts[0].text;
                 
-                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-                const jsonStart = rawText.indexOf('{');
-                const jsonEnd = rawText.lastIndexOf('}');
-                if (jsonStart !== -1 && jsonEnd !== -1) {
-                    rawText = rawText.substring(jsonStart, jsonEnd + 1);
-                }
-
-                const presentationData = JSON.parse(rawText);
+                const presentationData = parseJSONSafely(rawText);
 
                 let pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16X9';
@@ -362,4 +381,4 @@ Ensure exactly ${slideCount} slides are generated.`;
         }
     </script>
 </body>
-</html>
+    </html>
