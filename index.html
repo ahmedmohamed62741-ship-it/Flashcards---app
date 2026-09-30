@@ -3,343 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استوديو الإعلانات والجرافيك بالذكاء الاصطناعي - AI Ad Studio</title>
-    <!-- Tailwind CSS -->
+    <title>صانع العروض والشرائح الفاخرة 💡✨</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Fabric.js Canvas Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800&family=Amiri:wght@700&family=El+Messiri:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        body { font-family: 'Cairo', sans-serif; }
-        .loader {
-            border: 4px solid #334155;
-            border-top: 4px solid #6366f1;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            animation: spin 1s linear infinite;
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #030712; color: #f8fafc; }
+        
+        /* Neon & Glassmorphism Effects */
+        .neon-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+            transition: all 0.3s ease;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .neon-card:hover {
+            border-color: rgba(6, 182, 212, 0.5);
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+            transform: translateY(-2px);
+        }
+        .glow-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.6);
+            transform: scale(1.02);
+        }
+        
+        #outputContent h2 { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: #38bdf8; 
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+            padding-bottom: 0.75rem;
+        }
+        #outputContent h3 { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            color: #c084fc; 
+            margin-top: 1.5rem; 
+            margin-bottom: 0.75rem; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(192, 132, 252, 0.3);
+        }
+        #outputContent ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; }
+        #outputContent li { margin-bottom: 0.5rem; line-height: 1.8; color: #cbd5e1; }
+        #outputContent strong { color: #facc15; font-weight: 700; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
-    <!-- Header -->
-    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 flex flex-wrap justify-between items-center gap-3">
-        <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/30">
-                <i class="fa-solid fa-rectangle-ad text-2xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-black text-white">AI Product Ad Studio</h1>
-                <p class="text-xs text-indigo-400">تصميم إعلانات المنتجات والجرافيك بالذكاء الاصطناعي</p>
-            </div>
+    <header class="max-w-4xl mx-auto w-full text-center my-6">
+        <div class="inline-block p-3 rounded-2xl bg-purple-900/30 border border-purple-500/30 text-purple-400 mb-3 animate-pulse">
+            <i class="fa-solid fa-wand-magic-sparkles text-3xl"></i>
         </div>
-        <div class="flex gap-2">
-            <button onclick="exportAd('png')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg text-xs md:text-sm flex items-center gap-2 transition shadow-md">
-                <i class="fa-solid fa-download"></i> تصدير إعلان (PNG 4K)
-            </button>
-            <button onclick="exportAd('jpg')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg text-xs md:text-sm flex items-center gap-2 transition shadow-md">
-                <i class="fa-solid fa-file-image"></i> حفظ صورة (JPG)
-            </button>
-        </div>
+        <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 tracking-tight mb-3">
+            صانع العروض والشرائح الفاخرة 💡✨
+        </h1>
+        <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+            قم بتحديد عدد الشرائح وإدخال موضوعك أو نصوصك، وسيقوم الذكاء الاصطناعي بتصميم قوالب عرض مبهرة بإضاءات نيون ومحتوى متناسق وصور مخصصة.
+        </p>
     </header>
 
-    <!-- Main Workspace -->
-    <div class="flex-1 flex flex-col lg:flex-row p-4 gap-4 max-w-7xl mx-auto w-full">
+    <main class="max-w-4xl mx-auto w-full space-y-6">
 
-        <!-- Left Controls Panel -->
-        <div class="w-full lg:w-1/3 bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-5 overflow-y-auto max-h-[85vh]">
+        <div class="neon-card rounded-2xl p-5 md:p-8 space-y-6">
             
-            <!-- 1. AI Background Generator -->
-            <div class="bg-slate-900/90 p-4 rounded-xl border border-indigo-500/30 space-y-3">
-                <h2 class="text-md font-bold text-indigo-300 flex items-center gap-2">
-                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 1. خلفية إعلانية بالذكاء الاصطناعي
-                </h2>
-                <p class="text-xs text-slate-400">اكتب فكرة الخلفية المناسبة لمنتجك وسيرسمها الذكاء الاصطناعي سينمائياً:</p>
-                
-                <textarea id="aiPromptInput" rows="2" placeholder="مثال: Luxurious podium with tropical leaves and golden sunlight for perfume..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"></textarea>
-
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">نوع المنتج / الاستايل الإعلاني:</label>
-                    <select id="styleSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
-                        <option value="luxury podium display, soft studio lighting, cinematic ad background, high detail">عطور ومستحضرات تجميل (Luxury & Perfume)</option>
-                        <option value="modern urban streetwear background, neon lights, asphalt, cinematic shadow">أحذية وموضة (Shoes & Fashion)</option>
-                        <option value="futuristic tech display, glowing neon accents, dark sleek background">إلكترونيات وساعات (Electronics & Tech)</option>
-                        <option value="rustic wooden table, fresh ingredients background, warm studio lighting">أطعمة ومطاعم (Food & Dining)</option>
-                        <option value="clean minimalist background, pastel colors, professional product photography studio">استوديو مودرن بسيط (Minimalist Studio)</option>
-                    </select>
-                </div>
-
-                <button id="generateBgBtn" onclick="generateAIBackground()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/20">
-                    <i class="fa-solid fa-bolt text-yellow-300"></i> توليد الخلفية الإعلانية
-                </button>
-
-                <div id="loadingBox" class="hidden flex flex-col items-center justify-center p-3 gap-2">
-                    <div class="loader"></div>
-                    <span class="text-xs text-indigo-300 font-bold">جاري رسم الخلفية السينمائية بالذكاء الاصطناعي...</span>
-                </div>
+            <!-- API Key Input -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                <label for="apiKeyInput" class="block text-xs font-bold text-slate-300 flex items-center justify-between">
+                    <span>🔑 مفاتيح API (يمكنك وضع أكثر من مفتاح مفصول بفاصلة ,):</span>
+                    <span class="text-[10px] text-cyan-400 font-normal">يُحفظ تلقائياً في متصفحك</span>
+                </label>
+                <input type="text" id="apiKeyInput" oninput="saveApiKey()" placeholder="أدخل المفتاح الأول، أو عدة مفاتيح مفصولة بـ ," class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono tracking-wider">
             </div>
 
-            <!-- 2. Product Image Upload -->
-            <div class="space-y-3 bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
-                    <i class="fa-solid fa-box-open text-emerald-400"></i> 2. رفع صورة منتجك (PNG بدون خلفية)
-                </h2>
-                <input type="file" id="productUpload" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
-            </div>
-
-            <!-- 3. Ad Badges & CTAs -->
-            <div class="space-y-2">
-                <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
-                    <i class="fa-solid fa-tags text-amber-400"></i> 3. إشارة وتخفيضات الإعلان
-                </h2>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="addBadge('خصم 50% SALE', '#ef4444')" class="bg-red-600/30 border border-red-500/50 hover:bg-red-600 text-red-200 p-2 rounded-lg text-xs font-bold transition">
-                        🏷️ شارة خصم 50%
-                    </button>
-                    <button onclick="addBadge('اطلب الآن 🛒', '#2563eb')" class="bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600 text-blue-200 p-2 rounded-lg text-xs font-bold transition">
-                        🛒 زر طلب الآن
-                    </button>
-                    <button onclick="addBadge('شحن مجاني 🚚', '#10b981')" class="bg-emerald-600/30 border border-emerald-500/50 hover:bg-emerald-600 text-emerald-200 p-2 rounded-lg text-xs font-bold transition">
-                        🚚 شحن مجاني
-                    </button>
-                    <button onclick="addBadge('عرض لفترة محدودة ⏳', '#f59e0b')" class="bg-amber-600/30 border border-amber-500/50 hover:bg-amber-600 text-amber-200 p-2 rounded-lg text-xs font-bold transition">
-                        ⏳ عرض محدود
-                    </button>
-                </div>
-            </div>
-
-            <!-- 4. Text & Typography -->
-            <div class="space-y-3">
-                <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
-                    <i class="fa-solid fa-font text-indigo-400"></i> 4. نصوص وعناوين الإعلان
-                </h2>
-                <div class="flex gap-2">
-                    <input type="text" id="customTextInput" placeholder="عنوان الإعلان الرئيسي..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                    <button onclick="addCustomText()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold">إضافة</button>
+            <!-- Configuration Form -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="md:col-span-2 space-y-2">
+                    <label for="topicInput" class="block text-xs font-bold text-slate-300">
+                        📝 موضوع العرض أو النصوص المطلوب توزيعها على الشرائح:
+                    </label>
+                    <textarea id="topicInput" rows="4" placeholder="اكتب فكرة العرض، أو الصق النصوص هنا، وسيقوم النظام بتوزيعها بذكاء..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">الخط العربي:</label>
-                        <select id="fontSelect" onchange="updateSelectedText()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
-                            <option value="Cairo">القاهرة (Cairo)</option>
-                            <option value="Tajawal">تجوال (Tajawal)</option>
-                            <option value="El Messiri">المسيري (El Messiri)</option>
-                            <option value="Amiri">الأميري (Amiri)</option>
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label for="slideCount" class="block text-xs font-bold text-slate-300">
+                            📊 عدد الشرائح المطلوبة:
+                        </label>
+                        <select id="slideCount" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
+                            <option value="3">3 شرائح (سريع ومكثف)</option>
+                            <option value="5" selected>5 شرائح (متوازن)</option>
+                            <option value="7">7 شرائح (شامل مفصل)</option>
+                            <option value="10">10 شرائح (عرض كامل)</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">لون النص:</label>
-                        <input type="color" id="textColorInput" value="#ffffff" onchange="updateSelectedText()" class="w-full h-9 bg-slate-900 border border-slate-700 rounded-lg p-1 cursor-pointer">
+
+                    <div class="space-y-2">
+                        <label for="designMood" class="block text-xs font-bold text-slate-300">
+                            🎨 طابع الإضاءة والألوان:
+                        </label>
+                        <select id="designMood" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
+                            <option value="Neon Cyan & Purple">نيون سيان وبنفسجي (مستقبلي / تقني)</option>
+                            <option value="Gold & Deep Navy">ذهبي وكحلي داكن (أعمال / فاخر)</option>
+                            <option value="Emerald & Dark Slate">أخضر زمردي داكن (صحي / استثماري)</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
-            <!-- 5. Canvas Aspect Ratio -->
-            <div class="space-y-2">
-                <label class="block text-xs text-slate-400">مقاس الإعلان للسوشيال ميديا:</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="setCanvasRatio(500, 500)" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs font-bold">1:1 بوست</button>
-                    <button onclick="setCanvasRatio(400, 600)" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs font-bold">9:16 ستوري</button>
-                    <button onclick="setCanvasRatio(600, 350)" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs font-bold">16:9 غلاف</button>
-                </div>
-            </div>
-
-            <!-- Delete Element Button -->
-            <button onclick="deleteSelected()" class="w-full bg-red-900/40 hover:bg-red-800/60 border border-red-700/50 text-red-300 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-trash"></i> حذف العنصر المالي المحُدد
+            <button id="processBtn" onclick="generatePresentation()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
+                <i class="fa-solid fa-clapperboard text-lg"></i>
+                <span>توليد شرائح العرض الفاخرة الآن ⚡</span>
             </button>
         </div>
 
-        <!-- Right Canvas Workspace -->
-        <div class="flex-1 bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col items-center justify-center relative min-h-[500px]">
-            <div id="canvasWrapper" class="relative shadow-2xl rounded-lg overflow-hidden border border-slate-600">
-                <canvas id="adCanvas" width="500" height="500"></canvas>
-            </div>
-            <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-hand-pointer me-1"></i> اضغط على أي عنصر (منتج، نص، شارة) لسحبه، تكبيره، تدويره، أو ضبط مقاسه.</p>
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden text-center py-8 space-y-3">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري هندسة وتصميم شرائح العرض الفاخرة وإضافة تأثيرات الإضاءة...</p>
         </div>
 
-    </div>
+        <!-- Output Result Section -->
+        <div id="outputContainer" class="hidden neon-card rounded-2xl p-6 md:p-8 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 id="resultHeader" class="text-base font-bold text-cyan-400 flex items-center gap-2 m-0 bg-transparent p-0 border-0">
+                    <i class="fa-solid fa-laptop-code text-xl"></i> معاينة قوالب الشرائح الفاخرة
+                </h3>
+                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 py-2 px-4 rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
+                    <i class="fa-solid fa-copy text-cyan-400"></i> نسخ كود العرض
+                </button>
+            </div>
+            <div id="outputContent" class="text-slate-300 text-xs md:text-sm leading-relaxed space-y-6"></div>
+        </div>
 
-    <!-- Script Implementation -->
+    </main>
+
+    <footer class="text-center text-slate-500 text-xs my-8">
+        صانع العروض الذكي مدعوم بالذكاء الاصطناعي لتصميم محتوى وقوالب شرائح احترافية 💡🚀
+    </footer>
+
     <script>
-        let canvas;
+        const MODEL_NAME = "gemini-3.6-flash";
 
-        window.onload = function() {
-            canvas = new fabric.Canvas('adCanvas', {
-                backgroundColor: '#0f172a',
-                selection: true
-            });
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('user_gemini_api_keys');
+            const keyInput = document.getElementById('apiKeyInput');
+            if (savedKey && savedKey.trim() !== "") {
+                keyInput.value = savedKey;
+            }
+        });
 
-            // Initial Setup
-            document.getElementById('aiPromptInput').value = "Luxurious podium display with soft cinematic lighting and golden palm leaves";
-            generateAIBackground();
-        };
-
-        // Resize Canvas Aspect Ratio
-        function setCanvasRatio(w, h) {
-            canvas.setWidth(w);
-            canvas.setHeight(h);
-            canvas.renderAll();
+        function saveApiKey() {
+            const keyInput = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('user_gemini_api_keys', keyInput);
         }
 
-        // 1. AI Background Generator
-        function generateAIBackground() {
-            const promptInput = document.getElementById('aiPromptInput').value.trim();
-            const styleSelect = document.getElementById('styleSelect').value;
+        async function fetchWithKeyRotation(requestData) {
+            const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
+            if (!rawKeyInput) {
+                throw new Error("برجاء أدخل مفتاح API في الخانة المخصصة بالأعلى أولاً!");
+            }
 
-            if (!promptInput) {
-                alert("برجاء كتابة وصف الخلفية أولاً!");
+            const keys = rawKeyInput.split(',').map(k => k.trim()).filter(k => k);
+            const loadingText = document.getElementById('loadingText');
+
+            for (let i = 0; i < keys.length; i++) {
+                const currentKey = keys[i];
+                for (let attempt = 1; attempt <= 2; attempt++) {
+                    try {
+                        if (keys.length > 1) {
+                            loadingText.innerText = `جاري التوليد باستخدام المفتاح (${i + 1} من ${keys.length})... ⚡`;
+                        }
+                        
+                        const response = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${currentKey}`;
+                        const res = await fetch(response, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestData)
+                        });
+
+                        if (res.status === 429 || res.status === 503) {
+                            await new Promise(r => setTimeout(r, 1500));
+                            continue;
+                        }
+
+                        const data = await res.json();
+                        if (res.ok && data.candidates && data.candidates[0]) {
+                            return data;
+                        } else if (data.error) {
+                            throw new Error(data.error.message);
+                        }
+                    } catch (err) {
+                        if (i === keys.length - 1 && attempt === 2) throw err;
+                    }
+                }
+            }
+            throw new Error("تم استنفاد حدود الاستهلاك (Quota) لجميع المفاتيح المدخلة.");
+        }
+
+        async function generatePresentation() {
+            const topic = document.getElementById('topicInput').value.trim();
+            const slideCount = document.getElementById('slideCount').value;
+            const designMood = document.getElementById('designMood').value;
+
+            if (!topic) {
+                alert("برجاء إدخال موضوع العرض أو النصوص أولاً!");
                 return;
             }
 
-            const fullPrompt = `${promptInput}, ${styleSelect}`;
-            const encodedPrompt = encodeURIComponent(fullPrompt);
-            const seed = Math.floor(Math.random() * 1000000);
-            
-            const aiImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1000&height=1000&seed=${seed}&nologo=true`;
+            const processBtn = document.getElementById('processBtn');
+            const loading = document.getElementById('loading');
+            const outputContainer = document.getElementById('outputContainer');
+            const outputContent = document.getElementById('outputContent');
 
-            document.getElementById('loadingBox').classList.remove('hidden');
-            document.getElementById('generateBgBtn').classList.add('opacity-50', 'pointer-events-none');
+            processBtn.disabled = true;
+            processBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            loading.classList.remove('hidden');
+            outputContainer.classList.add('hidden');
 
-            fabric.Image.fromURL(aiImageUrl, function(img) {
-                img.scaleToWidth(canvas.width);
-                img.scaleToHeight(canvas.height);
-                
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            const systemPrompt = `You are an elite Presentation Designer, Content Strategist, and Master Slide Architect.
+Your task is to take the user's topic/text and divide it exactly into ${slideCount} professional presentation slides.
 
-                document.getElementById('loadingBox').classList.add('hidden');
-                document.getElementById('generateBgBtn').classList.remove('opacity-50', 'pointer-events-none');
-            }, { crossOrigin: 'anonymous' });
-        }
+DESIGN & LIGHTING MOOD: ${designMood}
 
-        // 2. Product Image Upload
-        document.getElementById('productUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
+CRITICAL RULES:
+- OUTPUT STRICTLY IN MARKDOWN. NO CONVERSATIONAL FILLER OR PREAMBLE.
+- START DIRECTLY WITH: ## 💡 هيكل وعرض الشرائح الفاخرة (${slideCount} شرائح)
+- For each slide, create a stunning layout featuring:
+  1. Slide Title (عنوان قوي وجذاب للشريحة)
+  2. 3 to 4 impactful bullet points containing the exact text/ideas.
+  3. A specific English search keyword for matching illustrative imagery (e.g., "futuristic glowing holographic technology display").
+  4. Speaker notes or visual lighting guidance.
 
-            const reader = new FileReader();
-            reader.onload = function(f) {
-                fabric.Image.fromURL(f.target.result, function(img) {
-                    img.scaleToWidth(240);
-                    img.set({
-                        left: canvas.width / 2,
-                        top: canvas.height / 2,
-                        originX: 'center',
-                        originY: 'center',
-                        cornerColor: '#6366f1',
-                        transparentCorners: false
-                    });
+FORMAT PER SLIDE:
+### الشريحة [رقم]: [عنوان الشريحة]
+* **🖼️ فكرة الصورة المناسبة (English):** [keyword]
+* **💡 التأثير الضوئي والجو البصري:** [وصف إضاءة النيون أو الغلاف]
+* **📌 النقاط الرئيسية للشريحة:**
+  * [نقطة 1]
+  * [نقطة 2]
+  * [نقطة 3]
 
-                    canvas.add(img);
-                    canvas.setActiveObject(img);
-                    canvas.renderAll();
-                });
+(استمر بترتيب الشرائح بدقة من 1 إلى ${slideCount})`;
+
+            const requestData = {
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: [{
+                    parts: [{ text: `موضوع العرض أو النصوص المراد صياغتها في الشرائح:\n${topic}` }]
+                }],
+                generationConfig: { temperature: 0.2, maxOutputTokens: 4096 }
             };
-            reader.readAsDataURL(file);
-        });
 
-        // 3. Add Ad Badges
-        function addBadge(textStr, bgColor) {
-            const text = new fabric.Text(textStr, {
-                fontSize: 18,
-                fill: '#ffffff',
-                fontFamily: 'Cairo',
-                fontWeight: 'bold',
-                originX: 'center',
-                originY: 'center',
-                top: 0,
-                left: 0
-            });
-
-            const rect = new fabric.Rect({
-                width: text.width + 30,
-                height: text.height + 16,
-                fill: bgColor,
-                rx: 8,
-                ry: 8,
-                originX: 'center',
-                originY: 'center',
-                top: 0,
-                left: 0
-            });
-
-            const group = new fabric.Group([rect, text], {
-                left: canvas.width / 2,
-                top: 80,
-                cornerColor: '#6366f1'
-            });
-
-            canvas.add(group);
-            canvas.setActiveObject(group);
-            canvas.renderAll();
-        }
-
-        // 4. Add Custom Typography
-        function addCustomText() {
-            const input = document.getElementById('customTextInput');
-            if(!input.value.trim()) return;
-
-            const text = new fabric.Text(input.value, {
-                left: canvas.width / 2,
-                top: canvas.height - 80,
-                originX: 'center',
-                originY: 'center',
-                fill: document.getElementById('textColorInput').value,
-                fontSize: 32,
-                fontFamily: document.getElementById('fontSelect').value,
-                fontWeight: '900',
-                shadow: 'rgba(0,0,0,0.8) 2px 2px 10px',
-                cornerColor: '#6366f1'
-            });
-
-            canvas.add(text);
-            canvas.setActiveObject(text);
-            input.value = '';
-            canvas.renderAll();
-        }
-
-        function updateSelectedText() {
-            const activeObj = canvas.getActiveObject();
-            if(activeObj && activeObj.type === 'text') {
-                activeObj.set({
-                    fontFamily: document.getElementById('fontSelect').value,
-                    fill: document.getElementById('textColorInput').value
-                });
-                canvas.renderAll();
+            try {
+                const data = await fetchWithKeyRotation(requestData);
+                const rawMarkdown = data.candidates[0].content.parts[0].text;
+                outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
+                outputContainer.classList.remove('hidden');
+            } catch (err) {
+                alert("حدث خطأ أثناء التوليد: " + err.message);
+            } finally {
+                loading.classList.add('hidden');
+                processBtn.disabled = false;
+                processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        // Delete Object
-        function deleteSelected() {
-            const activeObj = canvas.getActiveObject();
-            if(activeObj) {
-                canvas.remove(activeObj);
-                canvas.renderAll();
-            }
-        }
-
-        // Export Functions
-        function exportAd(format) {
-            canvas.discardActiveObject();
-            canvas.renderAll();
-
-            const dataURL = canvas.toDataURL({
-                format: format === 'png' ? 'png' : 'jpeg',
-                quality: 0.95,
-                multiplier: 3 // High resolution multiplier (4K Output)
-            });
-
-            const link = document.createElement('a');
-            link.download = `product-ad-design.${format}`;
-            link.href = dataURL;
-            link.click();
+        function copyResult() {
+            const text = document.getElementById('outputContent').innerText;
+            navigator.clipboard.writeText(text);
+            alert("تم نسخ محتوى العرض والشرائح بنجاح!");
         }
     </script>
 </body>
-                    </html>
+    </html>
