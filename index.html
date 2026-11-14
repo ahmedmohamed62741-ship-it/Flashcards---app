@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صانع عروض المحاضرات والريكوردات AI 🎙️📊</title>
+    <title>مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة توليد ملفات البوربوينت الحقيقية .pptx -->
-    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #030712; color: #f8fafc; }
@@ -28,6 +27,12 @@
             box-shadow: 0 0 35px rgba(6, 182, 212, 0.6);
             transform: scale(1.01);
         }
+
+        #outputContent h2 { font-size: 1.3rem; font-weight: 800; color: #38bdf8; border-right: 4px solid #0284c7; padding-right: 0.75rem; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        #outputContent h3 { font-size: 1.15rem; font-weight: 700; color: #34d399; margin-top: 1.25rem; margin-bottom: 0.5rem; background: #1e293b; padding: 0.6rem 0.8rem; border-radius: 0.5rem; border: 1px solid #334155; }
+        #outputContent ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; }
+        #outputContent li { margin-bottom: 0.4rem; line-height: 1.8; color: #cbd5e1; }
+        #outputContent strong { color: #facc15; font-weight: 700; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
@@ -37,10 +42,10 @@
             <i class="fa-solid fa-microphone-lines text-3xl"></i>
         </div>
         <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 tracking-tight mb-3">
-            مفرغ الريكوردات وصانع البوربوينت AI 🎙️📊
+            مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            ارفع تسجيل المحاضرة الصوتي لتفريغه بدقة تامة (عربي وإنجليزي)، وتحويله تلقائياً لشرائح بوربوينت فاخرة بصيغة (.pptx).
+            ارفع الريكورد الصوتي مع محتوى المحاضرة لفهم السياق، وسيقوم بتفريغ الشرح (عربي وإنجليزي بدقة متناهية) وعرضه منسقاً في الشاشة فوراً.
         </p>
     </header>
 
@@ -60,8 +65,8 @@
             <!-- Audio Recording Upload Section -->
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                 <label class="block text-xs font-bold text-slate-300 flex items-center justify-between">
-                    <span>🎙️ رفع تسجيل أو ريكورد المحاضرة الصوتي (Audio / Voice):</span>
-                    <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">اختياري (أو اكتب النص بالأسفل)</span>
+                    <span>🎙️ رفع الريكورد أو التسجيل الصوتي (اختياري لوحده أو مع المحاضرة):</span>
+                    <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">لم يتم اختيار ملف</span>
                 </label>
                 <div class="flex items-center gap-3">
                     <label class="flex-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-3 text-center cursor-pointer transition flex items-center justify-center gap-2 text-xs md:text-sm text-slate-200">
@@ -69,79 +74,52 @@
                         <span id="audioFileName">اختر ملف الصوت (MP3, WAV, M4A...)</span>
                         <input type="file" id="audioInput" accept="audio/*" onchange="handleAudioSelect(event)" class="hidden">
                     </label>
-                    <button type="button" onclick="clearAudio()" class="bg-red-900/30 hover:bg-red-900/50 text-red-400 p-3 rounded-xl border border-red-500/30 text-xs transition" title="إزالة الملف الصوتي">
+                    <button type="button" onclick="clearAudio()" class="bg-red-900/30 hover:bg-red-900/50 text-red-400 p-3 rounded-xl border border-red-500/30 text-xs transition" title="إزالة الريكورد">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Configuration Form -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="md:col-span-2 space-y-2">
-                    <label for="topicInput" class="block text-xs font-bold text-slate-300">
-                        📝 ملاحظات إضافية أو تنظيم الشرائح (اختياري مع الريكورد أو بديله):
-                    </label>
-                    <textarea id="topicInput" rows="4" placeholder="مثال: ركز في تفاصيل الريكورد على تقسيم الشرائح حسب شرح الدكتور، الشريحة الأولى كذا..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="space-y-2">
-                        <label for="slideCount" class="block text-xs font-bold text-slate-300">
-                            📊 عدد الشرائح (حتى 20):
-                        </label>
-                        <select id="slideCount" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
-                            <option value="3">3 شرائح</option>
-                            <option value="5">5 شرائح</option>
-                            <option value="7" selected>7 شرائح</option>
-                            <option value="10">10 شرائح</option>
-                            <option value="15">15 شريحة</option>
-                            <option value="20">20 شريحة</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="designMood" class="block text-xs font-bold text-slate-300">
-                            🎨 ثيم الألوان والفلتر:
-                        </label>
-                        <select id="designMood" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
-                            <option value="dark-neon">نيون أسود ومستقبلي (Dark Neon)</option>
-                            <option value="navy-gold" selected>كحلي وذهبي فاخر (Executive)</option>
-                            <option value="emerald-clean">أخضر زمردي وهادئ (Clean Mint)</option>
-                        </select>
-                    </div>
-                </div>
+            <!-- Lecture Context / Text Input -->
+            <div class="space-y-2">
+                <label for="topicInput" class="block text-xs font-bold text-slate-300">
+                    📚 محتوى المحاضرة المكتوب أو ملاحظات لتوضيح سياق الريكورد (اختياري):
+                </label>
+                <textarea id="topicInput" rows="5" placeholder="الصق هنا نص أو تفاصيل المحاضرة التي يشرحها الدكتور، ليفهم الريكورد بناءً عليها بدقة..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
             </div>
 
-            <button id="processBtn" onclick="generateAndDownloadPPTX()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
-                <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
-                <span>تفريغ الريكورد وتوليد ملف البوربوينت (.pptx) الفاخر 🚀</span>
+            <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
+                <i class="fa-solid fa-headphones-simple text-lg"></i>
+                <span>بدء التففريغ الذكي المنظم في الشاشة ⚡</span>
             </button>
         </div>
 
         <!-- Loading Indicator -->
         <div id="loading" class="hidden text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري الاستماع للريكورد الصوتي وتفريغ كلام الدكتور بدقة وهندسة القوالب...</p>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري الاستماع للريكورد وربطه بالمحاضرة وتفريغ التفاصيل بدقة...</p>
         </div>
 
-        <!-- Success Preview Container -->
-        <div id="outputContainer" class="hidden neon-card rounded-2xl p-6 text-center space-y-4">
-            <div class="inline-block p-4 rounded-full bg-emerald-500/20 text-emerald-400 text-3xl mb-2">
-                <i class="fa-solid fa-circle-check"></i>
+        <!-- Output Result Section -->
+        <div id="outputContainer" class="hidden neon-card rounded-2xl p-6 md:p-8 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 class="text-base font-bold text-cyan-400 flex items-center gap-2 m-0 bg-transparent p-0 border-0">
+                    <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد المنظم
+                </h3>
+                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 py-2 px-4 rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
+                    <i class="fa-solid fa-copy text-cyan-400"></i> نسخ التفريغ
+                </button>
             </div>
-            <h3 class="text-lg font-bold text-emerald-400">تم تفريغ الريكورد وإنشاء العرض بنجاح! 🎉</h3>
-            <p class="text-slate-300 text-xs md:text-sm">تم تنزيل ملف البوربوينت بصيغة `.pptx` على جهازك بنجاح.</p>
-            <div id="summaryPreview" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-right text-xs text-slate-300 max-h-48 overflow-y-auto"></div>
+            <div id="outputContent" class="text-slate-300 text-xs md:text-sm leading-relaxed space-y-4"></div>
         </div>
 
     </main>
 
     <footer class="text-center text-slate-500 text-xs my-8">
-        صانع عروض البوربوينت وتفريغ الصوتيات الذكي مدعوم بالذكاء الاصطناعي 🎙️📊
+        مفرغ الريكوردات والمحاضرات الذكي مدعوم بالذكاء الاصطناعي 🎙️📊
     </footer>
 
     <script>
-        // الاعتماد حصرياً على موديلات 3.8 و 3.6 كما طلبت
         const MODELS = [
             "gemini-3.8-flash",
             "gemini-3.6-flash"
@@ -169,13 +147,12 @@
 
             audioMimeType = file.type || "audio/mp3";
             document.getElementById('audioFileName').innerText = file.name;
-            document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد بنجاح 🎙️";
+            document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد 🎙️";
             document.getElementById('audioStatus').className = "text-[10px] text-emerald-400 font-bold";
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const base64String = e.target.result;
-                audioBase64 = base64String.split(',')[1];
+                audioBase64 = e.target.result.split(',')[1];
             };
             reader.readAsDataURL(file);
         }
@@ -184,7 +161,7 @@
             audioBase64 = null;
             document.getElementById('audioInput').value = "";
             document.getElementById('audioFileName').innerText = "اختر ملف الصوت (MP3, WAV, M4A...)";
-            document.getElementById('audioStatus').innerText = "اختياري (أو اكتب النص بالأسفل)";
+            document.getElementById('audioStatus').innerText = "لم يتم اختيار ملف";
             document.getElementById('audioStatus').className = "text-[10px] text-slate-400 font-normal";
         }
 
@@ -203,7 +180,7 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري الاستماع والتفريغ باستخدام (${modelName})... ⚡`;
+                            loadingText.innerText = `جاري المعالجة باستخدام (${modelName})... ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             const res = await fetch(endpoint, {
@@ -235,75 +212,35 @@
             throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
         }
 
-        function parseJSONSafely(rawText) {
-            let cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            const jsonStart = cleaned.indexOf('{');
-            const jsonEnd = cleaned.lastIndexOf('}');
-            if (jsonStart !== -1 && jsonEnd !== -1) {
-                cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
-            }
-
+        async function transcribeAudioAndLecture() {
             try {
-                return JSON.parse(cleaned);
-            } catch (err1) {
-                try {
-                    let fixed = cleaned.replace(/,\s*([\]}])/g, '$1');
-                    return JSON.parse(fixed);
-                } catch (err2) {
-                    throw new Error("خطأ في صياغة JSON الراجع من النموذج: " + err1.message);
-                }
-            }
-        }
-
-        async function generateAndDownloadPPTX() {
-            try {
-                if (typeof PptxGenJS === 'undefined') {
-                    alert("مكتبة توليد البوربوينت لم تتمكن من التحميل. تأكد من اتصالك بالإنترنت.");
-                    return;
-                }
-
                 const topic = document.getElementById('topicInput').value.trim();
-                const slideCount = document.getElementById('slideCount').value;
-                const designMood = document.getElementById('designMood').value;
 
                 if (!topic && !audioBase64) {
-                    alert("برجاء رفع تسجيل صوتي للمحاضرة أو كتابة الملاحظات/النصوص أولاً!");
+                    alert("برجاء رفع تسجيل صوتي للريكورد أو إدخال نص المحاضرة على الأقل!");
                     return;
                 }
 
                 const processBtn = document.getElementById('processBtn');
                 const loading = document.getElementById('loading');
                 const outputContainer = document.getElementById('outputContainer');
-                const summaryPreview = document.getElementById('summaryPreview');
+                const outputContent = document.getElementById('outputContent');
 
                 processBtn.disabled = true;
                 processBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 loading.classList.remove('hidden');
                 outputContainer.classList.add('hidden');
 
-                const systemPrompt = `You are an elite Clinical Professor, Medical/Academic Transcriptionist, and Presentation Architect.
-Your task is to listen to the provided lecture audio recording and/or read the text notes, accurately transcribe and extract the core spoken points (handling Arabic, English, and scientific terminology with absolute fidelity), and structure them into exactly ${slideCount} professional slides formatted as a strict JSON object.
+                const systemPrompt = `You are an elite Academic and Medical Transcriptionist & Professor.
+Your task is to listen to the provided audio recording (if any) and read the accompanying lecture text/notes.
+Produce an extremely accurate, detailed, and beautifully structured markdown transcription and breakdown of what the doctor/speaker said.
 
 CRITICAL INSTRUCTIONS:
-1. LANGUAGE FIDELITY: Match the exact language spoken in the audio or written in the text (Arabic/English terms, medical terms, doctor's phrasing).
-2. LAYOUT: For each slide, assign layout strictly as either "cards" or "list".
-3. STRICT JSON ONLY: Output ONLY valid JSON structure.
-4. STRUCTURE:
-{
-  "presentationTitle": "Main Presentation Title",
-  "coverSubtitle": "Lecture Transcription & Summary",
-  "slides": [
-    {
-      "slideNumber": 1,
-      "title": "Slide Title",
-      "layout": "cards",
-      "points": ["Detailed point 1...", "Detailed point 2...", "Detailed point 3..."]
-    }
-  ]
-}
-Ensure exactly ${slideCount} slides are generated.`;
+1. LANGUAGE FIDELITY: Seamlessly handle both Arabic and English text/terms in the exact same transcription (mixing Arabic explanation with English scientific/medical terms naturally as spoken).
+2. CONTEXTUAL MATCHING: If both a lecture text and audio are provided, use the lecture text to fully understand the context, terminology, and structure, and match the audio transcription precisely to it. If only audio is provided, transcribe it meticulously.
+3. FORMATTING: Use clear Markdown headings (##), subheadings (###), bullet points, and bold text for key terms to make it super organized and easy to study.
+4. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
 
-                // تجهيز المحتوى للذكاء الاصطناعي (متعدد الوسائط: صوت + نص)
                 let contentParts = [];
                 if (audioBase64) {
                     contentParts.push({
@@ -314,7 +251,7 @@ Ensure exactly ${slideCount} slides are generated.`;
                     });
                 }
                 contentParts.push({
-                    text: `مطلوب الاستماع للريكورد الصوتي وتفريغ محتوى المحاضرة بدقة، ثم إنشاء عدد ${slideCount} شرائح بوربوينت احترافية بناءً على الملاحظات التالية:\n${topic || "تفجير وتفريغ الشرح الصوتي بالكامل للشرائح"}`
+                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً على الريكورد الصوتي المرفق بدقة تامة وتنسيق احترافي يدمج العربي والإنجليزي."}`
                 });
 
                 const requestData = {
@@ -324,115 +261,30 @@ Ensure exactly ${slideCount} slides are generated.`;
                     }],
                     generationConfig: { 
                         temperature: 0.2, 
-                        maxOutputTokens: 8192,
-                        responseMimeType: "application/json"
+                        maxOutputTokens: 8192
                     }
                 };
 
                 const data = await fetchWithKeyRotation(requestData);
-                let rawText = data.candidates[0].content.parts[0].text;
-                
-                const presentationData = parseJSONSafely(rawText);
+                const rawMarkdown = data.candidates[0].content.parts[0].text;
 
-                let pptx = new PptxGenJS();
-                pptx.layout = 'LAYOUT_16X9';
-
-                let bgCol = "030712", titleCol = "38BDF8", textCol = "F8FAFC", cardBg = "1E293B", accentCol = "8B5CF6", cardBorder = "334155";
-                if (designMood === 'navy-gold') {
-                    bgCol = "0A1128"; titleCol = "FBBF24"; textCol = "FFFFFF"; cardBg = "172554"; accentCol = "F59E0B"; cardBorder = "1E3A8A";
-                } else if (designMood === 'emerald-clean') {
-                    bgCol = "022C22"; titleCol = "34D399"; textCol = "F0FDF4"; cardBg = "064E3B"; accentCol = "10B981"; cardBorder = "065F46";
-                }
-
-                let coverSlide = pptx.addSlide();
-                coverSlide.background = { color: bgCol };
-                coverSlide.addShape(pptx.shapes.RECTANGLE, { x: 0.8, y: 0.8, w: 11.7, h: 5.625, line: { color: accentCol, width: 2 }, fill: { color: bgCol } });
-                
-                coverSlide.addText(presentationData.presentationTitle || "Lecture Presentation", {
-                    x: 1.5, y: 2.2, w: '75%', h: 1.5,
-                    fontSize: 36, bold: true, color: titleCol, align: 'center'
-                });
-                if (presentationData.coverSubtitle) {
-                    coverSlide.addText(presentationData.coverSubtitle, {
-                        x: 1.5, y: 3.8, w: '75%', h: 1.0,
-                        fontSize: 18, color: textCol, align: 'center'
-                    });
-                }
-
-                if (presentationData.slides && Array.isArray(presentationData.slides)) {
-                    presentationData.slides.forEach((slideInfo) => {
-                        let slide = pptx.addSlide();
-                        slide.background = { color: bgCol };
-
-                        slide.addText(slideInfo.title || `Slide ${slideInfo.slideNumber}`, {
-                            x: 0.8, y: 0.5, w: '85%', h: 0.7,
-                            fontSize: 24, bold: true, color: titleCol
-                        });
-                        slide.addShape(pptx.shapes.RECTANGLE, {
-                            x: 0.8, y: 1.2, w: 1.2, h: 0.06, fill: { color: accentCol }
-                        });
-
-                        let points = slideInfo.points || [];
-                        let layoutType = slideInfo.layout ? slideInfo.layout.toLowerCase().trim() : 'cards';
-                        if (layoutType !== 'cards' && layoutType !== 'list') {
-                            layoutType = 'cards';
-                        }
-
-                        if (layoutType === 'cards' && points.length > 1) {
-                            let totalCards = Math.min(points.length, 4);
-                            let cardWidth = (11.0 - (totalCards - 1) * 0.3) / totalCards;
-                            
-                            for (let i = 0; i < totalCards; i++) {
-                                let xPos = 0.8 + i * (cardWidth + 0.3);
-                                slide.addShape(pptx.shapes.RECTANGLE, {
-                                    x: xPos, y: 1.6, w: cardWidth, h: 4.5,
-                                    fill: { color: cardBg }, line: { color: cardBorder, width: 1 }
-                                });
-                                slide.addShape(pptx.shapes.OVAL, {
-                                    x: xPos + 0.3, y: 1.9, w: 0.5, h: 0.5,
-                                    fill: { color: accentCol }
-                                });
-                                slide.addText(`0${i+1}`, {
-                                    x: xPos + 0.3, y: 1.9, w: 0.5, h: 0.5,
-                                    fontSize: 12, bold: true, color: "FFFFFF", align: 'center', valign: 'middle'
-                                });
-                                slide.addText(points[i], {
-                                    x: xPos + 0.2, y: 2.6, w: cardWidth - 0.4, h: 3.3,
-                                    fontSize: 14, color: textCol, valign: 'top'
-                                });
-                            }
-                        } else {
-                            slide.addShape(pptx.shapes.RECTANGLE, {
-                                x: 0.8, y: 1.5, w: 11.7, h: 4.8,
-                                fill: { color: cardBg }, line: { color: cardBorder, width: 1 }
-                            });
-
-                            let formattedPoints = points.map(pt => ({
-                                text: pt,
-                                options: { fontSize: 15, color: textCol, bullet: true, spaceAfter: 14 }
-                            }));
-
-                            slide.addText(formattedPoints, {
-                                x: 1.1, y: 1.8, w: 11.1, h: 4.2,
-                                align: 'left', valign: 'top'
-                            });
-                        }
-                    });
-                }
-
-                await pptx.writeFile({ fileName: `${presentationData.presentationTitle || 'Lecture_Presentation'}.pptx` });
-
-                summaryPreview.innerHTML = `<strong>عنوان العرض:</strong> ${presentationData.presentationTitle}<br><strong>عدد الشرائح المستخرجة من الريكورد:</strong> ${presentationData.slides.length}`;
+                outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
                 outputContainer.classList.remove('hidden');
 
             } catch (err) {
-                alert("حدث خطأ أثناء التوليد: " + err.message);
+                alert("حدث خطأ أثناء التفريغ: " + err.message);
             } finally {
                 document.getElementById('loading').classList.add('hidden');
                 const btn = document.getElementById('processBtn');
                 btn.disabled = false;
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
+        }
+
+        function copyResult() {
+            const text = document.getElementById('outputContent').innerText;
+            navigator.clipboard.writeText(text);
+            alert("تم نسخ التفريغ بنجاح!");
         }
     </script>
 </body>
