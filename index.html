@@ -47,7 +47,7 @@
             مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            ارفع الريكوردات الطويلة (مع ربط ذكي ببحث جوجل لتدقيق المصطلحات)، وتفريغ كامل الشرح بدقة متناهية مع التحميل المباشر كملف PDF.
+            التفريغ يحفظ تلقائياً ولن يضيع أبداً عند الخروج أو التحديث، مع دعم الريكوردات الطويلة والربط ببحث جوجل.
         </p>
     </header>
 
@@ -136,6 +136,15 @@
             if (savedKey && savedKey.trim() !== "") {
                 keyInput.value = savedKey;
             }
+
+            // استعادة آخر تفريغ محفوظ تلقائياً عند فتح الصفحة أو العودة للموقع
+            const savedTranscription = localStorage.getItem('last_saved_transcription_markdown');
+            if (savedTranscription && savedTranscription.trim() !== "") {
+                const outputContent = document.getElementById('outputContent');
+                const outputContainer = document.getElementById('outputContainer');
+                outputContent.innerHTML = window.marked ? marked.parse(savedTranscription) : savedTranscription;
+                outputContainer.classList.remove('hidden');
+            }
         });
 
         function saveApiKey() {
@@ -186,7 +195,7 @@
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             
-                            // رفع المهلة الزمنية إلى 30 دقيقة كاملة للريكوردات الطويلة جداً
+                            // مهلة زمنية 30 دقيقة كاملة للريكوردات الطويلة جداً
                             const controller = new AbortController();
                             const timeoutId = setTimeout(() => controller.abort(), 1800000); 
 
@@ -274,7 +283,7 @@ CRITICAL INSTRUCTIONS:
                     contents: [{
                         parts: contentParts
                     }],
-                    tools: [{ googleSearch: {} }], // ربط الريكورد بمحرك بحث جوجل للتدقيق الإملائي والعلمي الدقيق
+                    tools: [{ googleSearch: {} }],
                     generationConfig: { 
                         temperature: 0.1, 
                         maxOutputTokens: 8192
@@ -283,6 +292,9 @@ CRITICAL INSTRUCTIONS:
 
                 const data = await fetchWithKeyRotation(requestData);
                 const rawMarkdown = data.candidates[0].content.parts[0].text;
+
+                // حفظ التفريغ تلقائياً في ذاكرة المتصفح ليبقى موجوداً حتى لو خرجت من الموقع وعادت
+                localStorage.setItem('last_saved_transcription_markdown', rawMarkdown);
 
                 outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
                 outputContainer.classList.remove('hidden');
