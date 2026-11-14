@@ -47,7 +47,7 @@
             مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            ارفع الريكوردات الطويلة (حتى ساعتين) مع أو بدون محتوى المحاضرة، وسيقوم بتفريغ الشرح (عربي وإنجليزي بدقة متناهية وسرعة عالية) والتحميل المباشر كملف PDF.
+            ارفع الريكوردات الطويلة (مع ربط ذكي ببحث جوجل لتدقيق المصطلحات)، وتفريغ كامل الشرح بدقة متناهية مع التحميل المباشر كملف PDF.
         </p>
     </header>
 
@@ -67,7 +67,7 @@
             <!-- Audio Recording Upload Section -->
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                 <label class="block text-xs font-bold text-slate-300 flex items-center justify-between">
-                    <span>🎙️ رفع الريكورد أو التسجيل الصوتي (يدعم حتى ساعتين):</span>
+                    <span>🎙️ رفع الريكورد أو التسجيل الصوتي (يدعم التسجيلات الطويلة حتى ساعتين):</span>
                     <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">لم يتم اختيار ملف</span>
                 </label>
                 <div class="flex items-center gap-3">
@@ -92,21 +92,21 @@
 
             <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
                 <i class="fa-solid fa-headphones-simple text-lg"></i>
-                <span>بدء التففريغ الذكي السريع للريكورد ⚡</span>
+                <span>بدء التففريغ الذكي الشامل للريكورد ⚡</span>
             </button>
         </div>
 
         <!-- Loading Indicator -->
         <div id="loading" class="hidden text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري معالجة الريكورد الطويل وتحليل الصوت وربطه بالمحاضرة، يرجى الانتظار...</p>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري معالجة الريكورد الطويل والربط بمحرك بحث جوجل لتفريغ كل تفصيلة بدقة، يرجى الانتظار...</p>
         </div>
 
         <!-- Output Result Section -->
         <div id="outputContainer" class="hidden neon-card rounded-2xl p-6 md:p-8 space-y-5">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <h3 class="text-base font-bold text-cyan-400 flex items-center gap-2 m-0 bg-transparent p-0 border-0">
-                    <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد المنظم
+                    <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد الشامل
                 </h3>
                 <button onclick="downloadPDF()" class="text-xs bg-red-900/40 hover:bg-red-900/60 active:scale-95 text-red-200 py-2 px-4 rounded-xl border border-red-500/30 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
                     <i class="fa-solid fa-file-pdf text-red-400"></i> تحميل كملف PDF 📄
@@ -182,13 +182,13 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري معالجة الصوت الطويل عبر (${modelName})... يرجى الانتظار ⚡`;
+                            loadingText.innerText = `جاري معالجة الريكورد الطويل عبر (${modelName}) والربط ببحث جوجل... يرجى الانتظار ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             
-                            // رفع المهلة الزمنية إلى 10 دقائق كاملة لدعم الريكوردات الطويلة حتى ساعتين
+                            // رفع المهلة الزمنية إلى 30 دقيقة كاملة للريكوردات الطويلة جداً
                             const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 600000); 
+                            const timeoutId = setTimeout(() => controller.abort(), 1800000); 
 
                             const res = await fetch(endpoint, {
                                 method: 'POST',
@@ -215,7 +215,7 @@
                             }
                         } catch (err) {
                             if (err.name === 'AbortError') {
-                                lastError = new Error("استغرق الريكورد الطويل وقتاً تجاوز الحد الأقصى للمهلة (10 دقائق)، حاول تقليل مدة التسجيل أو التحقق من سرعة الإنترنت.");
+                                lastError = new Error("استغرق الريكورد الطويل جداً وقتاً تجاوز حد الـ 30 دقيقة، حاول التحقق من سرعة الإنترنت.");
                             } else {
                                 lastError = err;
                             }
@@ -245,15 +245,16 @@
                 loading.classList.remove('hidden');
                 outputContainer.classList.add('hidden');
 
-                const systemPrompt = `You are an elite Academic and Medical Transcriptionist & Professor.
-Your task is to listen to the provided audio recording (which can be up to 2 hours long) and read the accompanying lecture text/notes.
-Produce an extremely accurate, detailed, fast, and beautifully structured markdown transcription and breakdown of what the doctor/speaker said.
+                const systemPrompt = `You are an elite Academic, Medical Professor, and Expert Transcriptionist.
+Your task is to listen comprehensively to the provided audio recording (which can be up to 2 hours long) and read the accompanying lecture text/notes.
+Produce an extremely thorough, detailed, fully comprehensive, and beautifully structured markdown transcription of everything the speaker/doctor said without dropping a single important detail.
 
 CRITICAL INSTRUCTIONS:
-1. LANGUAGE FIDELITY: Seamlessly handle both Arabic and English text/terms in the exact same transcription (mixing Arabic explanation with English scientific/medical terms naturally as spoken).
-2. CONTEXTUAL MATCHING: If both a lecture text and audio are provided, use the lecture text to fully understand the context, terminology, and structure, and match the audio transcription precisely to it. If only audio is provided, transcribe it meticulously with lightning speed and high accuracy.
-3. FORMATTING: Use clear Markdown headings (##), subheadings (###), bullet points, and bold text for key terms to make it super organized and easy to study.
-4. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
+1. ABSOLUTE COMPLETENESS (DO NOT DROP ANYTHING): Transcribe and cover every single topic, explanation, example, and detail mentioned in the audio recording from start to finish. Do not truncate or omit anything.
+2. LANGUAGE & TERMINOLOGY FIDELITY: Seamlessly handle both Arabic explanation and English scientific/medical terms in the exact same transcription as spoken. Use Google Search grounding to verify and spell all medical, technical, and scientific names perfectly.
+3. CONTEXTUAL MATCHING: Use the accompanying lecture text (if provided) to align terms, structure, and context precisely with the audio.
+4. FORMATTING: Use clear Markdown headings (##), subheadings (###), detailed bullet points, and bold text for key terms to make it extremely organized for studying.
+5. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
 
                 let contentParts = [];
                 if (audioBase64) {
@@ -265,7 +266,7 @@ CRITICAL INSTRUCTIONS:
                     });
                 }
                 contentParts.push({
-                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً وبأقصى سرعة ودقة على الريكورد الصوتي الطويل المرفق مع دمج العربي والإنجليزي."}`
+                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً وبأقصى شمولية ودقة على الريكورد الصوتي الطويل المرفق مع ربطه بمحرك بحث جوجل لتدقيق المصطلحات الإنجليزية والعربية."}`
                 });
 
                 const requestData = {
@@ -273,6 +274,7 @@ CRITICAL INSTRUCTIONS:
                     contents: [{
                         parts: contentParts
                     }],
+                    tools: [{ googleSearch: {} }], // ربط الريكورد بمحرك بحث جوجل للتدقيق الإملائي والعلمي الدقيق
                     generationConfig: { 
                         temperature: 0.1, 
                         maxOutputTokens: 8192
