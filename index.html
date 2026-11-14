@@ -47,7 +47,7 @@
             مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            التفريغ يحفظ تلقائياً ولن يضيع أبداً عند الخروج أو التحديث، مع دعم الريكوردات الطويلة والربط ببحث جوجل.
+            الحفظ التلقائي مفعل بالكامل: ملاحظاتك والتفريغ محفوظون دائماً حتى لو خرجت أو أغلق الهاتف.
         </p>
     </header>
 
@@ -85,9 +85,9 @@
             <!-- Lecture Context / Text Input -->
             <div class="space-y-2">
                 <label for="topicInput" class="block text-xs font-bold text-slate-300">
-                    📚 محتوى المحاضرة المكتوب أو ملاحظات لتوضيح سياق الريكورد (اختياري):
+                    📚 محتوى المحاضرة المكتوب أو ملاحظات لتوضيح سياق الريكورد (يُحفظ تلقائياً):
                 </label>
-                <textarea id="topicInput" rows="5" placeholder="الصق هنا نص أو تفاصيل المحاضرة التي يشرحها الدكتور، ليفهم الريكورد بناءً عليها بدقة..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
+                <textarea id="topicInput" rows="5" oninput="saveTopicInput()" placeholder="الصق هنا نص أو تفاصيل المحاضرة التي يشرحها الدكتور، ليفهم الريكورد بناءً عليها بدقة..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
             </div>
 
             <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
@@ -96,10 +96,15 @@
             </button>
         </div>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="hidden text-center py-8 space-y-3">
+        <!-- Loading Indicator with Cancel Button -->
+        <div id="loading" class="hidden text-center py-8 space-y-4">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
             <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري معالجة الريكورد الطويل والربط بمحرك بحث جوجل لتفريغ كل تفصيلة بدقة، يرجى الانتظار...</p>
+            <div>
+                <button onclick="cancelTranscription()" class="text-xs bg-red-900/50 hover:bg-red-900 text-red-200 py-1.5 px-4 rounded-lg border border-red-500/40 transition cursor-pointer">
+                    <i class="fa-solid fa-stop text-red-400 mr-1"></i> إلغاء التحميل
+                </button>
+            </div>
         </div>
 
         <!-- Output Result Section -->
@@ -129,15 +134,23 @@
 
         let audioBase64 = null;
         let audioMimeType = "audio/mp3";
+        let currentAbortController = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            // استعادة مفتاح الـ API
             const savedKey = localStorage.getItem('user_gemini_api_keys');
             const keyInput = document.getElementById('apiKeyInput');
             if (savedKey && savedKey.trim() !== "") {
                 keyInput.value = savedKey;
             }
 
-            // استعادة آخر تفريغ محفوظ تلقائياً عند فتح الصفحة أو العودة للموقع
+            // استعادة محتوى ملاحظات المحاضرة المحفوظ تلقائياً
+            const savedTopic = localStorage.getItem('saved_topic_input');
+            if (savedTopic) {
+                document.getElementById('topicInput').value = savedTopic;
+            }
+
+            // استعادة آخر تفريغ محفوظ تلقائياً لكي لا يضيع أبداً عند الخروج أو التحديث
             const savedTranscription = localStorage.getItem('last_saved_transcription_markdown');
             if (savedTranscription && savedTranscription.trim() !== "") {
                 const outputContent = document.getElementById('outputContent');
@@ -150,6 +163,11 @@
         function saveApiKey() {
             const keyInput = document.getElementById('apiKeyInput').value.trim();
             localStorage.setItem('user_gemini_api_keys', keyInput);
+        }
+
+        function saveTopicInput() {
+            const topicText = document.getElementById('topicInput').value;
+            localStorage.setItem('saved_topic_input', topicText);
         }
 
         function handleAudioSelect(event) {
@@ -176,6 +194,17 @@
             document.getElementById('audioStatus').className = "text-[10px] text-slate-400 font-normal";
         }
 
+        function cancelTranscription() {
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            document.getElementById('loading').classList.add('hidden');
+            const btn = document.getElementById('processBtn');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            alert("تم إيقاف عملية التحميل بنجاح.");
+        }
+
         async function fetchWithKeyRotation(requestData) {
             const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
             if (!rawKeyInput) {
@@ -191,19 +220,19 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري معالجة الريكورد الطويل عبر (${modelName}) والربط ببحث جوجل... يرجى الانتظار ⚡`;
+                            loadingText.innerText = `جاري معالجة الريكورد عبر (${modelName}) والربط ببحث جوجل... يرجى الانتظار ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             
+                            currentAbortController = new AbortController();
                             // مهلة زمنية 30 دقيقة كاملة للريكوردات الطويلة جداً
-                            const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 1800000); 
+                            const timeoutId = setTimeout(() => currentAbortController.abort(), 1800000); 
 
                             const res = await fetch(endpoint, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(requestData),
-                                signal: controller.signal
+                                signal: currentAbortController.signal
                             });
 
                             clearTimeout(timeoutId);
@@ -224,7 +253,7 @@
                             }
                         } catch (err) {
                             if (err.name === 'AbortError') {
-                                lastError = new Error("استغرق الريكورد الطويل جداً وقتاً تجاوز حد الـ 30 دقيقة، حاول التحقق من سرعة الإنترنت.");
+                                throw new Error("تم إيقاف العملية أو تجاوزت الحد الأقصى للمهلة الزمنية.");
                             } else {
                                 lastError = err;
                             }
@@ -293,14 +322,16 @@ CRITICAL INSTRUCTIONS:
                 const data = await fetchWithKeyRotation(requestData);
                 const rawMarkdown = data.candidates[0].content.parts[0].text;
 
-                // حفظ التفريغ تلقائياً في ذاكرة المتصفح ليبقى موجوداً حتى لو خرجت من الموقع وعادت
+                // الحفظ التلقائي الفوري للتفريغ في ذاكرة المتصفح
                 localStorage.setItem('last_saved_transcription_markdown', rawMarkdown);
 
                 outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
                 outputContainer.classList.remove('hidden');
 
             } catch (err) {
-                alert("حدث خطأ أثناء التفريغ: " + err.message);
+                if (err.message !== "تم إيقاف العملية أو تجاوزت الحد الأقصى للمهلة الزمنية.") {
+                    alert("حدث خطأ أثناء التفريغ: " + err.message);
+                }
             } finally {
                 document.getElementById('loading').classList.add('hidden');
                 const btn = document.getElementById('processBtn');
