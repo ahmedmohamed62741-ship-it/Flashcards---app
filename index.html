@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- مكتبة لتوليد وتحميل ملفات الـ PDF مباشرة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #030712; color: #f8fafc; }
@@ -45,7 +47,7 @@
             مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            ارفع الريكورد الصوتي مع محتوى المحاضرة لفهم السياق، وسيقوم بتفريغ الشرح (عربي وإنجليزي بدقة متناهية) وعرضه منسقاً في الشاشة فوراً.
+            ارفع الريكورد الصوتي مع محتوى المحاضرة لفهم السياق، وسيقوم بتفريغ الشرح (عربي وإنجليزي بدقة متناهية) مع إمكانية التحميل المباشر كملف PDF.
         </p>
     </header>
 
@@ -106,8 +108,8 @@
                 <h3 class="text-base font-bold text-cyan-400 flex items-center gap-2 m-0 bg-transparent p-0 border-0">
                     <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد المنظم
                 </h3>
-                <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 py-2 px-4 rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
-                    <i class="fa-solid fa-copy text-cyan-400"></i> نسخ التفريغ
+                <button onclick="downloadPDF()" class="text-xs bg-red-900/40 hover:bg-red-900/60 active:scale-95 text-red-200 py-2 px-4 rounded-xl border border-red-500/30 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
+                    <i class="fa-solid fa-file-pdf text-red-400"></i> تحميل كملف PDF 📄
                 </button>
             </div>
             <div id="outputContent" class="text-slate-300 text-xs md:text-sm leading-relaxed space-y-4"></div>
@@ -145,9 +147,14 @@
             const file = event.target.files && event.target.files[0];
             if (!file) return;
 
+            // التحقق من حجم الملف لتنبيه المستخدم لو كان كبير جداً
+            if (file.size > 30 * 1024 * 1024) {
+                alert("حجم الريكورد كبير نسبياً، قد يستغرق الرفع ومعالجته وقتاً أطول قليلاً، يرجى الانتظار.");
+            }
+
             audioMimeType = file.type || "audio/mp3";
             document.getElementById('audioFileName').innerText = file.name;
-            document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد 🎙️";
+            document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد بنجاح 🎙️";
             document.getElementById('audioStatus').className = "text-[10px] text-emerald-400 font-bold";
 
             const reader = new FileReader();
@@ -180,14 +187,21 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري المعالجة باستخدام (${modelName})... ⚡`;
+                            loadingText.innerText = `جاري معالجة الصوت والتفريغ باستخدام (${modelName})... يرجى الانتظار ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
+                            
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 120000); // مهلة زمنية دقيقتين لمنع التعليق اللانهائي
+
                             const res = await fetch(endpoint, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(requestData)
+                                body: JSON.stringify(requestData),
+                                signal: controller.signal
                             });
+
+                            clearTimeout(timeoutId);
 
                             if (res.status === 429 || res.status === 503) {
                                 await new Promise(r => setTimeout(r, 1500));
@@ -204,7 +218,11 @@
                                 }
                             }
                         } catch (err) {
-                            lastError = err;
+                            if (err.name === 'AbortError') {
+                                lastError = new Error("استغرق الريكورد وقتاً طويلاً جداً للرد، حاول تقسيم الملف الصوتي إلى أجزاء أصغر.");
+                            } else {
+                                lastError = err;
+                            }
                         }
                     }
                 }
@@ -281,10 +299,16 @@ CRITICAL INSTRUCTIONS:
             }
         }
 
-        function copyResult() {
-            const text = document.getElementById('outputContent').innerText;
-            navigator.clipboard.writeText(text);
-            alert("تم نسخ التفريغ بنجاح!");
+        function downloadPDF() {
+            const element = document.getElementById('outputContent');
+            const opt = {
+                margin:       10,
+                filename:     'Lecture_Transcription.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
         }
     </script>
 </body>
