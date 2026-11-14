@@ -47,7 +47,7 @@
             مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            ارفع الريكورد الصوتي مع محتوى المحاضرة لفهم السياق، وسيقوم بتفريغ الشرح (عربي وإنجليزي بدقة متناهية) مع إمكانية التحميل المباشر كملف PDF.
+            ارفع الريكوردات الطويلة (حتى ساعتين) مع أو بدون محتوى المحاضرة، وسيقوم بتفريغ الشرح (عربي وإنجليزي بدقة متناهية وسرعة عالية) والتحميل المباشر كملف PDF.
         </p>
     </header>
 
@@ -67,7 +67,7 @@
             <!-- Audio Recording Upload Section -->
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                 <label class="block text-xs font-bold text-slate-300 flex items-center justify-between">
-                    <span>🎙️ رفع الريكورد أو التسجيل الصوتي (اختياري لوحده أو مع المحاضرة):</span>
+                    <span>🎙️ رفع الريكورد أو التسجيل الصوتي (يدعم حتى ساعتين):</span>
                     <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">لم يتم اختيار ملف</span>
                 </label>
                 <div class="flex items-center gap-3">
@@ -92,14 +92,14 @@
 
             <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
                 <i class="fa-solid fa-headphones-simple text-lg"></i>
-                <span>بدء التففريغ الذكي المنظم في الشاشة ⚡</span>
+                <span>بدء التففريغ الذكي السريع للريكورد ⚡</span>
             </button>
         </div>
 
         <!-- Loading Indicator -->
         <div id="loading" class="hidden text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري الاستماع للريكورد وربطه بالمحاضرة وتفريغ التفاصيل بدقة...</p>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري معالجة الريكورد الطويل وتحليل الصوت وربطه بالمحاضرة، يرجى الانتظار...</p>
         </div>
 
         <!-- Output Result Section -->
@@ -147,11 +147,6 @@
             const file = event.target.files && event.target.files[0];
             if (!file) return;
 
-            // التحقق من حجم الملف لتنبيه المستخدم لو كان كبير جداً
-            if (file.size > 30 * 1024 * 1024) {
-                alert("حجم الريكورد كبير نسبياً، قد يستغرق الرفع ومعالجته وقتاً أطول قليلاً، يرجى الانتظار.");
-            }
-
             audioMimeType = file.type || "audio/mp3";
             document.getElementById('audioFileName').innerText = file.name;
             document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد بنجاح 🎙️";
@@ -187,12 +182,13 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري معالجة الصوت والتفريغ باستخدام (${modelName})... يرجى الانتظار ⚡`;
+                            loadingText.innerText = `جاري معالجة الصوت الطويل عبر (${modelName})... يرجى الانتظار ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             
+                            // رفع المهلة الزمنية إلى 10 دقائق كاملة لدعم الريكوردات الطويلة حتى ساعتين
                             const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 120000); // مهلة زمنية دقيقتين لمنع التعليق اللانهائي
+                            const timeoutId = setTimeout(() => controller.abort(), 600000); 
 
                             const res = await fetch(endpoint, {
                                 method: 'POST',
@@ -219,7 +215,7 @@
                             }
                         } catch (err) {
                             if (err.name === 'AbortError') {
-                                lastError = new Error("استغرق الريكورد وقتاً طويلاً جداً للرد، حاول تقسيم الملف الصوتي إلى أجزاء أصغر.");
+                                lastError = new Error("استغرق الريكورد الطويل وقتاً تجاوز الحد الأقصى للمهلة (10 دقائق)، حاول تقليل مدة التسجيل أو التحقق من سرعة الإنترنت.");
                             } else {
                                 lastError = err;
                             }
@@ -250,12 +246,12 @@
                 outputContainer.classList.add('hidden');
 
                 const systemPrompt = `You are an elite Academic and Medical Transcriptionist & Professor.
-Your task is to listen to the provided audio recording (if any) and read the accompanying lecture text/notes.
-Produce an extremely accurate, detailed, and beautifully structured markdown transcription and breakdown of what the doctor/speaker said.
+Your task is to listen to the provided audio recording (which can be up to 2 hours long) and read the accompanying lecture text/notes.
+Produce an extremely accurate, detailed, fast, and beautifully structured markdown transcription and breakdown of what the doctor/speaker said.
 
 CRITICAL INSTRUCTIONS:
 1. LANGUAGE FIDELITY: Seamlessly handle both Arabic and English text/terms in the exact same transcription (mixing Arabic explanation with English scientific/medical terms naturally as spoken).
-2. CONTEXTUAL MATCHING: If both a lecture text and audio are provided, use the lecture text to fully understand the context, terminology, and structure, and match the audio transcription precisely to it. If only audio is provided, transcribe it meticulously.
+2. CONTEXTUAL MATCHING: If both a lecture text and audio are provided, use the lecture text to fully understand the context, terminology, and structure, and match the audio transcription precisely to it. If only audio is provided, transcribe it meticulously with lightning speed and high accuracy.
 3. FORMATTING: Use clear Markdown headings (##), subheadings (###), bullet points, and bold text for key terms to make it super organized and easy to study.
 4. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
 
@@ -269,7 +265,7 @@ CRITICAL INSTRUCTIONS:
                     });
                 }
                 contentParts.push({
-                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً على الريكورد الصوتي المرفق بدقة تامة وتنسيق احترافي يدمج العربي والإنجليزي."}`
+                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً وبأقصى سرعة ودقة على الريكورد الصوتي الطويل المرفق مع دمج العربي والإنجليزي."}`
                 });
 
                 const requestData = {
@@ -278,7 +274,7 @@ CRITICAL INSTRUCTIONS:
                         parts: contentParts
                     }],
                     generationConfig: { 
-                        temperature: 0.2, 
+                        temperature: 0.1, 
                         maxOutputTokens: 8192
                     }
                 };
