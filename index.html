@@ -46,7 +46,7 @@
             مفرغ الريكوردات والمحاضرات الذكي AI 🎙️⚡
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            توليد فائق السرعة والاستقرار مع ضغط تلقائي للصوت، ربط ببحث جوجل، وحفظ تلقائي دائم.
+            يقسم الريكوردات الطويلة تلقائياً ويعرض لك التفريغ أولاً بأول في الشاشة أثناء التحميل بأقصى سرعة.
         </p>
     </header>
 
@@ -66,7 +66,7 @@
             <!-- Audio Recording Upload Section -->
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                 <label class="block text-xs font-bold text-slate-300 flex items-center justify-between">
-                    <span>🎙️ رفع الريكورد الصوتي (يتم ضغطه وتسريعه تلقائياً):</span>
+                    <span>🎙️ رفع الريكورد الصوتي (يُقسم ويُفرغ في الشاشة أولاً بأول):</span>
                     <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">لم يتم اختيار ملف</span>
                 </label>
                 <div class="flex items-center gap-3">
@@ -91,26 +91,26 @@
 
             <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
                 <i class="fa-solid fa-bolt text-lg"></i>
-                <span>بدء التففريغ الذكي السريع الآن ⚡</span>
+                <span>بدء التففريغ السريع والكتابة الفورية في الشاشة ⚡</span>
             </button>
         </div>
 
         <!-- Loading Indicator with Cancel Button -->
         <div id="loading" class="hidden text-center py-6 space-y-4">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري تجهيز الصوت وتفريغ المحاضرة بأقصى سرعة...</p>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري تجهيز الصوت وتقسيمه للتفريغ السريع...</p>
             <div>
                 <button onclick="cancelTranscription()" class="text-xs bg-red-900/50 hover:bg-red-900 text-red-200 py-1.5 px-4 rounded-lg border border-red-500/40 transition cursor-pointer">
-                    <i class="fa-solid fa-stop text-red-400 mr-1"></i> إلغاء التحميل
+                    <i class="fa-solid fa-stop text-red-400 mr-1"></i> إيقاف واستكمال ما تم تفريغه
                 </button>
             </div>
         </div>
 
-        <!-- Output Result Section -->
+        <!-- Output Result Section (يظهر فوراً مع أول جزء) -->
         <div id="outputContainer" class="hidden neon-card rounded-2xl p-6 md:p-8 space-y-5">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <h3 class="text-base font-bold text-cyan-400 flex items-center gap-2 m-0 bg-transparent p-0 border-0">
-                    <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد الشامل
+                    <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد (يتحدث تلقائياً)
                 </h3>
                 <button onclick="downloadPDF()" class="text-xs bg-red-900/40 hover:bg-red-900/60 active:scale-95 text-red-200 py-2 px-4 rounded-xl border border-red-500/30 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
                     <i class="fa-solid fa-file-pdf text-red-400"></i> تحميل كملف PDF 📄
@@ -132,6 +132,7 @@
         ];
 
         let selectedAudioFile = null;
+        let isCancelled = false;
         let currentAbortController = null;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -184,6 +185,7 @@
         }
 
         function cancelTranscription() {
+            isCancelled = true;
             if (currentAbortController) {
                 currentAbortController.abort();
             }
@@ -191,53 +193,61 @@
             const btn = document.getElementById('processBtn');
             btn.disabled = false;
             btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            alert("تم إيقاف عملية التحميل بنجاح.");
         }
 
-        // ضغط الصوت داخل المتصفح (Mono 16kHz WAV) لتسريع الرفع والمعالجة 10 أضعاف بدون فقدان وضوح الكلام
-        async function compressAudioForFastUpload(file) {
+        // تقسيم وضغط الصوت إلى مقاطع صغيرة (10 دقائق لكل مقطع بتردد 8000Hz خفيف وسريع جداً)
+        async function splitAndCompressAudio(file) {
+            const loadingText = document.getElementById('loadingText');
+            loadingText.innerText = "جاري معالجة وتقسيم الصوت إلى مقاطع فائقة السرعة... ⚡";
+
             try {
-                // إذا كان الملف صغيراً أقل من 4 ميجا لا داعي لضغطه
-                if (file.size < 4 * 1024 * 1024) {
-                    return await fileToBase64(file);
-                }
-
-                const loadingText = document.getElementById('loadingText');
-                loadingText.innerText = "جاري ضغط وتسريع الملف الصوتي لتسريع الرفع في لحظة... ⚡";
-
                 const arrayBuffer = await file.arrayBuffer();
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-                // تقليل التردد إلى 16000Hz وقناة واحدة Mono (مثالي للكلام البشري ويصغر الحجم جداً)
-                const targetSampleRate = 16000;
-                const length = Math.ceil(audioBuffer.duration * targetSampleRate);
-                const offlineCtx = new OfflineAudioContext(1, length, targetSampleRate);
+                const totalDuration = audioBuffer.duration;
+                const chunkDuration = 600; // 10 دقائق (600 ثانية) لكل جزء لتسريع الرفع والرد الفوري
+                const targetSampleRate = 8000; // 8kHz كافية تماماً للكلام وتجعل حجم الملف صغيراً جداً
+                const chunks = [];
 
-                const source = offlineCtx.createBufferSource();
-                source.buffer = audioBuffer;
-                source.connect(offlineCtx.destination);
-                source.start(0);
+                for (let start = 0; start < totalDuration; start += chunkDuration) {
+                    const duration = Math.min(chunkDuration, totalDuration - start);
+                    const offlineCtx = new OfflineAudioContext(1, Math.ceil(duration * targetSampleRate), targetSampleRate);
 
-                const renderedBuffer = await offlineCtx.startRendering();
-                const wavBlob = audioBufferToWav(renderedBuffer);
-                return await fileToBase64(wavBlob, "audio/wav");
+                    const source = offlineCtx.createBufferSource();
+                    source.buffer = audioBuffer;
+                    source.connect(offlineCtx.destination);
+                    source.start(0, start, duration);
+
+                    const renderedBuffer = await offlineCtx.startRendering();
+                    const wavBlob = audioBufferToWav(renderedBuffer);
+                    const base64Data = await blobToBase64(wavBlob);
+
+                    const startMin = Math.floor(start / 60);
+                    const endMin = Math.ceil((start + duration) / 60);
+                    chunks.push({
+                        data: base64Data,
+                        mimeType: "audio/wav",
+                        label: `من الدقيقة ${startMin} إلى الدقيقة ${endMin}`
+                    });
+                }
+
+                return chunks;
             } catch (e) {
-                // في حال عدم دعم المتصفح للضغط لأي سبب، يعود للملف الأصلي بسلاسة
-                return await fileToBase64(file);
+                // إذا تعذر فك الضغط في المتصفح، يتم إرساله كجزء واحد
+                const base64Data = await blobToBase64(file);
+                return [{
+                    data: base64Data,
+                    mimeType: file.type || "audio/mp3",
+                    label: "التسجيل الكامل"
+                }];
             }
         }
 
-        function fileToBase64(blob, overrideMime) {
+        function blobToBase64(blob) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.onload = () => {
-                    const base64 = reader.result.split(',')[1];
-                    resolve({
-                        data: base64,
-                        mimeType: overrideMime || blob.type || "audio/mp3"
-                    });
-                };
+                reader.onload = () => resolve(reader.result.split(',')[1]);
                 reader.onerror = reject;
                 reader.readAsDataURL(blob);
             });
@@ -282,7 +292,7 @@
             return new Blob([out], { type: 'audio/wav' });
         }
 
-        async function fetchWithKeyRotation(requestData) {
+        async function fetchWithKeyRotation(requestData, statusMessage) {
             const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
             if (!rawKeyInput) {
                 throw new Error("برجاء أدخل مفتاح API في الخانة المخصصة بالأعلى أولاً!");
@@ -294,15 +304,17 @@
 
             for (const modelName of MODELS) {
                 for (let i = 0; i < keys.length; i++) {
+                    if (isCancelled) throw new Error("CANCELLED");
                     const currentKey = keys[i];
+
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `جاري التفريغ السريع عبر (${modelName}) والربط ببحث جوجل... ⚡`;
+                            loadingText.innerText = `${statusMessage} (${modelName})... ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
                             
                             currentAbortController = new AbortController();
-                            const timeoutId = setTimeout(() => currentAbortController.abort(), 1800000);
+                            const timeoutId = setTimeout(() => currentAbortController.abort(), 300000); // 5 دقائق كحد أقصى للجزء الواحد
 
                             const res = await fetch(endpoint, {
                                 method: 'POST',
@@ -320,7 +332,7 @@
 
                             const data = await res.json();
                             if (res.ok && data.candidates && data.candidates[0]) {
-                                return data;
+                                return data.candidates[0].content.parts[0].text;
                             } else if (data.error) {
                                 lastError = new Error(data.error.message);
                                 if (res.status === 404 || (data.error.message && data.error.message.includes('is no longer available'))) {
@@ -328,16 +340,15 @@
                                 }
                             }
                         } catch (err) {
-                            if (err.name === 'AbortError') {
-                                throw new Error("تم إيقاف العملية.");
-                            } else {
-                                lastError = err;
+                            if (err.name === 'AbortError' || isCancelled) {
+                                throw new Error("CANCELLED");
                             }
+                            lastError = err;
                         }
                     }
                 }
             }
-            throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
+            throw lastError || new Error("فشل الاتصال بالموديلات والمفاتيح المدخلة.");
         }
 
         async function transcribeAudioAndLecture() {
@@ -349,6 +360,7 @@
                     return;
                 }
 
+                isCancelled = false;
                 const processBtn = document.getElementById('processBtn');
                 const loading = document.getElementById('loading');
                 const outputContainer = document.getElementById('outputContainer');
@@ -357,55 +369,80 @@
                 processBtn.disabled = true;
                 processBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 loading.classList.remove('hidden');
-                outputContainer.classList.add('hidden');
 
                 const systemPrompt = `You are an elite Academic, Medical Professor, and Expert Transcriptionist.
-Your task is to listen comprehensively to the provided audio recording and read the accompanying lecture text/notes.
-Produce an extremely thorough, detailed, fully comprehensive, and beautifully structured markdown transcription of everything the speaker/doctor said without dropping a single important detail.
+Your task is to listen to the provided audio segment and read the accompanying lecture text/notes.
+Produce a thorough, detailed, and beautifully structured markdown transcription of everything the speaker/doctor said without dropping any detail.
 
 CRITICAL INSTRUCTIONS:
-1. ABSOLUTE COMPLETENESS (DO NOT DROP ANYTHING): Transcribe and cover every single topic, explanation, example, and detail mentioned in the audio recording from start to finish. Do not truncate or omit anything.
+1. ABSOLUTE COMPLETENESS: Transcribe and cover every single topic, explanation, and detail mentioned in this audio segment.
 2. LANGUAGE & TERMINOLOGY FIDELITY: Seamlessly handle both Arabic explanation and English scientific/medical terms in the exact same transcription as spoken. Use Google Search grounding to verify and spell all medical, technical, and scientific names perfectly.
-3. CONTEXTUAL MATCHING: Use the accompanying lecture text (if provided) to align terms, structure, and context precisely with the audio.
-4. FORMATTING: Use clear Markdown headings (##), subheadings (###), detailed bullet points, and bold text for key terms to make it extremely organized for studying.
-5. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
+3. FORMATTING: Use clear Markdown headings (##), subheadings (###), bullet points, and bold text for key terms.
+4. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
 
-                let contentParts = [];
+                let accumulatedMarkdown = "";
+
                 if (selectedAudioFile) {
-                    const compressedAudio = await compressAudioForFastUpload(selectedAudioFile);
-                    contentParts.push({
-                        inlineData: {
-                            mimeType: compressedAudio.mimeType,
-                            data: compressedAudio.data
-                        }
-                    });
-                }
-                contentParts.push({
-                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً وبأقصى شمولية ودقة على الريكورد الصوتي المرفق مع ربطه بمحرك بحث جوجل لتدقيق المصطلحات الإنجليزية والعربية."}`
-                });
+                    const audioChunks = await splitAndCompressAudio(selectedAudioFile);
+                    outputContainer.classList.remove('hidden');
+                    outputContent.innerHTML = `<p class="text-cyan-400 animate-pulse">تم تقسيم الريكورد إلى ${audioChunks.length} أجزاء سريعة، سيظهر التفريغ هنا تباعاً...</p>`;
 
-                const requestData = {
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    contents: [{
-                        parts: contentParts
-                    }],
-                    tools: [{ googleSearch: {} }],
-                    generationConfig: { 
-                        temperature: 0.1, 
-                        maxOutputTokens: 8192
+                    for (let idx = 0; idx < audioChunks.length; idx++) {
+                        if (isCancelled) break;
+
+                        const chunk = audioChunks[idx];
+                        const statusMsg = `جاري تفريغ الجزء ${idx + 1} من ${audioChunks.length} (${chunk.label})`;
+
+                        const requestData = {
+                            systemInstruction: { parts: [{ text: systemPrompt }] },
+                            contents: [{
+                                parts: [
+                                    {
+                                        inlineData: {
+                                            mimeType: chunk.mimeType,
+                                            data: chunk.data
+                                        }
+                                    },
+                                    {
+                                        text: `هذا هو الجزء رقم (${idx + 1} من ${audioChunks.length}) [${chunk.label}].\nمحتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، فرّغ الصوت بدقة مع دمج العربي والإنجليزي وتدقيق المصطلحات عبر جوجل."}`
+                                    }
+                                ]
+                            }],
+                            tools: [{ googleSearch: {} }],
+                            generationConfig: { 
+                                temperature: 0.1, 
+                                maxOutputTokens: 8192
+                            }
+                        };
+
+                        const chunkMarkdown = await fetchWithKeyRotation(requestData, statusMsg);
+                        
+                        // إضافة الجزء المفرغ فوراً إلى الشاشة وحفظه في المتصفح أثناء تحميل باقي الأجزاء
+                        const sectionHeader = audioChunks.length > 1 ? `\n\n---\n## ⏱️ الجزء ${idx + 1} (${chunk.label})\n\n` : "";
+                        accumulatedMarkdown += sectionHeader + chunkMarkdown;
+
+                        localStorage.setItem('last_saved_transcription_markdown', accumulatedMarkdown);
+                        outputContent.innerHTML = window.marked ? marked.parse(accumulatedMarkdown) : accumulatedMarkdown;
                     }
-                };
+                } else {
+                    // في حالة إدخال نص المحاضرة فقط بدون ملف صوتي
+                    const requestData = {
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        contents: [{
+                            parts: [{ text: `قم بتنظيم وتلخيص وشرح محتوى المحاضرة التالي بدقة:\n${topic}` }]
+                        }],
+                        tools: [{ googleSearch: {} }],
+                        generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
+                    };
 
-                const data = await fetchWithKeyRotation(requestData);
-                const rawMarkdown = data.candidates[0].content.parts[0].text;
-
-                localStorage.setItem('last_saved_transcription_markdown', rawMarkdown);
-
-                outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
-                outputContainer.classList.remove('hidden');
+                    accumulatedMarkdown = await fetchWithKeyRotation(requestData, "جاري تنظيم وشرح المحاضرة");
+                    localStorage.setItem('last_saved_transcription_markdown', accumulatedMarkdown);
+                    outputContent.innerHTML = window.marked ? marked.parse(accumulatedMarkdown) : accumulatedMarkdown;
+                    outputContainer.classList.remove('hidden');
+                }
 
             } catch (err) {
-                if (err.message !== "تم إيقاف العملية.") {
+                if (err.message !== "CANCELLED") {
                     alert("حدث خطأ أثناء التفريغ: " + err.message);
                 }
             } finally {
