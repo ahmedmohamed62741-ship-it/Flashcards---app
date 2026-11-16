@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝</title>
+    <title>مفرغ الريكوردات والمحاضرات فائق السرعة AI 🎙️⚡</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- مكتبة لتوليد وتحميل ملفات الـ PDF مباشرة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
@@ -41,13 +40,13 @@
 
     <header class="max-w-4xl mx-auto w-full text-center my-6">
         <div class="inline-block p-3 rounded-2xl bg-purple-900/30 border border-purple-500/30 text-purple-400 mb-3 animate-pulse">
-            <i class="fa-solid fa-microphone-lines text-3xl"></i>
+            <i class="fa-solid fa-bolt text-3xl"></i>
         </div>
         <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 tracking-tight mb-3">
-            مفرغ الريكوردات والمحاضرات الذكي AI 🎙️📝
+            مفرغ الريكوردات فائق السرعة AI 🎙️⚡
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            الحفظ التلقائي مفعل بالكامل: ملاحظاتك والتفريغ محفوظون دائماً حتى لو خرجت أو أغلق الهاتف.
+            رفع مباشر عبر File API وبث حي فوري للتفريغ مع الحفظ التلقائي والربط ببحث جوجل.
         </p>
     </header>
 
@@ -67,7 +66,7 @@
             <!-- Audio Recording Upload Section -->
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                 <label class="block text-xs font-bold text-slate-300 flex items-center justify-between">
-                    <span>🎙️ رفع الريكورد أو التسجيل الصوتي (يدعم التسجيلات الطويلة حتى ساعتين):</span>
+                    <span>🎙️ رفع الريكورد الصوتي (رفع مباشر سريع حتى ساعتين):</span>
                     <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">لم يتم اختيار ملف</span>
                 </label>
                 <div class="flex items-center gap-3">
@@ -91,18 +90,18 @@
             </div>
 
             <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
-                <i class="fa-solid fa-headphones-simple text-lg"></i>
-                <span>بدء التففريغ الذكي الشامل للريكورد ⚡</span>
+                <i class="fa-solid fa-bolt text-lg"></i>
+                <span>بدء التففريغ السريع والبث الفوري ⚡</span>
             </button>
         </div>
 
         <!-- Loading Indicator with Cancel Button -->
-        <div id="loading" class="hidden text-center py-8 space-y-4">
+        <div id="loading" class="hidden text-center py-6 space-y-4">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري معالجة الريكورد الطويل والربط بمحرك بحث جوجل لتفريغ كل تفصيلة بدقة، يرجى الانتظار...</p>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري تجهيز الرفع المباشر السريع...</p>
             <div>
                 <button onclick="cancelTranscription()" class="text-xs bg-red-900/50 hover:bg-red-900 text-red-200 py-1.5 px-4 rounded-lg border border-red-500/40 transition cursor-pointer">
-                    <i class="fa-solid fa-stop text-red-400 mr-1"></i> إلغاء التحميل
+                    <i class="fa-solid fa-stop text-red-400 mr-1"></i> إلغاء العملية
                 </button>
             </div>
         </div>
@@ -123,7 +122,7 @@
     </main>
 
     <footer class="text-center text-slate-500 text-xs my-8">
-        مفرغ الريكوردات والمحاضرات الذكي مدعوم بالذكاء الاصطناعي 🎙️📊
+        مفرغ الريكوردات والمحاضرات الذكي مدعوم بالذكاء الاصطناعي 🎙️⚡
     </footer>
 
     <script>
@@ -132,25 +131,20 @@
             "gemini-3.6-flash"
         ];
 
-        let audioBase64 = null;
-        let audioMimeType = "audio/mp3";
+        let selectedAudioFile = null;
         let currentAbortController = null;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // استعادة مفتاح الـ API
             const savedKey = localStorage.getItem('user_gemini_api_keys');
-            const keyInput = document.getElementById('apiKeyInput');
             if (savedKey && savedKey.trim() !== "") {
-                keyInput.value = savedKey;
+                document.getElementById('apiKeyInput').value = savedKey;
             }
 
-            // استعادة محتوى ملاحظات المحاضرة المحفوظ تلقائياً
             const savedTopic = localStorage.getItem('saved_topic_input');
             if (savedTopic) {
                 document.getElementById('topicInput').value = savedTopic;
             }
 
-            // استعادة آخر تفريغ محفوظ تلقائياً لكي لا يضيع أبداً عند الخروج أو التحديث
             const savedTranscription = localStorage.getItem('last_saved_transcription_markdown');
             if (savedTranscription && savedTranscription.trim() !== "") {
                 const outputContent = document.getElementById('outputContent');
@@ -174,20 +168,15 @@
             const file = event.target.files && event.target.files[0];
             if (!file) return;
 
-            audioMimeType = file.type || "audio/mp3";
-            document.getElementById('audioFileName').innerText = file.name;
-            document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد بنجاح 🎙️";
+            selectedAudioFile = file;
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+            document.getElementById('audioFileName').innerText = `${file.name} (${sizeMB} MB)`;
+            document.getElementById('audioStatus').innerText = "جاهز للرفع المباشر السريع ⚡";
             document.getElementById('audioStatus').className = "text-[10px] text-emerald-400 font-bold";
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                audioBase64 = e.target.result.split(',')[1];
-            };
-            reader.readAsDataURL(file);
         }
 
         function clearAudio() {
-            audioBase64 = null;
+            selectedAudioFile = null;
             document.getElementById('audioInput').value = "";
             document.getElementById('audioFileName').innerText = "اختر ملف الصوت (MP3, WAV, M4A...)";
             document.getElementById('audioStatus').innerText = "لم يتم اختيار ملف";
@@ -202,10 +191,82 @@
             const btn = document.getElementById('processBtn');
             btn.disabled = false;
             btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            alert("تم إيقاف عملية التحميل بنجاح.");
+            alert("تم إيقاف العملية بنجاح.");
         }
 
-        async function fetchWithKeyRotation(requestData) {
+        // دالة الرفع المباشر السريع عبر Google File API (تتجنب بطء Base64 تماماً)
+        async function uploadFileFast(file, apiKey, signal) {
+            const loadingText = document.getElementById('loadingText');
+            loadingText.innerText = "جاري رفع الريكورد مباشرة لسيرفرات جوجل بأقصى سرعة... 🚀";
+
+            const mimeType = file.type || "audio/mp3";
+            
+            // 1. بدء جلسة الرفع Resumable Upload
+            const initRes = await fetch(`https://generativelanguage.googleapis.com/upload/v1beta/files?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'X-Goog-Upload-Protocol': 'resumable',
+                    'X-Goog-Upload-Command': 'start',
+                    'X-Goog-Upload-Header-Content-Length': file.size.toString(),
+                    'X-Goog-Upload-Header-Content-Type': mimeType,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ file: { display_name: file.name } }),
+                signal: signal
+            });
+
+            if (!initRes.ok) {
+                const errData = await initRes.json().catch(() => ({}));
+                throw new Error(errData.error?.message || "فشل بدء جلسة الرفع السريع.");
+            }
+
+            const uploadUrl = initRes.headers.get('X-Goog-Upload-URL');
+            if (!uploadUrl) {
+                throw new Error("لم يتم الحصول على رابط الرفع المباشر.");
+            }
+
+            // 2. إرسال الملف الخام (Binary) دفعة واحدة بدون تحويل Base64
+            const uploadRes = await fetch(uploadUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Length': file.size.toString(),
+                    'X-Goog-Upload-Offset': '0',
+                    'X-Goog-Upload-Command': 'upload, finalize'
+                },
+                body: file,
+                signal: signal
+            });
+
+            if (!uploadRes.ok) {
+                throw new Error("فشل رفع الملف الصوتي.");
+            }
+
+            const fileInfo = await uploadRes.json();
+            let fileData = fileInfo.file;
+
+            // 3. انتظار تفعيل الملف إذا كان كبيراً جداً
+            while (fileData.state === 'PROCESSING') {
+                loadingText.innerText = "جاري تجهيز الملف الصوتي داخل معالجات جوجل... ⚡";
+                await new Promise(r => setTimeout(r, 2000));
+                const checkRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${fileData.name}?key=${apiKey}`, { signal });
+                fileData = await checkRes.json();
+            }
+
+            if (fileData.state === 'FAILED') {
+                throw new Error("فشلت معالجة الملف الصوتي في سيرفرات جوجل.");
+            }
+
+            return fileData;
+        }
+
+        async function deleteUploadedFile(fileName, apiKey) {
+            try {
+                await fetch(`https://generativelanguage.googleapis.com/v1beta/${fileName}?key=${apiKey}`, { method: 'DELETE' });
+            } catch (e) {}
+        }
+
+        // البث الحي السريع للنتائج (Streaming) مع تدوير المفاتيح والموديلات
+        async function streamWithKeyRotation(topic, systemPrompt) {
             const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
             if (!rawKeyInput) {
                 throw new Error("برجاء أدخل مفتاح API في الخانة المخصصة بالأعلى أولاً!");
@@ -213,20 +274,51 @@
 
             const keys = rawKeyInput.split(',').map(k => k.trim()).filter(k => k);
             const loadingText = document.getElementById('loadingText');
+            const outputContainer = document.getElementById('outputContainer');
+            const outputContent = document.getElementById('outputContent');
             let lastError = null;
 
-            for (const modelName of MODELS) {
-                for (let i = 0; i < keys.length; i++) {
-                    const currentKey = keys[i];
-                    for (let attempt = 1; attempt <= 2; attempt++) {
+            for (let i = 0; i < keys.length; i++) {
+                const currentKey = keys[i];
+                let uploadedFileObj = null;
+
+                try {
+                    currentAbortController = new AbortController();
+                    const timeoutId = setTimeout(() => currentAbortController.abort(), 1800000);
+
+                    if (selectedAudioFile) {
+                        uploadedFileObj = await uploadFileFast(selectedAudioFile, currentKey, currentAbortController.signal);
+                    }
+
+                    for (const modelName of MODELS) {
                         try {
-                            loadingText.innerText = `جاري معالجة الريكورد عبر (${modelName}) والربط ببحث جوجل... يرجى الانتظار ⚡`;
-                            
-                            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
-                            
-                            currentAbortController = new AbortController();
-                            // مهلة زمنية 30 دقيقة كاملة للريكوردات الطويلة جداً
-                            const timeoutId = setTimeout(() => currentAbortController.abort(), 1800000); 
+                            loadingText.innerText = `جاري التفريغ والبث الحي عبر (${modelName})... ⚡`;
+
+                            let contentParts = [];
+                            if (uploadedFileObj) {
+                                contentParts.push({
+                                    fileData: {
+                                        mimeType: uploadedFileObj.mimeType,
+                                        fileUri: uploadedFileObj.uri
+                                    }
+                                });
+                            }
+                            contentParts.push({
+                                text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً وبأقصى شمولية ودقة على الريكورد الصوتي المرفق مع ربطه بمحرك بحث جوجل لتدقيق المصطلحات الإنجليزية والعربية."}`
+                            });
+
+                            const requestData = {
+                                systemInstruction: { parts: [{ text: systemPrompt }] },
+                                contents: [{ parts: contentParts }],
+                                tools: [{ googleSearch: {} }],
+                                generationConfig: {
+                                    temperature: 0.1,
+                                    maxOutputTokens: 8192
+                                }
+                            };
+
+                            // استخدام streamGenerateContent للبث الحي الفوري
+                            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:streamGenerateContent?alt=sse&key=${currentKey}`;
 
                             const res = await fetch(endpoint, {
                                 method: 'POST',
@@ -235,32 +327,79 @@
                                 signal: currentAbortController.signal
                             });
 
-                            clearTimeout(timeoutId);
-
-                            if (res.status === 429 || res.status === 503) {
-                                await new Promise(r => setTimeout(r, 1500));
+                            if (!res.ok) {
+                                const errJson = await res.json().catch(() => ({}));
+                                const errMsg = errJson.error?.message || `خطأ HTTP ${res.status}`;
+                                if (res.status === 429 || res.status === 503) {
+                                    throw new Error("QUOTA_OR_BUSY");
+                                }
+                                lastError = new Error(errMsg);
                                 continue;
                             }
 
-                            const data = await res.json();
-                            if (res.ok && data.candidates && data.candidates[0]) {
-                                return data;
-                            } else if (data.error) {
-                                lastError = new Error(data.error.message);
-                                if (res.status === 404 || (data.error.message && data.error.message.includes('is no longer available'))) {
-                                    break;
+                            // قراءة البث الحي وعرض النص فوراً أثناء توليده
+                            const reader = res.body.getReader();
+                            const decoder = new TextDecoder("utf-8");
+                            let fullMarkdown = "";
+                            let buffer = "";
+
+                            outputContainer.classList.remove('hidden');
+                            outputContent.innerHTML = "";
+
+                            while (true) {
+                                const { done, value } = await reader.read();
+                                if (done) break;
+
+                                buffer += decoder.decode(value, { stream: true });
+                                const lines = buffer.split('\n');
+                                buffer = lines.pop();
+
+                                for (const line of lines) {
+                                    if (line.startsWith('data: ')) {
+                                        const jsonStr = line.slice(6).trim();
+                                        if (!jsonStr || jsonStr === '[DONE]') continue;
+                                        try {
+                                            const parsed = JSON.parse(jsonStr);
+                                            const chunkText = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                                            if (chunkText) {
+                                                fullMarkdown += chunkText;
+                                                outputContent.innerHTML = window.marked ? marked.parse(fullMarkdown) : fullMarkdown;
+                                                localStorage.setItem('last_saved_transcription_markdown', fullMarkdown);
+                                            }
+                                        } catch (e) {}
+                                    }
                                 }
                             }
-                        } catch (err) {
-                            if (err.name === 'AbortError') {
-                                throw new Error("تم إيقاف العملية أو تجاوزت الحد الأقصى للمهلة الزمنية.");
-                            } else {
-                                lastError = err;
+
+                            clearTimeout(timeoutId);
+                            if (uploadedFileObj) {
+                                deleteUploadedFile(uploadedFileObj.name, currentKey);
                             }
+                            return fullMarkdown;
+
+                        } catch (modelErr) {
+                            if (modelErr.name === 'AbortError') throw modelErr;
+                            if (modelErr.message === "QUOTA_OR_BUSY") throw modelErr;
+                            lastError = modelErr;
                         }
                     }
+
+                    clearTimeout(timeoutId);
+                    if (uploadedFileObj) {
+                        deleteUploadedFile(uploadedFileObj.name, currentKey);
+                    }
+
+                } catch (keyErr) {
+                    if (uploadedFileObj) {
+                        deleteUploadedFile(uploadedFileObj.name, currentKey);
+                    }
+                    if (keyErr.name === 'AbortError') {
+                        throw new Error("تم إيقاف العملية.");
+                    }
+                    lastError = keyErr;
                 }
             }
+
             throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
         }
 
@@ -268,20 +407,17 @@
             try {
                 const topic = document.getElementById('topicInput').value.trim();
 
-                if (!topic && !audioBase64) {
+                if (!topic && !selectedAudioFile) {
                     alert("برجاء رفع تسجيل صوتي للريكورد أو إدخال نص المحاضرة على الأقل!");
                     return;
                 }
 
                 const processBtn = document.getElementById('processBtn');
                 const loading = document.getElementById('loading');
-                const outputContainer = document.getElementById('outputContainer');
-                const outputContent = document.getElementById('outputContent');
 
                 processBtn.disabled = true;
                 processBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 loading.classList.remove('hidden');
-                outputContainer.classList.add('hidden');
 
                 const systemPrompt = `You are an elite Academic, Medical Professor, and Expert Transcriptionist.
 Your task is to listen comprehensively to the provided audio recording (which can be up to 2 hours long) and read the accompanying lecture text/notes.
@@ -294,42 +430,10 @@ CRITICAL INSTRUCTIONS:
 4. FORMATTING: Use clear Markdown headings (##), subheadings (###), detailed bullet points, and bold text for key terms to make it extremely organized for studying.
 5. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
 
-                let contentParts = [];
-                if (audioBase64) {
-                    contentParts.push({
-                        inlineData: {
-                            mimeType: audioMimeType,
-                            data: audioBase64
-                        }
-                    });
-                }
-                contentParts.push({
-                    text: `محتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، يعتمد التفريغ كلياً وبأقصى شمولية ودقة على الريكورد الصوتي الطويل المرفق مع ربطه بمحرك بحث جوجل لتدقيق المصطلحات الإنجليزية والعربية."}`
-                });
-
-                const requestData = {
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    contents: [{
-                        parts: contentParts
-                    }],
-                    tools: [{ googleSearch: {} }],
-                    generationConfig: { 
-                        temperature: 0.1, 
-                        maxOutputTokens: 8192
-                    }
-                };
-
-                const data = await fetchWithKeyRotation(requestData);
-                const rawMarkdown = data.candidates[0].content.parts[0].text;
-
-                // الحفظ التلقائي الفوري للتفريغ في ذاكرة المتصفح
-                localStorage.setItem('last_saved_transcription_markdown', rawMarkdown);
-
-                outputContent.innerHTML = window.marked ? marked.parse(rawMarkdown) : rawMarkdown;
-                outputContainer.classList.remove('hidden');
+                await streamWithKeyRotation(topic, systemPrompt);
 
             } catch (err) {
-                if (err.message !== "تم إيقاف العملية أو تجاوزت الحد الأقصى للمهلة الزمنية.") {
+                if (err.message !== "تم إيقاف العملية.") {
                     alert("حدث خطأ أثناء التفريغ: " + err.message);
                 }
             } finally {
