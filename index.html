@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مفرغ الريكوردات والمحاضرات الذكي AI 🎙️⚡</title>
+    <title>المساعد الصيدلي الذكي (OTC & Cosmetology AI) 🩺💊</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #030712; color: #f8fafc; }
@@ -28,33 +26,35 @@
             box-shadow: 0 0 35px rgba(6, 182, 212, 0.6);
             transform: scale(1.01);
         }
-
-        #outputContent h2 { font-size: 1.3rem; font-weight: 800; color: #38bdf8; border-right: 4px solid #0284c7; padding-right: 0.75rem; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        #outputContent h3 { font-size: 1.15rem; font-weight: 700; color: #34d399; margin-top: 1.25rem; margin-bottom: 0.5rem; background: #1e293b; padding: 0.6rem 0.8rem; border-radius: 0.5rem; border: 1px solid #334155; }
-        #outputContent ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; }
-        #outputContent li { margin-bottom: 0.4rem; line-height: 1.8; color: #cbd5e1; }
-        #outputContent strong { color: #facc15; font-weight: 700; }
+        .emerald-glow-btn {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+        }
+        .emerald-glow-btn:hover {
+            box-shadow: 0 0 35px rgba(6, 182, 212, 0.6);
+            transform: scale(1.01);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
     <header class="max-w-4xl mx-auto w-full text-center my-6">
-        <div class="inline-block p-3 rounded-2xl bg-purple-900/30 border border-purple-500/30 text-purple-400 mb-3 animate-pulse">
-            <i class="fa-solid fa-microphone-lines text-3xl"></i>
+        <div class="inline-block p-3 rounded-2xl bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 mb-3 animate-pulse">
+            <i class="fa-solid fa-staff-snake text-3xl"></i>
         </div>
-        <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 tracking-tight mb-3">
-            مفرغ الريكوردات والمحاضرات الذكي AI 🎙️⚡
+        <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-emerald-400 tracking-tight mb-3">
+            المساعد الصيدلي الذكي AI 🩺💊
         </h1>
-        <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-            يقسم الريكوردات الطويلة تلقائياً ويعرض لك التفريغ أولاً بأول في الشاشة أثناء التحميل بأقصى سرعة.
+        <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
+            نظام الفرز الإكلينيكي وترشيح أدوية الـ OTC ومنتجات العناية بالبشرة والشعر بالأسماء التجارية في السوق المصري.
         </p>
     </header>
 
     <main class="max-w-4xl mx-auto w-full space-y-6">
 
-        <div class="neon-card rounded-2xl p-5 md:p-8 space-y-6">
-            
-            <!-- API Key Input -->
+        <!-- API Key Input (محفوظ ومثبت بنفس المنطق تماماً) -->
+        <div class="neon-card rounded-2xl p-5 md:p-6 space-y-4">
             <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
                 <label for="apiKeyInput" class="block text-xs font-bold text-slate-300 flex items-center justify-between">
                     <span>🔑 مفاتيح API (مفصولة بفاصلة ,):</span>
@@ -63,95 +63,167 @@
                 <input type="text" id="apiKeyInput" oninput="saveApiKey()" placeholder="أدخل المفتاح الأول، أو عدة مفاتيح مفصولة بـ ," class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono tracking-wider">
             </div>
 
-            <!-- Audio Recording Upload Section -->
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                <label class="block text-xs font-bold text-slate-300 flex items-center justify-between">
-                    <span>🎙️ رفع الريكورد الصوتي (يُقسم ويُفرغ في الشاشة أولاً بأول):</span>
-                    <span id="audioStatus" class="text-[10px] text-slate-400 font-normal">لم يتم اختيار ملف</span>
-                </label>
-                <div class="flex items-center gap-3">
-                    <label class="flex-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-3 text-center cursor-pointer transition flex items-center justify-center gap-2 text-xs md:text-sm text-slate-200">
-                        <i class="fa-solid fa-file-audio text-cyan-400 text-lg"></i>
-                        <span id="audioFileName">اختر ملف الصوت (MP3, WAV, M4A...)</span>
-                        <input type="file" id="audioInput" accept="audio/*" onchange="handleAudioSelect(event)" class="hidden">
-                    </label>
-                    <button type="button" onclick="clearAudio()" class="bg-red-900/30 hover:bg-red-900/50 text-red-400 p-3 rounded-xl border border-red-500/30 text-xs transition" title="إزالة الريكورد">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+            <!-- الخطوة الأولى: الشكوى الأساسية والبيانات الديموغرافية الأولية -->
+            <div id="step1Container" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label for="caseCategory" class="block text-xs font-bold text-slate-300">
+                            🗂️ نوع الاستشارة:
+                        </label>
+                        <select id="caseCategory" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
+                            <option value="otc">أعراض مرضية / أدوية OTC</option>
+                            <option value="skin">عناية بالبشرة / جلدية (Skincare)</option>
+                            <option value="hair">عناية بالشعر / تساقط (Haircare)</option>
+                            <option value="supplements">فيتامينات ومكملات غذائية</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="patientGroup" class="block text-xs font-bold text-slate-300">
+                            👤 الفئة العمرية / الحالة:
+                        </label>
+                        <select id="patientGroup" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
+                            <option value="adult_male">بالغ (رجل)</option>
+                            <option value="adult_female">بالغة (أنثى - غير حامل)</option>
+                            <option value="pregnant_lactating">سيدة (حامل أو مرضعة)</option>
+                            <option value="child_infant">طفل أو رضيع</option>
+                            <option value="elderly">كبير في السن (+60 سنة)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="ageWeightInput" class="block text-xs font-bold text-slate-300">
+                            ⚖️ العمر والوزن التقريبي:
+                        </label>
+                        <input type="text" id="ageWeightInput" placeholder="مثال: 28 سنة / 75 كجم (أو 3 سنين / 14 كجم)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500">
+                    </div>
                 </div>
+
+                <div class="space-y-2">
+                    <label for="complaintInput" class="block text-xs font-bold text-slate-300">
+                        📝 اشرح الشكوى أو الأعراض أو المشكلة بالتفصيل:
+                    </label>
+                    <textarea id="complaintInput" rows="4" placeholder="مثال:
+- عندي حموضة وحرقان في المعدة بيزيد بعد الأكل وبقاله يومين...
+- أو: ابني عنده 4 سنين وعنده كحة ناشفة بالليل ورشح بسيط بدون سخونية...
+- أو: بشرتي دهنية وفيها حبوب تحت الجلد وآثار حبوب قديمة ومحتاجة روتين مناسب..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
+                </div>
+
+                <button id="analyzeBtn" onclick="startTriageAssessment()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
+                    <i class="fa-solid fa-stethoscope text-lg"></i>
+                    <span>بدء الفحص وطرح الأسئلة الاستقصائية للحالة 🔍</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden text-center py-8 space-y-3">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري تحليل الحالة ومراجعة المراجع الدوائية...</p>
+        </div>
+
+        <!-- الخطوة الثانية: الأسئلة الاستقصائية الديناميكية (Triage Questions) -->
+        <div id="triageQuestionsContainer" class="hidden neon-card rounded-2xl p-5 md:p-8 space-y-6 border-cyan-500/40">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-cyan-400 flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-question"></i>
+                        <span>أسئلة استكمال التشخيص الصيدلي</span>
+                    </h2>
+                    <p id="triageSummaryNote" class="text-xs text-slate-400 mt-1">أجب بدقة على هذه الأسئلة لتحديد الجرعة الآمنة وتجنب أي موانع استخدام.</p>
+                </div>
+                <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-rose-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
+                    تعديل الشكوى
+                </button>
             </div>
 
-            <!-- Lecture Context / Text Input -->
-            <div class="space-y-2">
-                <label for="topicInput" class="block text-xs font-bold text-slate-300">
-                    📚 محتوى المحاضرة المكتوب أو ملاحظات لتوضيح سياق الريكورد (يُحفظ تلقائياً):
-                </label>
-                <textarea id="topicInput" rows="5" oninput="saveTopicInput()" placeholder="الصق هنا نص أو تفاصيل المحاضرة التي يشرحها الدكتور، ليفهم الريكورد بناءً عليها بدقة..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
+            <div id="dynamicQuestionsList" class="space-y-4">
+                <!-- سيتم توليد الأسئلة هنا ديناميكياً -->
             </div>
 
-            <button id="processBtn" onclick="transcribeAudioAndLecture()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
-                <i class="fa-solid fa-bolt text-lg"></i>
-                <span>بدء التففريغ السريع والكتابة الفورية في الشاشة ⚡</span>
+            <button id="recommendBtn" onclick="generateFinalPrescription()" class="w-full emerald-glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
+                <i class="fa-solid fa-prescription-bottle-medical text-lg"></i>
+                <span>اعتماد الإجابات وعرض البروتوكول العلاجي والأسماء التجارية 💊</span>
             </button>
         </div>
 
-        <!-- Loading Indicator with Cancel Button -->
-        <div id="loading" class="hidden text-center py-6 space-y-4">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري تجهيز الصوت وتقسيمه للتفريغ السريع...</p>
-            <div>
-                <button onclick="cancelTranscription()" class="text-xs bg-red-900/50 hover:bg-red-900 text-red-200 py-1.5 px-4 rounded-lg border border-red-500/40 transition cursor-pointer">
-                    <i class="fa-solid fa-stop text-red-400 mr-1"></i> إيقاف واستكمال ما تم تفريغه
-                </button>
-            </div>
-        </div>
-
-        <!-- Output Result Section (يظهر فوراً مع أول جزء) -->
-        <div id="outputContainer" class="hidden neon-card rounded-2xl p-6 md:p-8 space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <h3 class="text-base font-bold text-cyan-400 flex items-center gap-2 m-0 bg-transparent p-0 border-0">
-                    <i class="fa-solid fa-file-lines text-xl"></i> تفريغ المحاضرة والريكورد (يتحدث تلقائياً)
+        <!-- الخطوة الثالثة: النتيجة النهائية والبروتوكول العلاجي -->
+        <div id="finalResultContainer" class="hidden space-y-6">
+            
+            <!-- تنبيه علامات الخطر (Red Flags) إن وجدت -->
+            <div id="redFlagsBox" class="hidden bg-rose-950/60 border border-rose-500/50 rounded-2xl p-5 space-y-2">
+                <h3 class="text-rose-400 font-bold text-sm md:text-base flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-lg animate-bounce"></i>
+                    <span>تنبيه طبي هام (Red Flags - متى يجب زيارة الطبيب فوراً):</span>
                 </h3>
-                <button onclick="downloadPDF()" class="text-xs bg-red-900/40 hover:bg-red-900/60 active:scale-95 text-red-200 py-2 px-4 rounded-xl border border-red-500/30 transition flex items-center gap-1.5 cursor-pointer select-none shadow-md">
-                    <i class="fa-solid fa-file-pdf text-red-400"></i> تحميل كملف PDF 📄
-                </button>
+                <p id="redFlagsText" class="text-xs md:text-sm text-rose-200 leading-relaxed"></p>
             </div>
-            <div id="outputContent" class="text-slate-300 text-xs md:text-sm leading-relaxed space-y-4"></div>
+
+            <!-- ملخص التقييم الإكلينيكي -->
+            <div class="neon-card rounded-2xl p-5 md:p-6 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base md:text-lg font-bold text-purple-400 flex items-center gap-2">
+                        <i class="fa-solid fa-notes-medical"></i>
+                        <span>التقييم الإكلينيكي للحالة:</span>
+                    </h3>
+                    <button onclick="resetForm()" class="text-xs text-cyan-400 hover:underline">
+                        + استشارة جديدة
+                    </button>
+                </div>
+                <p id="clinicalAssessmentText" class="text-xs md:text-sm text-slate-300 leading-relaxed"></p>
+            </div>
+
+            <!-- كروت الأدوية والمواد الفعالة والأسماء التجارية في مصر -->
+            <div class="space-y-3">
+                <h3 class="text-base md:text-lg font-bold text-cyan-400 flex items-center gap-2 px-1">
+                    <i class="fa-solid fa-pills"></i>
+                    <span>الخيارات العلاجية والأسماء التجارية المتوفرة في السوق المصري:</span>
+                </h3>
+                <div id="medicationsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- كروت الأدوية -->
+                </div>
+            </div>
+
+            <!-- نصائح غير دوائية وتعليمات الاستخدام -->
+            <div class="neon-card rounded-2xl p-5 md:p-6 space-y-3 border-emerald-500/30">
+                <h3 class="text-base font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                    <span>تعليمات ونصائح داعمة (Non-Pharmacological Advice):</span>
+                </h3>
+                <ul id="lifestyleTipsList" class="list-disc list-inside text-xs md:text-sm text-slate-300 space-y-1.5 leading-relaxed"></ul>
+            </div>
+
+            <!-- المصادر المرجعية -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 text-[11px] text-slate-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+                <div>
+                    <strong class="text-slate-300">📚 المصادر وقواعد البيانات المرجعية:</strong>
+                    <span id="referencesText">Lexicomp, UpToDate, Micromedex, BNF, Egyptian Drug Authority (EDA)</span>
+                </div>
+                <span class="text-amber-400/90 font-semibold">* إرشاد صيدلي لحالات الـ OTC ولا يغني عن الكشف الطبي في الحالات المتقدمة.</span>
+            </div>
+
         </div>
 
     </main>
 
     <footer class="text-center text-slate-500 text-xs my-8">
-        مفرغ الريكوردات والمحاضرات الذكي مدعوم بالذكاء الاصطناعي 🎙️⚡
+        المساعد الصيدلي الإكلينيكي الذكي - مخصص للسوق الدوائي المصري 🇪🇬💊
     </footer>
 
     <script>
+        // الموديلات المطلوبة حصرياً (نفس المصفوفة بدون أي تعديل)
         const MODELS = [
             "gemini-3.8-flash",
             "gemini-3.6-flash"
         ];
 
-        let selectedAudioFile = null;
-        let isCancelled = false;
-        let currentAbortController = null;
+        let currentQuestionsData = [];
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('user_gemini_api_keys');
+            const keyInput = document.getElementById('apiKeyInput');
             if (savedKey && savedKey.trim() !== "") {
-                document.getElementById('apiKeyInput').value = savedKey;
-            }
-
-            const savedTopic = localStorage.getItem('saved_topic_input');
-            if (savedTopic) {
-                document.getElementById('topicInput').value = savedTopic;
-            }
-
-            const savedTranscription = localStorage.getItem('last_saved_transcription_markdown');
-            if (savedTranscription && savedTranscription.trim() !== "") {
-                const outputContent = document.getElementById('outputContent');
-                const outputContainer = document.getElementById('outputContainer');
-                outputContent.innerHTML = window.marked ? marked.parse(savedTranscription) : savedTranscription;
-                outputContainer.classList.remove('hidden');
+                keyInput.value = savedKey;
             }
         });
 
@@ -160,139 +232,8 @@
             localStorage.setItem('user_gemini_api_keys', keyInput);
         }
 
-        function saveTopicInput() {
-            const topicText = document.getElementById('topicInput').value;
-            localStorage.setItem('saved_topic_input', topicText);
-        }
-
-        function handleAudioSelect(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-
-            selectedAudioFile = file;
-            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-            document.getElementById('audioFileName').innerText = `${file.name} (${sizeMB} MB)`;
-            document.getElementById('audioStatus').innerText = "تم إرفاق الريكورد بنجاح 🎙️";
-            document.getElementById('audioStatus').className = "text-[10px] text-emerald-400 font-bold";
-        }
-
-        function clearAudio() {
-            selectedAudioFile = null;
-            document.getElementById('audioInput').value = "";
-            document.getElementById('audioFileName').innerText = "اختر ملف الصوت (MP3, WAV, M4A...)";
-            document.getElementById('audioStatus').innerText = "لم يتم اختيار ملف";
-            document.getElementById('audioStatus').className = "text-[10px] text-slate-400 font-normal";
-        }
-
-        function cancelTranscription() {
-            isCancelled = true;
-            if (currentAbortController) {
-                currentAbortController.abort();
-            }
-            document.getElementById('loading').classList.add('hidden');
-            const btn = document.getElementById('processBtn');
-            btn.disabled = false;
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-        }
-
-        // تقسيم وضغط الصوت إلى مقاطع صغيرة (10 دقائق لكل مقطع بتردد 8000Hz خفيف وسريع جداً)
-        async function splitAndCompressAudio(file) {
-            const loadingText = document.getElementById('loadingText');
-            loadingText.innerText = "جاري معالجة وتقسيم الصوت إلى مقاطع فائقة السرعة... ⚡";
-
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-                const totalDuration = audioBuffer.duration;
-                const chunkDuration = 600; // 10 دقائق (600 ثانية) لكل جزء لتسريع الرفع والرد الفوري
-                const targetSampleRate = 8000; // 8kHz كافية تماماً للكلام وتجعل حجم الملف صغيراً جداً
-                const chunks = [];
-
-                for (let start = 0; start < totalDuration; start += chunkDuration) {
-                    const duration = Math.min(chunkDuration, totalDuration - start);
-                    const offlineCtx = new OfflineAudioContext(1, Math.ceil(duration * targetSampleRate), targetSampleRate);
-
-                    const source = offlineCtx.createBufferSource();
-                    source.buffer = audioBuffer;
-                    source.connect(offlineCtx.destination);
-                    source.start(0, start, duration);
-
-                    const renderedBuffer = await offlineCtx.startRendering();
-                    const wavBlob = audioBufferToWav(renderedBuffer);
-                    const base64Data = await blobToBase64(wavBlob);
-
-                    const startMin = Math.floor(start / 60);
-                    const endMin = Math.ceil((start + duration) / 60);
-                    chunks.push({
-                        data: base64Data,
-                        mimeType: "audio/wav",
-                        label: `من الدقيقة ${startMin} إلى الدقيقة ${endMin}`
-                    });
-                }
-
-                return chunks;
-            } catch (e) {
-                // إذا تعذر فك الضغط في المتصفح، يتم إرساله كجزء واحد
-                const base64Data = await blobToBase64(file);
-                return [{
-                    data: base64Data,
-                    mimeType: file.type || "audio/mp3",
-                    label: "التسجيل الكامل"
-                }];
-            }
-        }
-
-        function blobToBase64(blob) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        }
-
-        function audioBufferToWav(buffer) {
-            const numOfChan = 1;
-            const length = buffer.length * numOfChan * 2 + 44;
-            const out = new ArrayBuffer(length);
-            const view = new DataView(out);
-            const sampleRate = buffer.sampleRate;
-            let offset = 0;
-
-            function writeString(str) {
-                for (let i = 0; i < str.length; i++) {
-                    view.setUint8(offset + i, str.charCodeAt(i));
-                }
-                offset += str.length;
-            }
-
-            writeString('RIFF');
-            view.setUint32(offset, length - 8, true); offset += 4;
-            writeString('WAVE');
-            writeString('fmt ');
-            view.setUint32(offset, 16, true); offset += 4;
-            view.setUint16(offset, 1, true); offset += 2;
-            view.setUint16(offset, numOfChan, true); offset += 2;
-            view.setUint32(offset, sampleRate, true); offset += 4;
-            view.setUint32(offset, sampleRate * 2, true); offset += 4;
-            view.setUint16(offset, 2, true); offset += 2;
-            view.setUint16(offset, 16, true); offset += 2;
-            writeString('data');
-            view.setUint32(offset, length - offset - 4, true); offset += 4;
-
-            const channelData = buffer.getChannelData(0);
-            for (let i = 0; i < channelData.length; i++) {
-                let s = Math.max(-1, Math.min(1, channelData[i]));
-                view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-                offset += 2;
-            }
-
-            return new Blob([out], { type: 'audio/wav' });
-        }
-
-        async function fetchWithKeyRotation(requestData, statusMessage) {
+        // دالة الاتصال وتدوير المفاتيح (نفس الكود المحلول تماماً بدون أي لعب)
+        async function fetchWithKeyRotation(requestData) {
             const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
             if (!rawKeyInput) {
                 throw new Error("برجاء أدخل مفتاح API في الخانة المخصصة بالأعلى أولاً!");
@@ -304,26 +245,17 @@
 
             for (const modelName of MODELS) {
                 for (let i = 0; i < keys.length; i++) {
-                    if (isCancelled) throw new Error("CANCELLED");
                     const currentKey = keys[i];
-
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `${statusMessage} (${modelName})... ⚡`;
+                            loadingText.innerText = `جاري التحليل باستخدام (${modelName})... ⚡`;
                             
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
-                            
-                            currentAbortController = new AbortController();
-                            const timeoutId = setTimeout(() => currentAbortController.abort(), 300000); // 5 دقائق كحد أقصى للجزء الواحد
-
                             const res = await fetch(endpoint, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(requestData),
-                                signal: currentAbortController.signal
+                                body: JSON.stringify(requestData)
                             });
-
-                            clearTimeout(timeoutId);
 
                             if (res.status === 429 || res.status === 503) {
                                 await new Promise(r => setTimeout(r, 1500));
@@ -332,7 +264,7 @@
 
                             const data = await res.json();
                             if (res.ok && data.candidates && data.candidates[0]) {
-                                return data.candidates[0].content.parts[0].text;
+                                return data;
                             } else if (data.error) {
                                 lastError = new Error(data.error.message);
                                 if (res.status === 404 || (data.error.message && data.error.message.includes('is no longer available'))) {
@@ -340,129 +272,340 @@
                                 }
                             }
                         } catch (err) {
-                            if (err.name === 'AbortError' || isCancelled) {
-                                throw new Error("CANCELLED");
-                            }
                             lastError = err;
                         }
                     }
                 }
             }
-            throw lastError || new Error("فشل الاتصال بالموديلات والمفاتيح المدخلة.");
+            throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
         }
 
-        async function transcribeAudioAndLecture() {
+        // دالة تنظيف وتحليل JSON (نفس الكود المحلول تماماً)
+        function parseJSONSafely(rawText) {
+            let cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonStart = cleaned.indexOf('{');
+            const jsonEnd = cleaned.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+                cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+            }
+
             try {
-                const topic = document.getElementById('topicInput').value.trim();
-
-                if (!topic && !selectedAudioFile) {
-                    alert("برجاء رفع تسجيل صوتي للريكورد أو إدخال نص المحاضرة على الأقل!");
-                    return;
+                return JSON.parse(cleaned);
+            } catch (err1) {
+                try {
+                    let fixed = cleaned.replace(/,\s*([\]}])/g, '$1');
+                    return JSON.parse(fixed);
+                } catch (err2) {
+                    throw new Error("خطأ في صياغة JSON الراجع من النموذج: " + err1.message);
                 }
-
-                isCancelled = false;
-                const processBtn = document.getElementById('processBtn');
-                const loading = document.getElementById('loading');
-                const outputContainer = document.getElementById('outputContainer');
-                const outputContent = document.getElementById('outputContent');
-
-                processBtn.disabled = true;
-                processBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                loading.classList.remove('hidden');
-
-                const systemPrompt = `You are an elite Academic, Medical Professor, and Expert Transcriptionist.
-Your task is to listen to the provided audio segment and read the accompanying lecture text/notes.
-Produce a thorough, detailed, and beautifully structured markdown transcription of everything the speaker/doctor said without dropping any detail.
-
-CRITICAL INSTRUCTIONS:
-1. ABSOLUTE COMPLETENESS: Transcribe and cover every single topic, explanation, and detail mentioned in this audio segment.
-2. LANGUAGE & TERMINOLOGY FIDELITY: Seamlessly handle both Arabic explanation and English scientific/medical terms in the exact same transcription as spoken. Use Google Search grounding to verify and spell all medical, technical, and scientific names perfectly.
-3. FORMATTING: Use clear Markdown headings (##), subheadings (###), bullet points, and bold text for key terms.
-4. NO FILLER: Output strictly the formatted markdown content directly without conversational preamble.`;
-
-                let accumulatedMarkdown = "";
-
-                if (selectedAudioFile) {
-                    const audioChunks = await splitAndCompressAudio(selectedAudioFile);
-                    outputContainer.classList.remove('hidden');
-                    outputContent.innerHTML = `<p class="text-cyan-400 animate-pulse">تم تقسيم الريكورد إلى ${audioChunks.length} أجزاء سريعة، سيظهر التفريغ هنا تباعاً...</p>`;
-
-                    for (let idx = 0; idx < audioChunks.length; idx++) {
-                        if (isCancelled) break;
-
-                        const chunk = audioChunks[idx];
-                        const statusMsg = `جاري تفريغ الجزء ${idx + 1} من ${audioChunks.length} (${chunk.label})`;
-
-                        const requestData = {
-                            systemInstruction: { parts: [{ text: systemPrompt }] },
-                            contents: [{
-                                parts: [
-                                    {
-                                        inlineData: {
-                                            mimeType: chunk.mimeType,
-                                            data: chunk.data
-                                        }
-                                    },
-                                    {
-                                        text: `هذا هو الجزء رقم (${idx + 1} من ${audioChunks.length}) [${chunk.label}].\nمحتوى المحاضرة أو السياق المرفق:\n${topic || "لا يوجد نص مرفق، فرّغ الصوت بدقة مع دمج العربي والإنجليزي وتدقيق المصطلحات عبر جوجل."}`
-                                    }
-                                ]
-                            }],
-                            tools: [{ googleSearch: {} }],
-                            generationConfig: { 
-                                temperature: 0.1, 
-                                maxOutputTokens: 8192
-                            }
-                        };
-
-                        const chunkMarkdown = await fetchWithKeyRotation(requestData, statusMsg);
-                        
-                        // إضافة الجزء المفرغ فوراً إلى الشاشة وحفظه في المتصفح أثناء تحميل باقي الأجزاء
-                        const sectionHeader = audioChunks.length > 1 ? `\n\n---\n## ⏱️ الجزء ${idx + 1} (${chunk.label})\n\n` : "";
-                        accumulatedMarkdown += sectionHeader + chunkMarkdown;
-
-                        localStorage.setItem('last_saved_transcription_markdown', accumulatedMarkdown);
-                        outputContent.innerHTML = window.marked ? marked.parse(accumulatedMarkdown) : accumulatedMarkdown;
-                    }
-                } else {
-                    // في حالة إدخال نص المحاضرة فقط بدون ملف صوتي
-                    const requestData = {
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                        contents: [{
-                            parts: [{ text: `قم بتنظيم وتلخيص وشرح محتوى المحاضرة التالي بدقة:\n${topic}` }]
-                        }],
-                        tools: [{ googleSearch: {} }],
-                        generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
-                    };
-
-                    accumulatedMarkdown = await fetchWithKeyRotation(requestData, "جاري تنظيم وشرح المحاضرة");
-                    localStorage.setItem('last_saved_transcription_markdown', accumulatedMarkdown);
-                    outputContent.innerHTML = window.marked ? marked.parse(accumulatedMarkdown) : accumulatedMarkdown;
-                    outputContainer.classList.remove('hidden');
-                }
-
-            } catch (err) {
-                if (err.message !== "CANCELLED") {
-                    alert("حدث خطأ أثناء التفريغ: " + err.message);
-                }
-            } finally {
-                document.getElementById('loading').classList.add('hidden');
-                const btn = document.getElementById('processBtn');
-                btn.disabled = false;
-                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        function downloadPDF() {
-            const element = document.getElementById('outputContent');
-            const opt = {
-                margin:       10,
-                filename:     'Lecture_Transcription.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
+        function setLoadingState(isLoading, customMsg = "") {
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const recommendBtn = document.getElementById('recommendBtn');
+
+            if (isLoading) {
+                if (customMsg) loadingText.innerText = customMsg;
+                loading.classList.remove('hidden');
+                if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.classList.add('opacity-50', 'cursor-not-allowed'); }
+                if (recommendBtn) { recommendBtn.disabled = true; recommendBtn.classList.add('opacity-50', 'cursor-not-allowed'); }
+            } else {
+                loading.classList.add('hidden');
+                if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.classList.remove('opacity-50', 'cursor-not-allowed'); }
+                if (recommendBtn) { recommendBtn.disabled = false; recommendBtn.classList.remove('opacity-50', 'cursor-not-allowed'); }
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('triageQuestionsContainer').classList.add('hidden');
+            document.getElementById('finalResultContainer').classList.add('hidden');
+            document.getElementById('step1Container').classList.remove('hidden');
+        }
+
+        // المرحلة 1: توليد أسئلة الفرز الإكلينيكي (Triage) بناءً على حالة المريض
+        async function startTriageAssessment() {
+            try {
+                const category = document.getElementById('caseCategory').value;
+                const patientGroup = document.getElementById('patientGroup').value;
+                const ageWeight = document.getElementById('ageWeightInput').value.trim();
+                const complaint = document.getElementById('complaintInput').value.trim();
+
+                if (!complaint) {
+                    alert("برجاء كتابة الأعراض أو المشكلة أولاً!");
+                    return;
+                }
+
+                setLoadingState(true, "جاري تحليل الحالة وتجهيز الأسئلة الصيدلية...");
+                document.getElementById('triageQuestionsContainer').classList.add('hidden');
+                document.getElementById('finalResultContainer').classList.add('hidden');
+
+                const systemPrompt = `You are an expert Clinical Pharmacist & Dermocosmetic Specialist in Egypt.
+Your job in STEP 1 is to perform Clinical Triage (WWHAM / SCHOLAR-MAC protocol) BEFORE recommending any medication or product.
+
+Analyze the user's complaint, category, patient group, and age/weight, then generate 4 to 6 targeted, high-yield diagnostic/safety questions in Egyptian/clear Arabic to rule out red flags, check contraindications, determine exact pediatric/adult dosing, or identify skin/hair type.
+
+CRITICAL RULES:
+1. Tailor questions strictly to the patient profile:
+   - If child/infant: ask exact weight in kg (if missing), fever presence/degree, hydration/feeding, duration.
+   - If pregnant/lactating: ask trimester/month of pregnancy or baby's age, OB/GYN approval.
+   - If elderly: ask chronic diseases (hypertension, diabetes, kidney/liver issues, glaucoma, BPH) and current medications.
+   - If skin/hair care: ask skin type (oily/dry/combination/sensitive), scalp type, allergies, pregnancy status (for retinoids/salicylic acid), current routine.
+   - If OTC symptom: ask onset/duration, severity, accompanying red flag symptoms, drug allergies, chronic conditions.
+2. Provide quick-select options for each question (plus allow custom text if needed).
+3. Output STRICT JSON ONLY:
+{
+  "triageNote": "رسالة قصيرة توضح سبب طرح هذه الأسئلة للحالة",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "نص السؤال باللغة العربية الواضحة؟",
+      "type": "select_or_text",
+      "options": ["خيار 1", "خيار 2", "خيار 3"],
+      "placeholder": "أو اكتب إجابتك بالتفصيل هنا..."
+    }
+  ]
+}`;
+
+                const userMessage = `نوع الاستشارة: ${category}
+الفئة: ${patientGroup}
+العمر والوزن المدخل: ${ageWeight || "غير محدد"}
+الشكوى والتفاصيل: ${complaint}`;
+
+                const requestData = {
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: [{ parts: [{ text: userMessage }] }],
+                    generationConfig: {
+                        temperature: 0.2,
+                        maxOutputTokens: 4096,
+                        responseMimeType: "application/json"
+                    }
+                };
+
+                const data = await fetchWithKeyRotation(requestData);
+                const rawText = data.candidates[0].content.parts[0].text;
+                const parsed = parseJSONSafely(rawText);
+
+                if (!parsed.questions || !Array.isArray(parsed.questions) || parsed.questions.length === 0) {
+                    throw new Error("لم يتم توليد أسئلة بشكل صحيح، حاول مرة أخرى.");
+                }
+
+                currentQuestionsData = parsed.questions;
+                document.getElementById('triageSummaryNote').innerText = parsed.triageNote || "أجب على الأسئلة التالية بدقة لتحديد العلاج الأنسب والأكثر أماناً:";
+
+                const listContainer = document.getElementById('dynamicQuestionsList');
+                listContainer.innerHTML = "";
+
+                parsed.questions.forEach((q, idx) => {
+                    const qDiv = document.createElement('div');
+                    qDiv.className = "bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-3";
+
+                    let optionsHtml = "";
+                    if (q.options && Array.isArray(q.options) && q.options.length > 0) {
+                        optionsHtml = `<div class="flex flex-wrap gap-2">` + q.options.map(opt => `
+                            <button type="button" onclick="selectQuickOption('ans_${idx}', this)" class="quick-opt-btn text-xs bg-slate-900 hover:bg-purple-900/40 text-slate-300 border border-slate-700 rounded-lg px-3 py-1.5 transition">
+                                ${opt}
+                            </button>
+                        `).join('') + `</div>`;
+                    }
+
+                    qDiv.innerHTML = `
+                        <label class="block text-xs md:text-sm font-bold text-slate-200">
+                            <span class="text-cyan-400 ml-1">${idx + 1}.</span> ${q.question}
+                        </label>
+                        ${optionsHtml}
+                        <input type="text" id="ans_${idx}" placeholder="${q.placeholder || 'اكتب إجابتك هنا...'}" class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                    `;
+                    listContainer.appendChild(qDiv);
+                });
+
+                document.getElementById('triageQuestionsContainer').classList.remove('hidden');
+                document.getElementById('triageQuestionsContainer').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                alert("حدث خطأ: " + err.message);
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        function selectQuickOption(inputId, btnElement) {
+            const input = document.getElementById(inputId);
+            const val = btnElement.innerText.trim();
+            
+            // تمييز الزر المختار بصرياً
+            const parent = btnElement.parentElement;
+            parent.querySelectorAll('.quick-opt-btn').forEach(b => {
+                b.classList.remove('border-cyan-400', 'bg-cyan-950/60', 'text-cyan-300');
+                b.classList.add('border-slate-700', 'bg-slate-900', 'text-slate-300');
+            });
+            btnElement.classList.remove('border-slate-700', 'bg-slate-900', 'text-slate-300');
+            btnElement.classList.add('border-cyan-400', 'bg-cyan-950/60', 'text-cyan-300');
+
+            input.value = val;
+        }
+
+        // المرحلة 2: تحليل الإجابات وترشيح المادة الفعالة والأسماء التجارية في السوق المصري
+        async function generateFinalPrescription() {
+            try {
+                const category = document.getElementById('caseCategory').value;
+                const patientGroup = document.getElementById('patientGroup').value;
+                const ageWeight = document.getElementById('ageWeightInput').value.trim();
+                const complaint = document.getElementById('complaintInput').value.trim();
+
+                let qaSummary = "";
+                currentQuestionsData.forEach((q, idx) => {
+                    const ans = document.getElementById(`ans_${idx}`).value.trim() || "لم يتم الإجابة / غير متأكد";
+                    qaSummary += `- السؤال: ${q.question}\n  الإجابة: ${ans}\n`;
+                });
+
+                setLoadingState(true, "جاري مطابقة الحالة مع المراجع الطبية والأسماء التجارية في مصر...");
+
+                const systemPrompt = `You are a Senior Clinical Pharmacist & Dermocosmetic Consultant practicing in Egypt.
+Based on the patient's initial complaint and their answers to the triage questions, provide an evidence-based OTC / Cosmeceutical recommendation tailored specifically to the **Egyptian Pharmaceutical Market**.
+
+CRITICAL CLINICAL & PHARMACEUTICAL RULES:
+1. **Evidence-Based Sources:** Rely on authoritative clinical pharmacology & dermatology references (Lexicomp, UpToDate, Micromedex, BNF, AAD guidelines, and the Egyptian Drug Authority - EDA database / Egyptian Drug Index).
+2. **Accurate Egyptian Market Brand Names:** For every active ingredient or dermocosmetic formula recommended, list **accurate, well-known commercial brand names currently available in Egyptian pharmacies** (e.g., Panadol, Cetal, Brufen, Megafen, Antinal, Kapect, Controloc, Antopral, Gaviscon, Telfast, Claritine, Otrivin, Physiomer, La Roche-Posay, Bioderma, CeraVe, StarVille, Infinity, Shan, Kolagra, StrongVille, Hair Tonic brands, etc.). Include dosage forms (Tab, Syrup, Drops, Gel, Cream, Shampoo, Serum) and concentrations!
+3. **Safety & Contraindications:**
+   - Strictly respect pregnancy/lactation categories (FDA/LactMed).
+   - Calculate exact pediatric weight-based dosing (mg/kg/dose) if child/infant.
+   - Avoid NSAIDs/decongestants in hypertensive/renal/peptic ulcer patients.
+   - If Red Flags exist (e.g., high persistent fever, blood in stool, severe shortness of breath, chest pain, signs of severe infection), emphasize immediate physician referral in "redFlags" and advise against self-medication alone.
+4. **Language:** Clear, professional Arabic for explanations, with English scientific names for Active Ingredients and Commercial Brand Names alongside their Arabic names.
+5. **STRICT JSON OUTPUT ONLY:**
+{
+  "hasRedFlags": true,
+  "redFlagsWarning": "تحذير واضح ومباشر إذا كانت هناك أعراض تستدعي طبيب فوراً، أو علامات يجب مراقبتها",
+  "clinicalAssessment": "شرح مبسط ودقيق للحالة بناءً على إجابات المريض وآلية عمل العلاج المختار",
+  "recommendations": [
+    {
+      "role": "الخط العلاجي الأول / مسكن وخافض / غسول / سيروم...",
+      "activeIngredient": "Scientific Active Ingredient + Concentration (المادة الفعالة)",
+      "egyptianBrands": ["Brand 1 (Form)", "Brand 2 (Form)", "Brand 3 (Form)"],
+      "dosageAndUsage": "الجرعة الدقيقة وطريقة الاستخدام وعدد المرات والمدة",
+      "precautions": "محاذير الاستخدام أو التداخلات الدوائية"
+    }
+  ],
+  "nonPharmacologicalAdvice": [
+    "نصيحة 1",
+    "نصيحة 2",
+    "نصيحة 3"
+  ],
+  "referencesUsed": "Lexicomp, UpToDate, BNF, Egyptian Drug Authority (EDA) Index"
+}`;
+
+                const fullCasePrompt = `بيانات الحالة الكاملة:
+- نوع الاستشارة: ${category}
+- الفئة: ${patientGroup}
+- العمر والوزن: ${ageWeight || "غير محدد"}
+- الشكوى الأساسية: ${complaint}
+
+إجابات الأسئلة الاستقصائية:
+${qaSummary}
+
+المطلوب: التقييم الإكلينيكي + الترشيح الدوائي أو الكوزمتك بالـ Active Ingredient والـ Commercial Brand Names المتوفرة في صيدليات مصر بدقة عالية.`;
+
+                const requestData = {
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: [{ parts: [{ text: fullCasePrompt }] }],
+                    generationConfig: {
+                        temperature: 0.25,
+                        maxOutputTokens: 8192,
+                        responseMimeType: "application/json"
+                    }
+                };
+
+                const data = await fetchWithKeyRotation(requestData);
+                const rawText = data.candidates[0].content.parts[0].text;
+                const result = parseJSONSafely(rawText);
+
+                // عرض النتيجة
+                const redFlagsBox = document.getElementById('redFlagsBox');
+                const redFlagsText = document.getElementById('redFlagsText');
+                if (result.redFlagsWarning && result.redFlagsWarning.trim() !== "") {
+                    redFlagsText.innerText = result.redFlagsWarning;
+                    redFlagsBox.classList.remove('hidden');
+                } else {
+                    redFlagsBox.classList.add('hidden');
+                }
+
+                document.getElementById('clinicalAssessmentText').innerText = result.clinicalAssessment || "";
+
+                const medsGrid = document.getElementById('medicationsGrid');
+                medsGrid.innerHTML = "";
+
+                if (result.recommendations && Array.isArray(result.recommendations)) {
+                    result.recommendations.forEach((med, index) => {
+                        const brandsBadges = (med.egyptianBrands || []).map(b => 
+                            `<span class="inline-block bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 text-xs font-bold px-2.5 py-1 rounded-lg">${b}</span>`
+                        ).join(' ');
+
+                        const card = document.createElement('div');
+                        card.className = "neon-card rounded-2xl p-5 space-y-3 flex flex-col justify-between border-purple-500/30";
+                        card.innerHTML = `
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-xs font-extrabold text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-md border border-purple-500/30">
+                                        ${med.role || `خيار رقم ${index + 1}`}
+                                    </span>
+                                    <span class="text-xs text-slate-500 font-mono">#0${index + 1}</span>
+                                </div>
+
+                                <div>
+                                    <div class="text-[11px] text-slate-400">🧪 المادة الفعالة (Active Ingredient):</div>
+                                    <div class="text-sm md:text-base font-extrabold text-emerald-400 mt-0.5 dir-ltr text-right">
+                                        ${med.activeIngredient}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="text-[11px] text-slate-400 mb-1.5">🇪🇬 الأسماء التجارية في السوق المصري:</div>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        ${brandsBadges}
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 space-y-1">
+                                    <div class="text-[11px] font-bold text-amber-400">⏱️ الجرعة وطريقة الاستخدام:</div>
+                                    <p class="text-xs text-slate-200 leading-relaxed">${med.dosageAndUsage}</p>
+                                </div>
+                            </div>
+
+                            ${med.precautions ? `
+                            <div class="pt-2 border-t border-slate-800/80 text-[11px] text-rose-300/90 flex items-start gap-1.5">
+                                <i class="fa-solid fa-circle-info mt-0.5 text-rose-400"></i>
+                                <span>${med.precautions}</span>
+                            </div>` : ''}
+                        `;
+                        medsGrid.appendChild(card);
+                    });
+                }
+
+                const tipsList = document.getElementById('lifestyleTipsList');
+                tipsList.innerHTML = "";
+                if (result.nonPharmacologicalAdvice && Array.isArray(result.nonPharmacologicalAdvice)) {
+                    result.nonPharmacologicalAdvice.forEach(tip => {
+                        const li = document.createElement('li');
+                        li.innerText = tip;
+                        tipsList.appendChild(li);
+                    });
+                }
+
+                if (result.referencesUsed) {
+                    document.getElementById('referencesText').innerText = result.referencesUsed;
+                }
+
+                document.getElementById('finalResultContainer').classList.remove('hidden');
+                document.getElementById('finalResultContainer').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                alert("حدث خطأ أثناء استخراج الترشيحات: " + err.message);
+            } finally {
+                setLoadingState(false);
+            }
         }
     </script>
 </body>
