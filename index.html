@@ -212,9 +212,8 @@
     </footer>
 
     <script>
-        // الموديلات المطلوبة حصرياً (نفس المصفوفة بدون أي تعديل)
+        // تم تثبيت الموديل حصرياً على gemini-3.6-flash لضمان السرعة القصوى فوراً
         const MODELS = [
-            "gemini-3.8-flash",
             "gemini-3.6-flash"
         ];
 
@@ -234,7 +233,7 @@
             localStorage.setItem('user_gemini_api_keys', keyInput);
         }
 
-        // دالة الاتصال السريعة مع تدوير المفاتيح + تعطيل زمن التفكير الإضافي + Streaming SSE
+        // دالة الاتصال مع gemini-3.6-flash مع البث المباشر (SSE) لظهور النتيجة فوراً
         async function fetchWithKeyRotation(requestData, onChunkUpdate = null) {
             const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
             if (!rawKeyInput) {
@@ -252,12 +251,10 @@
                         try {
                             loadingText.innerText = `توليد فوري عبر (${modelName})... ⚡`;
 
-                            // بناء الطلب مع تعطيل التفكير البطئ لتقليل زمن الانتظار لأقل من ثانيتين
                             const payload = JSON.parse(JSON.stringify(requestData));
                             payload.generationConfig = payload.generationConfig || {};
                             payload.generationConfig.thinkingConfig = { thinkingBudget: 0 };
 
-                            // استخدام البث المباشر SSE لظهور الاستجابة لحظياً
                             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:streamGenerateContent?alt=sse&key=${currentKey}`;
                             let res = await fetch(endpoint, {
                                 method: 'POST',
@@ -265,7 +262,6 @@
                                 body: JSON.stringify(payload)
                             });
 
-                            // إذا رفض الموديل thinkingConfig لأي سبب، نعيد المحاولة بدونه فوراً
                             if (res.status === 400) {
                                 delete payload.generationConfig.thinkingConfig;
                                 res = await fetch(endpoint, {
@@ -276,7 +272,7 @@
                             }
 
                             if (res.status === 429 || res.status === 503) {
-                                await new Promise(r => setTimeout(r, 400));
+                                await new Promise(r => setTimeout(r, 300));
                                 continue;
                             }
 
@@ -290,7 +286,6 @@
                                 continue;
                             }
 
-                            // قراءة التدفق (Stream) وتجميع النص لحظة بلحظة
                             const reader = res.body.getReader();
                             const decoder = new TextDecoder("utf-8");
                             let fullText = "";
@@ -316,7 +311,7 @@
                                                 fullText += partText;
                                                 if (onChunkUpdate) onChunkUpdate(fullText);
                                             }
-                                        } catch (e) { /* تجاهل الأجزاء غير المكتملة */ }
+                                        } catch (e) {}
                                     }
                                 }
                             }
@@ -330,10 +325,9 @@
                     }
                 }
             }
-            throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
+            throw lastError || new Error("فشل الاتصال بجميع المفاتيح المدخلة.");
         }
 
-        // دالة تنظيف وتحليل JSON (نفس الكود المحلول تماماً)
         function parseJSONSafely(rawText) {
             let cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             const jsonStart = cleaned.indexOf('{');
@@ -388,7 +382,6 @@
             document.getElementById('step1Container').classList.remove('hidden');
         }
 
-        // المرحلة 1: توليد أسئلة الفرز الإكلينيكي بسرعة فائقة
         async function startTriageAssessment() {
             try {
                 const category = document.getElementById('caseCategory').value;
@@ -494,7 +487,6 @@ Output STRICT compact JSON ONLY:
             input.value = val;
         }
 
-        // المرحلة 2: استخراج البروتوكول العلاجي والأسماء التجارية في السوق المصري بسرعة فائقة
         async function generateFinalPrescription() {
             try {
                 const category = document.getElementById('caseCategory').value;
