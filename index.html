@@ -47,13 +47,13 @@
             المساعد الصيدلي الذكي AI 🩺💊
         </h1>
         <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
-            نظام الفرز الإكلينيكي الفوري وترشيح أدوية الـ OTC ومنتجات العناية بالبشرة والشعر بالأسماء التجارية في السوق المصري.
+            نظام الفرز الإكلينيكي وترشيح أدوية الـ OTC ومنتجات العناية بالبشرة والشعر بالأسماء التجارية في السوق المصري.
         </p>
     </header>
 
     <main class="max-w-4xl mx-auto w-full space-y-6">
 
-        <!-- API Key Input (محفوظ ومثبت بنفس المنطق تماماً) -->
+        <!-- API Key Input -->
         <div class="neon-card rounded-2xl p-5 md:p-6 space-y-4">
             <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
                 <label for="apiKeyInput" class="block text-xs font-bold text-slate-300 flex items-center justify-between">
@@ -63,7 +63,7 @@
                 <input type="text" id="apiKeyInput" oninput="saveApiKey()" placeholder="أدخل المفتاح الأول، أو عدة مفاتيح مفصولة بـ ," class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono tracking-wider">
             </div>
 
-            <!-- الخطوة الأولى: الشكوى الأساسية والبيانات الديموغرافية الأولية -->
+            <!-- الخطوة الأولى -->
             <div id="step1Container" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="space-y-2">
@@ -103,55 +103,51 @@
                     <label for="complaintInput" class="block text-xs font-bold text-slate-300">
                         📝 اشرح الشكوى أو الأعراض أو المشكلة بالتفصيل:
                     </label>
-                    <textarea id="complaintInput" rows="3" placeholder="مثال:
+                    <textarea id="complaintInput" rows="4" placeholder="مثال:
 - عندي حموضة وحرقان في المعدة بيزيد بعد الأكل وبقاله يومين...
 - أو: ابني عنده 4 سنين وعنده كحة ناشفة بالليل ورشح بسيط بدون سخونية...
 - أو: بشرتي دهنية وفيها حبوب تحت الجلد وآثار حبوب قديمة ومحتاجة روتين مناسب..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"></textarea>
                 </div>
 
                 <button id="analyzeBtn" onclick="startTriageAssessment()" class="w-full glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
-                    <i class="fa-solid fa-bolt text-lg"></i>
-                    <span>بدء الفحص السريع وطرح أسئلة الحالة ⚡</span>
+                    <i class="fa-solid fa-stethoscope text-lg"></i>
+                    <span>بدء الفحص وطرح الأسئلة الاستقصائية للحالة 🔍</span>
                 </button>
             </div>
         </div>
 
-        <!-- Loading Indicator مع عداد ثواني مباشر -->
-        <div id="loading" class="hidden text-center py-6 space-y-2">
-            <div class="inline-block animate-spin rounded-full h-9 w-9 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
-            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري التحليل الفوري...</p>
-            <p id="timerText" class="text-[11px] text-slate-500 font-mono">0.0s</p>
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden text-center py-8 space-y-3">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent shadow-lg shadow-cyan-500/50"></div>
+            <p id="loadingText" class="text-cyan-400 text-xs font-bold animate-pulse">جاري تحليل الحالة ومراجعة المراجع الدوائية...</p>
         </div>
 
-        <!-- الخطوة الثانية: الأسئلة الاستقصائية الديناميكية (Triage Questions) -->
-        <div id="triageQuestionsContainer" class="hidden neon-card rounded-2xl p-5 md:p-8 space-y-5 border-cyan-500/40">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <!-- الخطوة الثانية: الأسئلة الاستقصائية الديناميكية -->
+        <div id="triageQuestionsContainer" class="hidden neon-card rounded-2xl p-5 md:p-8 space-y-6 border-cyan-500/40">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-cyan-400 flex items-center gap-2">
                         <i class="fa-solid fa-clipboard-question"></i>
                         <span>أسئلة استكمال التشخيص الصيدلي</span>
                     </h2>
-                    <p id="triageSummaryNote" class="text-xs text-slate-400 mt-1">أجب بدقة لتحديد الجرعة الآمنة وتجنب أي موانع استخدام.</p>
+                    <p id="triageSummaryNote" class="text-xs text-slate-400 mt-1">أجب بدقة على هذه الأسئلة لتحديد الجرعة الآمنة وتجنب أي موانع استخدام.</p>
                 </div>
                 <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-rose-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
                     تعديل الشكوى
                 </button>
             </div>
 
-            <div id="dynamicQuestionsList" class="space-y-3">
-                <!-- سيتم توليد الأسئلة هنا ديناميكياً -->
-            </div>
+            <div id="dynamicQuestionsList" class="space-y-4"></div>
 
             <button id="recommendBtn" onclick="generateFinalPrescription()" class="w-full emerald-glow-btn text-white font-bold py-4 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer select-none">
                 <i class="fa-solid fa-prescription-bottle-medical text-lg"></i>
-                <span>اعتماد الإجابات وعرض البروتوكول والأسماء التجارية فوراً 💊</span>
+                <span>اعتماد الإجابات وعرض البروتوكول العلاجي والأسماء التجارية 💊</span>
             </button>
         </div>
 
-        <!-- الخطوة الثالثة: النتيجة النهائية والبروتوكول العلاجي -->
+        <!-- الخطوة الثالثة: النتيجة النهائية -->
         <div id="finalResultContainer" class="hidden space-y-6">
             
-            <!-- تنبيه علامات الخطر (Red Flags) إن وجدت -->
             <div id="redFlagsBox" class="hidden bg-rose-950/60 border border-rose-500/50 rounded-2xl p-5 space-y-2">
                 <h3 class="text-rose-400 font-bold text-sm md:text-base flex items-center gap-2">
                     <i class="fa-solid fa-triangle-exclamation text-lg animate-bounce"></i>
@@ -160,7 +156,6 @@
                 <p id="redFlagsText" class="text-xs md:text-sm text-rose-200 leading-relaxed"></p>
             </div>
 
-            <!-- ملخص التقييم الإكلينيكي -->
             <div class="neon-card rounded-2xl p-5 md:p-6 space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="text-base md:text-lg font-bold text-purple-400 flex items-center gap-2">
@@ -174,18 +169,14 @@
                 <p id="clinicalAssessmentText" class="text-xs md:text-sm text-slate-300 leading-relaxed"></p>
             </div>
 
-            <!-- كروت الأدوية والمواد الفعالة والأسماء التجارية في مصر -->
             <div class="space-y-3">
                 <h3 class="text-base md:text-lg font-bold text-cyan-400 flex items-center gap-2 px-1">
                     <i class="fa-solid fa-pills"></i>
                     <span>الخيارات العلاجية والأسماء التجارية المتوفرة في السوق المصري:</span>
                 </h3>
-                <div id="medicationsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- كروت الأدوية -->
-                </div>
+                <div id="medicationsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- نصائح غير دوائية وتعليمات الاستخدام -->
             <div class="neon-card rounded-2xl p-5 md:p-6 space-y-3 border-emerald-500/30">
                 <h3 class="text-base font-bold text-emerald-400 flex items-center gap-2">
                     <i class="fa-solid fa-hand-holding-heart"></i>
@@ -194,7 +185,6 @@
                 <ul id="lifestyleTipsList" class="list-disc list-inside text-xs md:text-sm text-slate-300 space-y-1.5 leading-relaxed"></ul>
             </div>
 
-            <!-- المصادر المرجعية -->
             <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 text-[11px] text-slate-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
                 <div>
                     <strong class="text-slate-300">📚 المصادر وقواعد البيانات المرجعية:</strong>
@@ -212,13 +202,12 @@
     </footer>
 
     <script>
-        // تم تثبيت الموديل حصرياً على gemini-3.6-flash لضمان السرعة القصوى فوراً
+        // تم إزالة gemini-3.8-flash وترك gemini-3.6-flash فقط
         const MODELS = [
             "gemini-3.6-flash"
         ];
 
         let currentQuestionsData = [];
-        let timerInterval = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('user_gemini_api_keys');
@@ -233,8 +222,8 @@
             localStorage.setItem('user_gemini_api_keys', keyInput);
         }
 
-        // دالة الاتصال مع gemini-3.6-flash مع البث المباشر (SSE) لظهور النتيجة فوراً
-        async function fetchWithKeyRotation(requestData, onChunkUpdate = null) {
+        // نفس دالة الاتصال الأصلية اللي اشتغلت معاك بالظبط بدون أي تعديل
+        async function fetchWithKeyRotation(requestData) {
             const rawKeyInput = document.getElementById('apiKeyInput').value.trim();
             if (!rawKeyInput) {
                 throw new Error("برجاء أدخل مفتاح API في الخانة المخصصة بالأعلى أولاً!");
@@ -249,75 +238,28 @@
                     const currentKey = keys[i];
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
-                            loadingText.innerText = `توليد فوري عبر (${modelName})... ⚡`;
-
-                            const payload = JSON.parse(JSON.stringify(requestData));
-                            payload.generationConfig = payload.generationConfig || {};
-                            payload.generationConfig.thinkingConfig = { thinkingBudget: 0 };
-
-                            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:streamGenerateContent?alt=sse&key=${currentKey}`;
-                            let res = await fetch(endpoint, {
+                            loadingText.innerText = `جاري التحليل باستخدام (${modelName})... ⚡`;
+                            
+                            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${currentKey}`;
+                            const res = await fetch(endpoint, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(payload)
+                                body: JSON.stringify(requestData)
                             });
 
-                            if (res.status === 400) {
-                                delete payload.generationConfig.thinkingConfig;
-                                res = await fetch(endpoint, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify(payload)
-                                });
-                            }
-
                             if (res.status === 429 || res.status === 503) {
-                                await new Promise(r => setTimeout(r, 300));
+                                await new Promise(r => setTimeout(r, 1500));
                                 continue;
                             }
 
-                            if (!res.ok) {
-                                const errData = await res.json().catch(() => ({}));
-                                const errMsg = errData.error?.message || `HTTP ${res.status}`;
-                                lastError = new Error(errMsg);
-                                if (res.status === 404 || errMsg.includes('is no longer available')) {
+                            const data = await res.json();
+                            if (res.ok && data.candidates && data.candidates[0]) {
+                                return data;
+                            } else if (data.error) {
+                                lastError = new Error(data.error.message);
+                                if (res.status === 404 || (data.error.message && data.error.message.includes('is no longer available'))) {
                                     break;
                                 }
-                                continue;
-                            }
-
-                            const reader = res.body.getReader();
-                            const decoder = new TextDecoder("utf-8");
-                            let fullText = "";
-                            let buffer = "";
-
-                            while (true) {
-                                const { done, value } = await reader.read();
-                                if (done) break;
-                                buffer += decoder.decode(value, { stream: true });
-
-                                const lines = buffer.split("\n");
-                                buffer = lines.pop();
-
-                                for (const line of lines) {
-                                    const trimmed = line.trim();
-                                    if (trimmed.startsWith("data:")) {
-                                        const jsonStr = trimmed.slice(5).trim();
-                                        if (!jsonStr || jsonStr === "[DONE]") continue;
-                                        try {
-                                            const chunk = JSON.parse(jsonStr);
-                                            const partText = chunk.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                                            if (partText) {
-                                                fullText += partText;
-                                                if (onChunkUpdate) onChunkUpdate(fullText);
-                                            }
-                                        } catch (e) {}
-                                    }
-                                }
-                            }
-
-                            if (fullText.trim().length > 0) {
-                                return { candidates: [{ content: { parts: [{ text: fullText }] } }] };
                             }
                         } catch (err) {
                             lastError = err;
@@ -325,9 +267,10 @@
                     }
                 }
             }
-            throw lastError || new Error("فشل الاتصال بجميع المفاتيح المدخلة.");
+            throw lastError || new Error("فشل الاتصال بجميع الموديلات والمفاتيح المدخلة.");
         }
 
+        // نفس دالة parseJSONSafely الأصلية بالظبط
         function parseJSONSafely(rawText) {
             let cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             const jsonStart = cleaned.indexOf('{');
@@ -351,7 +294,6 @@
         function setLoadingState(isLoading, customMsg = "") {
             const loading = document.getElementById('loading');
             const loadingText = document.getElementById('loadingText');
-            const timerText = document.getElementById('timerText');
             const analyzeBtn = document.getElementById('analyzeBtn');
             const recommendBtn = document.getElementById('recommendBtn');
 
@@ -360,16 +302,7 @@
                 loading.classList.remove('hidden');
                 if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.classList.add('opacity-50', 'cursor-not-allowed'); }
                 if (recommendBtn) { recommendBtn.disabled = true; recommendBtn.classList.add('opacity-50', 'cursor-not-allowed'); }
-
-                const startTime = performance.now();
-                timerText.innerText = "0.0s";
-                clearInterval(timerInterval);
-                timerInterval = setInterval(() => {
-                    const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
-                    timerText.innerText = `${elapsed}s`;
-                }, 100);
             } else {
-                clearInterval(timerInterval);
                 loading.classList.add('hidden');
                 if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.classList.remove('opacity-50', 'cursor-not-allowed'); }
                 if (recommendBtn) { recommendBtn.disabled = false; recommendBtn.classList.remove('opacity-50', 'cursor-not-allowed'); }
@@ -382,6 +315,7 @@
             document.getElementById('step1Container').classList.remove('hidden');
         }
 
+        // المرحلة 1: توليد أسئلة الفرز الإكلينيكي
         async function startTriageAssessment() {
             try {
                 const category = document.getElementById('caseCategory').value;
@@ -394,38 +328,53 @@
                     return;
                 }
 
-                setLoadingState(true, "تجهيز أسئلة الفرز الصيدلي...");
+                setLoadingState(true, "جاري تحليل الحالة وتجهيز الأسئلة الصيدلية...");
                 document.getElementById('triageQuestionsContainer').classList.add('hidden');
                 document.getElementById('finalResultContainer').classList.add('hidden');
 
-                const systemPrompt = `Expert Clinical Pharmacist & Dermocosmetic Specialist in Egypt.
-Generate 4 to 5 concise, high-yield triage questions in clear Arabic (WWHAM protocol) before recommending OTC drugs or skincare/haircare.
-Tailor strictly to profile:
-- Child/infant: exact weight (kg), fever, feeding/hydration, duration.
-- Pregnant/lactating: trimester/baby age, OB approval.
-- Elderly: chronic diseases (HTN, DM, renal/hepatic, BPH) & meds.
-- Skin/Hair: skin/scalp type, allergies, pregnancy (for retinoids/salicylic), current products.
-- OTC: duration, severity, red flags, allergies, chronic conditions.
+                const systemPrompt = `You are an expert Clinical Pharmacist & Dermocosmetic Specialist in Egypt.
+Your job in STEP 1 is to perform Clinical Triage (WWHAM / SCHOLAR-MAC protocol) BEFORE recommending any medication or product.
 
-Output STRICT compact JSON ONLY:
-{"triageNote":"جملة قصيرة","questions":[{"question":"السؤال؟","options":["خيار 1","خيار 2","خيار 3"]}]}`;
+Analyze the user's complaint, category, patient group, and age/weight, then generate 4 to 6 targeted, high-yield diagnostic/safety questions in Egyptian/clear Arabic to rule out red flags, check contraindications, determine exact pediatric/adult dosing, or identify skin/hair type.
 
-                const userMessage = `النوع: ${category} | الفئة: ${patientGroup} | العمر/الوزن: ${ageWeight || "غير محدد"} | الشكوى: ${complaint}`;
+CRITICAL RULES:
+1. Tailor questions strictly to the patient profile:
+   - If child/infant: ask exact weight in kg (if missing), fever presence/degree, hydration/feeding, duration.
+   - If pregnant/lactating: ask trimester/month of pregnancy or baby's age, OB/GYN approval.
+   - If elderly: ask chronic diseases (hypertension, diabetes, kidney/liver issues, glaucoma, BPH) and current medications.
+   - If skin/hair care: ask skin type (oily/dry/combination/sensitive), scalp type, allergies, pregnancy status (for retinoids/salicylic acid), current routine.
+   - If OTC symptom: ask onset/duration, severity, accompanying red flag symptoms, drug allergies, chronic conditions.
+2. Provide quick-select options for each question (plus allow custom text if needed).
+3. Output STRICT JSON ONLY:
+{
+  "triageNote": "رسالة قصيرة توضح سبب طرح هذه الأسئلة للحالة",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "نص السؤال باللغة العربية الواضحة؟",
+      "type": "select_or_text",
+      "options": ["خيار 1", "خيار 2", "خيار 3"],
+      "placeholder": "أو اكتب إجابتك بالتفصيل هنا..."
+    }
+  ]
+}`;
+
+                const userMessage = `نوع الاستشارة: ${category}
+الفئة: ${patientGroup}
+العمر والوزن المدخل: ${ageWeight || "غير محدد"}
+الشكوى والتفاصيل: ${complaint}`;
 
                 const requestData = {
                     systemInstruction: { parts: [{ text: systemPrompt }] },
                     contents: [{ parts: [{ text: userMessage }] }],
                     generationConfig: {
                         temperature: 0.2,
-                        maxOutputTokens: 1500,
+                        maxOutputTokens: 4096,
                         responseMimeType: "application/json"
                     }
                 };
 
-                const data = await fetchWithKeyRotation(requestData, (partial) => {
-                    document.getElementById('loadingText').innerText = `جاري كتابة الأسئلة (${partial.length} حرف)... ⚡`;
-                });
-
+                const data = await fetchWithKeyRotation(requestData);
                 const rawText = data.candidates[0].content.parts[0].text;
                 const parsed = parseJSONSafely(rawText);
 
@@ -434,14 +383,14 @@ Output STRICT compact JSON ONLY:
                 }
 
                 currentQuestionsData = parsed.questions;
-                document.getElementById('triageSummaryNote').innerText = parsed.triageNote || "أجب على الأسئلة التالية لتحديد العلاج الأنسب والأكثر أماناً:";
+                document.getElementById('triageSummaryNote').innerText = parsed.triageNote || "أجب على الأسئلة التالية بدقة لتحديد العلاج الأنسب والأكثر أماناً:";
 
                 const listContainer = document.getElementById('dynamicQuestionsList');
                 listContainer.innerHTML = "";
 
                 parsed.questions.forEach((q, idx) => {
                     const qDiv = document.createElement('div');
-                    qDiv.className = "bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-2.5";
+                    qDiv.className = "bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-3";
 
                     let optionsHtml = "";
                     if (q.options && Array.isArray(q.options) && q.options.length > 0) {
@@ -457,7 +406,7 @@ Output STRICT compact JSON ONLY:
                             <span class="text-cyan-400 ml-1">${idx + 1}.</span> ${q.question}
                         </label>
                         ${optionsHtml}
-                        <input type="text" id="ans_${idx}" placeholder="أو اكتب إجابتك هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                        <input type="text" id="ans_${idx}" placeholder="${q.placeholder || 'اكتب إجابتك هنا...'}" class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
                     `;
                     listContainer.appendChild(qDiv);
                 });
@@ -487,6 +436,7 @@ Output STRICT compact JSON ONLY:
             input.value = val;
         }
 
+        // المرحلة 2: استخراج البروتوكول العلاجي والأسماء التجارية
         async function generateFinalPrescription() {
             try {
                 const category = document.getElementById('caseCategory').value;
@@ -496,57 +446,68 @@ Output STRICT compact JSON ONLY:
 
                 let qaSummary = "";
                 currentQuestionsData.forEach((q, idx) => {
-                    const ans = document.getElementById(`ans_${idx}`).value.trim() || "غير محدد";
-                    qaSummary += `س: ${q.question} -> ج: ${ans}\n`;
+                    const ans = document.getElementById(`ans_${idx}`).value.trim() || "لم يتم الإجابة / غير متأكد";
+                    qaSummary += `- السؤال: ${q.question}\n  الإجابة: ${ans}\n`;
                 });
 
-                setLoadingState(true, "مطابقة المراجع الدوائية والأسماء التجارية في مصر...");
+                setLoadingState(true, "جاري مطابقة الحالة مع المراجع الطبية والأسماء التجارية في مصر...");
 
-                const systemPrompt = `Senior Clinical Pharmacist & Dermocosmetic Consultant in Egypt.
-Provide evidence-based OTC / Cosmeceutical protocol tailored to the **Egyptian Pharmaceutical Market** (Lexicomp, UpToDate, Micromedex, BNF, AAD, EDA Egyptian Drug Index).
+                const systemPrompt = `You are a Senior Clinical Pharmacist & Dermocosmetic Consultant practicing in Egypt.
+Based on the patient's initial complaint and their answers to the triage questions, provide an evidence-based OTC / Cosmeceutical recommendation tailored specifically to the **Egyptian Pharmaceutical Market**.
 
-RULES:
-1. List accurate commercial brand names available in Egyptian pharmacies (e.g., Panadol, Cetal, Brufen, Megafen, Antinal, Kapect, Controloc, Antopral, Gaviscon, Telfast, Claritine, Otrivin, Physiomer, La Roche-Posay, Bioderma, CeraVe, StarVille, Infinity, Shan, Kolagra, StrongVille, etc.) with dosage forms & concentrations.
-2. Respect pregnancy/lactation safety, exact pediatric weight-based dosing (mg/kg), and chronic disease contraindications (HTN, DM, renal, ulcer).
-3. Include clear Red Flags warning when physician referral is needed.
-4. Arabic explanations + English scientific active ingredients & commercial brand names.
-
-Output STRICT compact JSON ONLY:
+CRITICAL CLINICAL & PHARMACEUTICAL RULES:
+1. **Evidence-Based Sources:** Rely on authoritative clinical pharmacology & dermatology references (Lexicomp, UpToDate, Micromedex, BNF, AAD guidelines, and the Egyptian Drug Authority - EDA database / Egyptian Drug Index).
+2. **Accurate Egyptian Market Brand Names:** For every active ingredient or dermocosmetic formula recommended, list **accurate, well-known commercial brand names currently available in Egyptian pharmacies** (e.g., Panadol, Cetal, Brufen, Megafen, Antinal, Kapect, Controloc, Antopral, Gaviscon, Telfast, Claritine, Otrivin, Physiomer, La Roche-Posay, Bioderma, CeraVe, StarVille, Infinity, Shan, Kolagra, StrongVille, Hair Tonic brands, etc.). Include dosage forms (Tab, Syrup, Drops, Gel, Cream, Shampoo, Serum) and concentrations!
+3. **Safety & Contraindications:**
+   - Strictly respect pregnancy/lactation categories (FDA/LactMed).
+   - Calculate exact pediatric weight-based dosing (mg/kg/dose) if child/infant.
+   - Avoid NSAIDs/decongestants in hypertensive/renal/peptic ulcer patients.
+   - If Red Flags exist (e.g., high persistent fever, blood in stool, severe shortness of breath, chest pain, signs of severe infection), emphasize immediate physician referral in "redFlags" and advise against self-medication alone.
+4. **Language:** Clear, professional Arabic for explanations, with English scientific names for Active Ingredients and Commercial Brand Names alongside their Arabic names.
+5. **STRICT JSON OUTPUT ONLY:**
 {
-  "redFlagsWarning": "تحذير علامات الخطر ومتى يجب زيارة الطبيب",
-  "clinicalAssessment": "ملخص التقييم الإكلينيكي للحالة",
+  "hasRedFlags": true,
+  "redFlagsWarning": "تحذير واضح ومباشر إذا كانت هناك أعراض تستدعي طبيب فوراً، أو علامات يجب مراقبتها",
+  "clinicalAssessment": "شرح مبسط ودقيق للحالة بناءً على إجابات المريض وآلية عمل العلاج المختار",
   "recommendations": [
     {
-      "role": "دور العلاج (مثلاً: الخط الأول / غسول / مسكن)",
-      "activeIngredient": "Active Ingredient + Conc",
+      "role": "الخط العلاجي الأول / مسكن وخافض / غسول / سيروم...",
+      "activeIngredient": "Scientific Active Ingredient + Concentration (المادة الفعالة)",
       "egyptianBrands": ["Brand 1 (Form)", "Brand 2 (Form)", "Brand 3 (Form)"],
-      "dosageAndUsage": "الجرعة الدقيقة وطريقة الاستخدام",
-      "precautions": "محاذير الاستخدام"
+      "dosageAndUsage": "الجرعة الدقيقة وطريقة الاستخدام وعدد المرات والمدة",
+      "precautions": "محاذير الاستخدام أو التداخلات الدوائية"
     }
   ],
-  "nonPharmacologicalAdvice": ["نصيحة 1", "نصيحة 2", "نصيحة 3"],
-  "referencesUsed": "Lexicomp, UpToDate, BNF, Egyptian Drug Authority (EDA)"
+  "nonPharmacologicalAdvice": [
+    "نصيحة 1",
+    "نصيحة 2",
+    "نصيحة 3"
+  ],
+  "referencesUsed": "Lexicomp, UpToDate, BNF, Egyptian Drug Authority (EDA) Index"
 }`;
 
-                const fullCasePrompt = `النوع: ${category} | الفئة: ${patientGroup} | العمر/الوزن: ${ageWeight || "غير محدد"}
-الشكوى: ${complaint}
-الإجابات:
-${qaSummary}`;
+                const fullCasePrompt = `بيانات الحالة الكاملة:
+- نوع الاستشارة: ${category}
+- الفئة: ${patientGroup}
+- العمر والوزن: ${ageWeight || "غير محدد"}
+- الشكوى الأساسية: ${complaint}
+
+إجابات الأسئلة الاستقصائية:
+${qaSummary}
+
+المطلوب: التقييم الإكلينيكي + الترشيح الدوائي أو الكوزمتك بالـ Active Ingredient والـ Commercial Brand Names المتوفرة في صيدليات مصر بدقة عالية.`;
 
                 const requestData = {
                     systemInstruction: { parts: [{ text: systemPrompt }] },
                     contents: [{ parts: [{ text: fullCasePrompt }] }],
                     generationConfig: {
-                        temperature: 0.2,
-                        maxOutputTokens: 2500,
+                        temperature: 0.25,
+                        maxOutputTokens: 8192,
                         responseMimeType: "application/json"
                     }
                 };
 
-                const data = await fetchWithKeyRotation(requestData, (partial) => {
-                    document.getElementById('loadingText').innerText = `جاري تجهيز الروشتة والأسماء التجارية (${partial.length} حرف)... ⚡`;
-                });
-
+                const data = await fetchWithKeyRotation(requestData);
                 const rawText = data.candidates[0].content.parts[0].text;
                 const result = parseJSONSafely(rawText);
 
